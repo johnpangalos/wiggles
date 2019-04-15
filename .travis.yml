@@ -7,10 +7,15 @@ cache: yarn
 
 stages:
   - lint
+  - test
 
 jobs:
   include:
     - stage: "lint"
-      name: "Check Lint"
+      name: "Check lint"
       script:
         - yarn run eslint ./
+    - stage: "test"
+      name: "Running tests"
+      script:
+        - yarn test --no-watch 
