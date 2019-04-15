@@ -21,7 +21,7 @@
     "watch:css": "postcss src/styles/index.css -o src/tailwind.css -w",
     "start": "yarn run watch:css & cross-env BROWSER=none react-scripts start",
     "build": "yarn run build:css && react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --verbose=false",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -35,6 +35,8 @@
   ],
   "devDependencies": {
     "autoprefixer": "^9.5.1",
+    "enzyme": "^3.9.0",
+    "enzyme-adapter-react-16": "^1.12.1",
     "postcss-cli": "^6.1.2",
     "tailwindcss": "^0.7.4"
   },

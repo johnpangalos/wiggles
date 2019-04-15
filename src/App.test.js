@@ -1,9 +1,23 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { shallow } from 'enzyme';
 import App from './App';
 
-it('renders without crashing', () => {
-  const div = document.createElement('div');
-  ReactDOM.render(<App />, div);
-  ReactDOM.unmountComponentAtNode(div);
+global.firebase = {
+  auth: jest.fn(() => ({
+    useDeviceLanguage: jest.fn(),
+    signInWithRedirect: jest.fn(),
+    getRedirectResult: jest.fn(() => ({
+      credential: {
+        accessToken: 'someAccessToken'
+      },
+      user: {
+        name: 'someUser'
+      }
+    }))
+  }))
+};
+
+it("Doesn't render the loading spinner", () => {
+  const wrapper = shallow(<App />);
+  expect(wrapper.find('.loading').length).toEqual(0);
 });

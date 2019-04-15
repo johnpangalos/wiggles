@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/johnny88/wiggles.svg?branch=master)](https://travis-ci.org/johnny88/wiggles)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/19c12a78-61bc-4730-b9ad-8b6c75a16b21/deploy-status)](https://app.netlify.com/sites/wiggles/deploys)
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
