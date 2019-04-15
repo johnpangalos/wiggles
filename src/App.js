@@ -1,8 +1,9 @@
-import React from "react";
+import React from 'react';
 
 export default () => (
   <div className="flex flex-col justify-center items-center h-screen">
-    <div className="
+    <div
+      className="
       flex
       flex-col
       justify-center
@@ -11,7 +12,8 @@ export default () => (
       px-10
       py-8
       rounded-lg
-      text-grey-darkest">
+      text-grey-darkest"
+    >
       <div className="text-3xl font-bold pb-2">App under construction...</div>
       <div className="text-xl">Please comeback later to see more!</div>
     </div>
