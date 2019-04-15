@@ -8,10 +8,10 @@
     "react-scripts": "2.1.8"
   },
   "scripts": {
-    "build:css": "postcss src/styles/index.css -o src/index.css",
-    "watch:css": "postcss src/styles/index.css -o src/index.css -w",
-    "start": "npm run watch:css & react-scripts start",
-    "build": "npm run build:css && react-scripts build",
+    "build:css": "postcss src/styles/index.css -o src/tailwind.css",
+    "watch:css": "postcss src/styles/index.css -o src/tailwind.css -w",
+    "start": "yarn run watch:css & cross-env BROWSER=none react-scripts start",
+    "build": "yarn run build:css && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
