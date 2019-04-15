@@ -5,6 +5,12 @@ node_js:
 
 cache: yarn
 
-lint: 
-  script:
-    - yarn run eslint ./
+stages:
+  - lint
+
+jobs:
+  include:
+    - stage: "lint"
+      name: "Check Lint"
+      script:
+        - yarn run eslint ./
