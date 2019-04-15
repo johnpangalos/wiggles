@@ -23,5 +23,9 @@ yarn-debug.log*
 yarn-error.log*
 
 # Vim temp files
-.swp
-.swp
+*.swp
+*.swo
+
+# Generated tailwind css file
+src/tailwind.css
+
