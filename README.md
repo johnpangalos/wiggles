@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/johnny88/wiggles.svg?branch=master)](https://travis-ci.org/johnny88/wiggles)
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
