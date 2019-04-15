@@ -1,8 +1,0 @@
-language: node_js
-
-cache: yarn
-
-lint:
-  script:
-    - yarn run eslint ./
-
