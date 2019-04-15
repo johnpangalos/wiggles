@@ -31,7 +31,10 @@ export default () => {
   });
 
   return (
-    <div className="flex flex-col justify-center items-center h-screen">
+    <div
+      id="App"
+      className="flex flex-col justify-center items-center h-screen"
+    >
       {loading ? <Loading /> : <ConstructionMessage />}
     </div>
   );
