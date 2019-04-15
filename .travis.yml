@@ -6,16 +6,14 @@ node_js:
 cache: yarn
 
 stages:
-  - lint
   - test
 
 jobs:
   include:
-    - stage: "lint"
+    - stage: "test"
       name: "Check lint"
       script:
         - yarn run eslint ./
-    - stage: "test"
-      name: "Running tests"
+    - name: "Running tests"
       script:
         - yarn test --no-watch 
