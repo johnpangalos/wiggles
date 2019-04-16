@@ -88,7 +88,7 @@ const ConstructionMessage = () => (
 );
 
 const PrivateRoute = ({ component: Component, user, signOut, ...rest }) => {
-  if (!(user && user.claims && user.claims.authorized)) signOut();
+  if (user && user.claims && !user.claims.authorized) signOut();
   return (
     <Route
       {...rest}
