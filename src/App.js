@@ -10,11 +10,31 @@ export default () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    window.firebase.auth().onAuthStateChanged(res => {
-      if (res) setUser(res);
-      setLoading(false);
+    let callback = null;
+    let metadataRef = null;
+
+    const unsubscribe = window.firebase.auth().onAuthStateChanged(res => {
+      if (callback) metadataRef.off('value', callback);
+
+      if (res) {
+        metadataRef = window.firebase
+          .database()
+          .ref('metadata/' + res.uid + '/refreshTime');
+        callback = async snapshot => {
+          res.getIdToken(true);
+          setLoading(false);
+          const idToken = await window.firebase
+            .auth()
+            .currentUser.getIdTokenResult();
+          setUser(idToken);
+        };
+        metadataRef.on('value', callback);
+      } else {
+        setLoading(false);
+      }
     });
-  });
+    return () => unsubscribe();
+  }, []);
 
   const signOut = () => {
     window.firebase.auth().signOut();
@@ -44,6 +64,7 @@ export default () => {
             <div className="h-full w-full">
               <PrivateRoute
                 exact
+                signOut={signOut}
                 user={user}
                 path="/"
                 component={ConstructionMessage}
@@ -66,7 +87,8 @@ const ConstructionMessage = () => (
   </div>
 );
 
-const PrivateRoute = ({ component: Component, user, ...rest }) => {
+const PrivateRoute = ({ component: Component, user, signOut, ...rest }) => {
+  if (!(user && user.claims && user.claims.authorized)) signOut();
   return (
     <Route
       {...rest}
