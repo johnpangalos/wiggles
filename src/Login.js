@@ -12,7 +12,6 @@ const getFirebaseToken = () => {
 
 export const Login = withRouter(({ user, location }) => {
   const { from } = location.state || { from: { pathname: '/' } };
-  console.log(from);
   return user ? <Redirect to={from} /> : <LoginModal />;
 });
 
