@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
-import { Redirect } from 'react-router-dom';
+import { Redirect, withRouter } from 'react-router-dom';
 import { Loading } from './Loading';
 
 const getFirebaseToken = () => {
@@ -10,9 +10,11 @@ const getFirebaseToken = () => {
   window.firebase.auth().signInWithRedirect(provider);
 };
 
-export const Login = ({ user }) => {
-  return user ? <Redirect to="/" /> : <LoginModal />;
-};
+export const Login = withRouter(({ user, location }) => {
+  const { from } = location.state || { from: { pathname: '/' } };
+  console.log(from);
+  return user ? <Redirect to={from} /> : <LoginModal />;
+});
 
 const LoginModal = () => {
   const [loading, setLoading] = useState(false);
