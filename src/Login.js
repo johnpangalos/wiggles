@@ -1,6 +1,6 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGoogle } from '@fortawesome/free-brands-svg-icons';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { Redirect } from 'react-router-dom';
 
 const getFirebaseToken = () => {
@@ -21,11 +21,12 @@ const LoginModal = () => (
         onClick={() => getFirebaseToken()}
         className="flex items-baseline bg-red py-2 text-white"
       >
-        <div className="px-3">
-          <FontAwesomeIcon color="white" icon={faGoogle} />
-        </div>
         <div>Login with Google</div>
       </button>
     </div>
   </div>
 );
+
+// <div className="px-3">
+// <FontAwesomeIcon color="white" icon={faGoogle} />
+// </div>
