@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { Redirect, withRouter } from 'react-router-dom';
-import { Loading } from './Loading';
+
+import { Loading } from '~/components';
+import { Fade } from '~/components/transitions';
 
 const getFirebaseToken = () => {
   window.firebase.auth().useDeviceLanguage();
@@ -22,22 +24,27 @@ const LoginModal = () => {
     getFirebaseToken();
   };
 
-  return loading ? (
-    <Loading />
-  ) : (
-    <div className="flex justify-center items-center h-full w-full">
-      <div className="flex flex-col bg-grey-lightest p-4 sm:w-64 w-full shadow">
-        <div className="text-xl pb-2">Please Login</div>
-        <button
-          onClick={() => handleClick()}
-          className="flex items-baseline bg-red py-2 text-white"
-        >
-          <div className="px-3">
-            <FontAwesomeIcon color="white" icon={faGoogle} />
+  return (
+    <>
+      <Fade in={loading}>
+        <Loading />
+      </Fade>
+      <Fade in={!loading}>
+        <div className="flex justify-center items-center h-full w-full pt-16">
+          <div className="flex flex-col bg-grey-lightest p-4 sm:w-64 w-full shadow">
+            <div className="text-xl pb-2">Please Login</div>
+            <button
+              onClick={() => handleClick()}
+              className="flex items-baseline bg-red py-2 text-white"
+            >
+              <div className="px-3">
+                <FontAwesomeIcon color="white" icon={faGoogle} />
+              </div>
+              <div>Login with Google</div>
+            </button>
           </div>
-          <div>Login with Google</div>
-        </button>
-      </div>
-    </div>
+        </div>
+      </Fade>
+    </>
   );
 };
