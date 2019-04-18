@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
+import { Fade } from '~/components/transitions';
 
 import { Loading, Button } from '~/components';
 import { Login, ImageUpload } from '~/containers';
@@ -46,7 +47,7 @@ export default () => {
       className="flex flex-col h-screen w-full items-center text-grey-darkest"
     >
       <Router>
-        <div className="flex items-center flex-shrink bg-grey-lighter w-full h-16 shadow">
+        <div className="z-10 flex items-center flex-shrink bg-grey-lighter w-full h-16 shadow absolute">
           <div className="flex-grow" />
           {user && (
             <div className="pr-5">
@@ -54,11 +55,12 @@ export default () => {
             </div>
           )}
         </div>
-        <div className="flex items-center flex-grow w-full">
-          {loading ? (
+        <div className="flex flex-col items-center flex-grow h-full w-full">
+          <Fade in={loading} className="h-full">
             <Loading />
-          ) : (
-            <div className="h-full w-full">
+          </Fade>
+          <Fade in={!loading} className="h-full">
+            <>
               <PrivateRoute
                 exact
                 signOut={signOut}
@@ -67,8 +69,8 @@ export default () => {
                 component={ImageUpload}
               />
               <Route path="/login" component={() => <Login user={user} />} />
-            </div>
-          )}
+            </>
+          </Fade>
         </div>
       </Router>
     </div>

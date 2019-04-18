@@ -1,13 +1,13 @@
 import React from 'react';
 import './__styles__/loading-spinner.css';
-import { Fade } from '~/components/transitions';
 
-export const Loading = () => (
+export const Loading = ({ message = '' }) => (
   <div className="flex items-center justify-center h-full w-full">
-    <Fade appear={true}>
+    <div className="flex flex-col items-center justify-center h-full w-full">
+      {message && <div className="pb-2 text-lg">{message}</div>}
       <div className="self-center loading">
         <div />
       </div>
-    </Fade>
+    </div>
   </div>
 );

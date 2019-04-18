@@ -1,11 +1,13 @@
 import React, { useState, useRef } from 'react';
-import { Button } from '~/components';
-import { Fade } from '~/components/transitions';
+import { Alert, Button, Loading } from '~/components';
 import { getExtenstion } from '~/utils';
+import { Fade } from '~/components/transitions';
+
 export const ImageUpload = () => {
   const [file, setFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const storageRef = window.firebase.storage().ref();
+  const [alert, setAlert] = useState(false);
 
   const handleImageChange = event => {
     event.preventDefault();
@@ -18,53 +20,79 @@ export const ImageUpload = () => {
     reader.readAsDataURL(eventFile);
   };
 
-  const onCancel = () => {
+  const reset = () => {
     setImagePreview(null);
     setFile(null);
   };
+  const onCancel = () => reset();
 
-  const onSubmit = async () => {
+  const onSubmit = setUploading => async () => {
+    setUploading(true);
     const name = `${+new Date()}.${getExtenstion(file.name)}`;
-    debugger;
-    // const ref = storageRef.child(`${+ new Date()}`);
-    // const snapshot = await ref.put(file);
+    const ref = storageRef.child(name);
+    try {
+      await ref.put(file);
+      setAlert(true);
+      setUploading(false);
+      reset();
+    } catch (error) {
+      setUploading(false);
+      console.error(error);
+    }
   };
 
   return (
-    <div className="h-full">
-      {imagePreview ? (
+    <>
+      <Fade in={!!imagePreview}>
         <SubmitScreen
           imagePreview={imagePreview}
           onCancel={onCancel}
           onSubmit={onSubmit}
         />
-      ) : (
-        <UploadScreen handleImageChange={handleImageChange} />
-      )}
-    </div>
+      </Fade>
+      <Fade in={!imagePreview}>
+        <UploadScreen
+          alert={alert}
+          setAlert={setAlert}
+          handleImageChange={handleImageChange}
+        />
+      </Fade>
+    </>
   );
 };
 
-const SubmitScreen = ({ imagePreview, onCancel, onSubmit }) => (
-  <Fade appear={true}>
-    <div className="flex flex-col justify-center items-center h-full">
-      <div className="flex justify-center items-center flex-grow p-3">
-        <img alt="Preview" src={imagePreview} />
-      </div>
+const SubmitScreen = ({ imagePreview, onCancel, onSubmit }) => {
+  const [uploading, setUploading] = useState(false);
 
-      <div className="flex justify-end w-full py-3 pr-3">
-        <Button onClick={onCancel} className="mr-2">
-          Cancel
-        </Button>
-        <Button onClick={onSubmit} color="red" dark="true">
-          Submit
-        </Button>
-      </div>
-    </div>
-  </Fade>
-);
+  return (
+    <>
+      <Fade in={uploading}>
+        <div className="h-full w-full pt-16">
+          <Loading message="Uploading Image" />
+        </div>
+      </Fade>
 
-const UploadScreen = ({ handleImageChange }) => {
+      <Fade in={!uploading}>
+        <div className="flex flex-col justify-center items-center w-full h-full pt-16">
+          <div className="flex justify-center items-center flex-grow p-3">
+            <img alt="Preview" src={imagePreview} />
+          </div>
+
+          <div className="flex justify-end w-full py-3 pr-3">
+            <Button onClick={onCancel} className="mr-2">
+              Cancel
+            </Button>
+            <Button onClick={onSubmit(setUploading)} color="red" dark="true">
+              Submit
+            </Button>
+          </div>
+        </div>
+      </Fade>
+    </>
+  );
+};
+
+const UploadScreen = ({ handleImageChange, alert, setAlert }) => {
   const uploadImage = useRef(null);
 
   const handleClick = event => {
@@ -73,26 +101,30 @@ const UploadScreen = ({ handleImageChange }) => {
   };
 
   return (
-    <Fade appear={true}>
-      <div className="flex flex-col justify-center items-center h-full">
-        <div className="flex flex-col justify-center items-center flex-grow max-w-xs w-full text-center">
-          <div className="text-xl font-bold pb-2">Nothing to see here!</div>
-          <div>When uploading an image a preview will show up here.</div>
-        </div>
-
-        <div className="flex justify-center w-full py-3">
-          <Button color="red" dark="true" onClick={event => handleClick(event)}>
-            Upload image
-          </Button>
-          <input
-            className="hidden"
-            id="upload-image"
-            ref={uploadImage}
-            type="file"
-            onChange={event => handleImageChange(event)}
-          />
-        </div>
+    <div className="flex flex-col justify-center items-center h-full w-full pt-16">
+      <div className="w-full">
+        <Alert show={alert} onClose={() => setAlert(false)} type="success">
+          Upload Successful
+        </Alert>
       </div>
-    </Fade>
+
+      <div className="flex flex-col justify-center items-center flex-grow max-w-xs w-full text-center">
+        <div className="text-xl font-bold pb-2">Nothing to see here!</div>
+        <div>When uploading an image a preview will show up here.</div>
+      </div>
+
+      <div className="flex justify-center w-full py-3">
+        <Button color="red" dark="true" onClick={event => handleClick(event)}>
+          Upload image
+        </Button>
+        <input
+          className="hidden"
+          id="upload-image"
+          ref={uploadImage}
+          type="file"
+          onChange={event => handleImageChange(event)}
+        />
+      </div>
+    </div>
   );
 };

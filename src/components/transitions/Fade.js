@@ -1,22 +1,37 @@
 import React from 'react';
-import { CSSTransitionGroup } from 'react-transition-group';
-import './__styles__/fade.css';
+import { Transition } from 'react-transition-group';
 
-export const Fade = ({
-  children,
-  appear = false,
-  enter = false,
-  leave = false
-}) => (
-  <CSSTransitionGroup
-    transitionName="fade"
-    transitionAppear={appear}
-    transitionAppearTimeout={500}
-    transitionEnter={enter}
-    transitionEnterTimeout={500}
-    transitionLeave={leave}
-    transitionLeaveTimeout={300}
+const defaultStyle = {
+  transition: `opacity 500ms ease-in-out`,
+  opacity: 0
+};
+
+const transitionStyles = {
+  entering: { opacity: 1, zIndex: 2 },
+  entered: { opacity: 1, zIndex: 2 },
+  exiting: { opacity: 0, zIndex: 1 },
+  exited: { opacity: 0, zIndex: 1 }
+};
+
+export const Fade = ({ children, show = true, className, ...rest }) => (
+  <Transition
+    in={show}
+    timeout={{
+      enter: 500,
+      exit: 300
+    }}
+    {...rest}
   >
-    {children}
-  </CSSTransitionGroup>
+    {state => (
+      <div
+        className={`${className} absolute h-full w-full`}
+        style={{
+          ...defaultStyle,
+          ...transitionStyles[state]
+        }}
+      >
+        {children}
+      </div>
+    )}
+  </Transition>
 );
