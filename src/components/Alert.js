@@ -24,14 +24,14 @@ export const Alert = ({ show, children, type = 'info', onClose }) => (
         )} px-4 py-3 rounded h-full w-full`}
         role="alert"
       >
-        <div className="flex">
+        <div className="flex items-center">
           <div className="flex-grow">{children}</div>
 
           {onClose && (
             <FontAwesomeIcon
               onClick={onClose}
               role="button"
-              className={`fill-current text${typeColorMap[type]}-dark`}
+              className={`text-2xl fill-current text${typeColorMap[type]}-dark`}
               icon={faTimes}
             />
           )}
