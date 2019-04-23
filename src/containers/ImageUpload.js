@@ -1,9 +1,11 @@
 import React, { useState, useRef } from 'react';
-import { Alert, Button, Loading } from '~/components';
+import { Alert, CircleButton, Button, Loading } from '~/components';
 import { getExtenstion } from '~/utils';
 import { Fade } from '~/components/transitions';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCameraRetro } from '@fortawesome/free-solid-svg-icons';
 
-export const ImageUpload = () => {
+export const ImageUpload = ({ user }) => {
   const [file, setFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const storageRef = window.firebase.storage().ref();
@@ -30,8 +32,9 @@ export const ImageUpload = () => {
     setUploading(true);
     const name = `${+new Date()}.${getExtenstion(file.name)}`;
     const ref = storageRef.child(name);
+    const metadata = { customMetadata: { userId: user.claims.sub } };
     try {
-      await ref.put(file);
+      await ref.put(file, metadata);
       setAlert(true);
       setUploading(false);
       reset();
@@ -67,15 +70,18 @@ const SubmitScreen = ({ imagePreview, onCancel, onSubmit }) => {
   return (
     <>
       <Fade in={uploading}>
-        <div className="h-full w-full pt-16">
+        <div className="h-full w-full pb-16">
           <Loading message="Uploading Image" />
         </div>
       </Fade>
 
       <Fade in={!uploading}>
-        <div className="flex flex-col justify-center items-center w-full h-full pt-16">
-          <div className="flex justify-center items-center flex-grow p-3">
-            <img alt="Preview" src={imagePreview} />
+        <div className="flex flex-col justify-center items-center w-full h-full pb-16">
+          <div className="flex w-full justify-center items-center flex-grow p-3">
+            <div
+              style={{ backgroundImage: `url(${imagePreview})` }}
+              className="bg-no-repeat bg-center bg-contain w-full h-full"
+            />
           </div>
 
           <div className="flex justify-end w-full py-3 pr-3">
@@ -101,7 +107,7 @@ const UploadScreen = ({ handleImageChange, alert, setAlert }) => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center h-full w-full pt-16">
+    <div className="flex flex-col justify-center items-center h-full w-full pb-16">
       <div className="w-full">
         <Alert show={alert} onClose={() => setAlert(false)} type="success">
           Upload Successful
@@ -114,9 +120,13 @@ const UploadScreen = ({ handleImageChange, alert, setAlert }) => {
       </div>
 
       <div className="flex justify-center w-full py-3">
-        <Button color="red" dark="true" onClick={event => handleClick(event)}>
-          Upload image
-        </Button>
+        <CircleButton
+          color="red"
+          dark="true"
+          onClick={event => handleClick(event)}
+        >
+          <FontAwesomeIcon role="button" size="2x" icon={faCameraRetro} />
+        </CircleButton>
         <input
           className="hidden"
           id="upload-image"
