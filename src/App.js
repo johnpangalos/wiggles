@@ -60,37 +60,41 @@ export default () => {
           </Fade>
         </div>
         <Fade in={!loading}>
-          {user && (
-            <>
-              <PrivateRoute
-                signOut={signOut}
-                user={user}
-                path="/camera"
-                component={() => <ImageUpload user={user} />}
-              />
-              <PrivateRoute
-                exact
-                signOut={signOut}
-                user={user}
-                path="/"
-                component={() => <Feed />}
-              />
-              <PrivateRoute
-                signOut={signOut}
-                user={user}
-                path="/profile"
-                component={() => <div>Profile</div>}
-              />
-              <BottomNavigation />
-            </>
-          )}
+          <PrivateRoute
+            signOut={signOut}
+            user={user}
+            path="/camera"
+            component={() => <ImageUpload user={user} />}
+          />
+          <PrivateRoute
+            exact
+            signOut={signOut}
+            user={user}
+            path="/"
+            component={() => <Feed />}
+          />
+          <PrivateRoute
+            signOut={signOut}
+            user={user}
+            path="/profile"
+            component={() => (
+              <div className="flex items-center justify-center h-full">
+                <button
+                  className="bg-red hover:bg-red-dark text-white font-bold py-2 px-4 rounded"
+                  onClick={() => signOut()}
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+          />
           <Route path="/login" component={() => <Login user={user} />} />
+          {user && <BottomNavigation />}
         </Fade>
       </Router>
     </div>
   );
 };
-// <Button onClick={() => signOut()}>Logout</Button>
 
 const PrivateRoute = withRouter(
   ({ location, component: Component, user, signOut, ...rest }) => {

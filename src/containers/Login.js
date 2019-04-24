@@ -27,7 +27,7 @@ const LoginModal = () => {
   return (
     <>
       <Fade in={loading}>
-        <div className="flex flex-col items-center flex-grow h-full w-full pb-16">
+        <div className="flex flex-col items-center flex-grow h-full w-full">
           <Loading />
         </div>
       </Fade>
