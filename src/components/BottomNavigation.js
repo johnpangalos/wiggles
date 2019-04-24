@@ -8,10 +8,12 @@ import {
 import { NavLink } from 'react-router-dom';
 import '~/components/transitions';
 export const BottomNavigation = () => (
-  <div className="z-10 flex items-center justify-around flex-shrink bg-grey-lighter w-full h-16 shadow absolute pin-b px-12">
-    <NavButton to="/" icon={faHome} text={'Feed'} />
-    <NavButton to="/camera" icon={faCameraRetro} text={'Camera'} />
-    <NavButton to="/profile" icon={faUser} text={'Profile'} />
+  <div className="z-10 bg-grey-lighter flex items-center justify-center w-full h-16 shadow absolute pin-b px-12">
+    <div className="flex items-center justify-around flex-shrink w-full max-w-lg">
+      <NavButton to="/" icon={faHome} text={'Feed'} />
+      <NavButton to="/camera" icon={faCameraRetro} text={'Camera'} />
+      <NavButton to="/profile" icon={faUser} text={'Profile'} />
+    </div>
   </div>
 );
 
