@@ -1,0 +1,4 @@
+.color-transition {
+  transition-property: color;
+  transition-duration: 500ms;
+}
