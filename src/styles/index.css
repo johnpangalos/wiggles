@@ -1,2 +1,14 @@
 @tailwind preflight;
 @tailwind utilities;
+
+.w-0 {
+  width: 0;
+}
+
+.h-500 {
+  height: 500px;
+}
+
+.max-w-500 {
+  max-width: 500px;
+}
