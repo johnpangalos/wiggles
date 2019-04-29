@@ -37,7 +37,7 @@ const Image = ({ image, index }) => {
 
   const getImageUrl = async () => {
     var storage = window.firebase.storage();
-    const url = await storage.ref(image.path).getDownloadURL();
+    const url = await storage.ref(image.web).getDownloadURL();
     setImageUrl(url);
   };
 
