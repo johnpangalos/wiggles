@@ -10,6 +10,7 @@ export const ImageUpload = ({ user }) => {
   const [imagePreview, setImagePreview] = useState(null);
   const storageRef = window.firebase.storage().ref();
   const [alert, setAlert] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState('Uploading Image');
 
   const handleImageChange = event => {
     event.preventDefault();
@@ -30,14 +31,31 @@ export const ImageUpload = ({ user }) => {
 
   const onSubmit = setUploading => async () => {
     setUploading(true);
-    const name = `${+new Date()}.${getExtenstion(file.name)}`;
+    const timestamp = +new Date();
+    const name = `${timestamp}.${getExtenstion(file.name)}`;
     const ref = storageRef.child(name);
     const metadata = { customMetadata: { userId: user.claims.sub } };
+
+    const imageDataRef = window.firebase.database().ref('images/');
+    const unsubscribe = () => imageDataRef.off('child_changed', endLoading);
+    const endLoading = snapshot => {
+      const val = snapshot.val();
+      if (val.uploadFinished) {
+        setUploading(false);
+        reset();
+        unsubscribe();
+        return;
+      }
+      setUploadMessage(val.status);
+    };
+
+    imageDataRef
+      .orderByChild('timestamp')
+      .equalTo(timestamp.toString())
+      .on('child_changed', endLoading);
     try {
       await ref.put(file, metadata);
       setAlert(true);
-      setUploading(false);
-      reset();
     } catch (error) {
       setUploading(false);
       console.error(error);
@@ -48,6 +66,7 @@ export const ImageUpload = ({ user }) => {
     <>
       <Fade in={!!imagePreview}>
         <SubmitScreen
+          uploadMessage={uploadMessage}
           imagePreview={imagePreview}
           onCancel={onCancel}
           onSubmit={onSubmit}
@@ -64,14 +83,14 @@ export const ImageUpload = ({ user }) => {
   );
 };
 
-const SubmitScreen = ({ imagePreview, onCancel, onSubmit }) => {
+const SubmitScreen = ({ imagePreview, onCancel, onSubmit, uploadMessage }) => {
   const [uploading, setUploading] = useState(false);
 
   return (
     <>
       <Fade in={uploading}>
         <div className="h-full w-full pb-16">
-          <Loading message="Uploading Image" />
+          <Loading message={uploadMessage} />
         </div>
       </Fade>
 
