@@ -1,26 +1,56 @@
 import React, { useState, useRef } from 'react';
-import { Alert, CircleButton, Button, Loading } from '~/components';
+import { Alert, CircleButton, Button, Loading, Image } from '~/components';
 import { getExtenstion } from '~/utils';
 import { Fade } from '~/components/transitions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCameraRetro } from '@fortawesome/free-solid-svg-icons';
+import EXIF from 'exif-js';
+
+var rotation = {
+  1: 'rotate(0deg)',
+  3: 'rotate(180deg)',
+  6: 'rotate(90deg)',
+  8: 'rotate(270deg)'
+};
+
+const getOrientation = file =>
+  new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const { Orientation } = EXIF.readFromBinaryFile(reader.result);
+      resolve(Orientation);
+    };
+
+    reader.readAsArrayBuffer(file);
+  });
+
+const getUrlFromFile = file =>
+  new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      resolve(reader.result);
+    };
+    reader.readAsDataURL(file);
+  });
 
 export const ImageUpload = ({ user }) => {
   const [file, setFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [orientation, setOrientation] = useState(null);
   const storageRef = window.firebase.storage().ref();
   const [alert, setAlert] = useState(false);
   const [uploadMessage, setUploadMessage] = useState('Uploading Image');
 
-  const handleImageChange = event => {
+  const handleImageChange = async event => {
     event.preventDefault();
-    const reader = new FileReader();
     const eventFile = event.target.files[0];
-    reader.onloadend = () => {
-      setFile(eventFile);
-      setImagePreview(reader.result);
-    };
-    reader.readAsDataURL(eventFile);
+    setFile(eventFile);
+    const [url, direction] = await Promise.all([
+      getUrlFromFile(eventFile),
+      getOrientation(eventFile)
+    ]);
+    setImagePreview(url);
+    setOrientation(direction);
   };
 
   const reset = () => {
@@ -70,6 +100,7 @@ export const ImageUpload = ({ user }) => {
           imagePreview={imagePreview}
           onCancel={onCancel}
           onSubmit={onSubmit}
+          orientation={orientation}
         />
       </Fade>
       <Fade in={!imagePreview}>
@@ -83,9 +114,14 @@ export const ImageUpload = ({ user }) => {
   );
 };
 
-const SubmitScreen = ({ imagePreview, onCancel, onSubmit, uploadMessage }) => {
+const SubmitScreen = ({
+  imagePreview,
+  onCancel,
+  onSubmit,
+  uploadMessage,
+  orientation
+}) => {
   const [uploading, setUploading] = useState(false);
-
   return (
     <>
       <Fade in={uploading}>
@@ -96,12 +132,15 @@ const SubmitScreen = ({ imagePreview, onCancel, onSubmit, uploadMessage }) => {
 
       <Fade in={!uploading}>
         <div className="flex flex-col justify-center items-center w-full h-full pb-16">
-          <div className="flex w-full justify-center items-center flex-grow p-3">
-            <div
-              style={{ backgroundImage: `url(${imagePreview})` }}
-              className="bg-no-repeat bg-center bg-contain w-full h-full"
+          {imagePreview && (
+            <Image
+              style={{ transform: rotation[orientation] }}
+              url={imagePreview}
+              index={0}
+              size="500"
+              preloaded
             />
-          </div>
+          )}
 
           <div className="flex justify-end w-full py-3 pr-3">
             <Button onClick={onCancel} className="mr-2">
@@ -151,7 +190,7 @@ const UploadScreen = ({ handleImageChange, alert, setAlert }) => {
           id="upload-image"
           ref={uploadImage}
           type="file"
-          onChange={event => handleImageChange(event)}
+          onChange={handleImageChange}
         />
       </div>
     </div>
