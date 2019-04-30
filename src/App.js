@@ -8,7 +8,7 @@ import {
 import { Fade } from '~/components/transitions';
 
 import { Loading, BottomNavigation } from '~/components';
-import { Login, ImageUpload, Feed } from '~/containers';
+import { Login, ImageUpload, Feed, Profile } from '~/containers';
 
 export default () => {
   const [user, setUser] = useState(null);
@@ -49,7 +49,7 @@ export default () => {
   return (
     <div
       id="App"
-      className="flex flex-col h-screen w-full items-center text-grey-darkest"
+      className="flex flex-col w-full items-center text-grey-darkest"
     >
       <Router>
         <div className="flex h-full w-full">
@@ -78,16 +78,7 @@ export default () => {
               signOut={signOut}
               user={user}
               path="/profile"
-              component={() => (
-                <div className="flex items-center justify-center h-full">
-                  <button
-                    className="bg-red hover:bg-red-dark text-white font-bold py-2 px-4 rounded"
-                    onClick={() => signOut()}
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
+              component={() => <Profile signOut={signOut} user={user} />}
             />
             {user && <BottomNavigation />}
           </>
@@ -108,7 +99,6 @@ const PublicRoute = withRouter(
 
 const PrivateRoute = withRouter(
   ({ location, component: Component, user, signOut, ...rest }) => {
-    if (user && user.claims && !user.claims.authorized) signOut();
     return (
       <Fade in={location.pathname === rest.path}>
         <Route
