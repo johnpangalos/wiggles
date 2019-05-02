@@ -32,7 +32,7 @@ const LoginModal = () => {
         </div>
       </Fade>
       <Fade in={!loading}>
-        <div className="flex justify-center items-center h-full w-full px-5 bg-grey-dark">
+        <div className="flex justify-center items-center h-full w-full px-5 bg-grey-darkest ">
           <div className="flex flex-col bg-grey-lightest p-4 sm:w-64 w-full shadow">
             <div className="text-xl pb-2">Please Login</div>
             <button
