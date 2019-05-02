@@ -5,10 +5,11 @@ export const CircleButton = ({
   className,
   onClick,
   color,
+  hoverColor,
   dark = false
 }) => {
   let colorClasses = color
-    ? `bg-${color} hover:bg-${color}-dark`
+    ? `bg-${color} hover:bg-${hoverColor}`
     : 'bg-transparent hover:bg-grey-light';
   let textClass = dark ? 'text-white' : 'text-grey-darkest';
   return (

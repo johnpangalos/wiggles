@@ -7,7 +7,10 @@ export const Image = ({
   size,
   lazyLoadStart = 2,
   preloaded = false,
-  style = {}
+  style = {},
+  selected = false,
+  selectable = false,
+  handleClick = () => null
 }) => {
   const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -38,7 +41,8 @@ export const Image = ({
       setImageUrl(url);
       setLoading(false);
     }
-  }, url);
+  }, [url]);
+
   useEffect(() => {
     if (!preloaded) {
       const unsubscribe = imgLoadListener();
@@ -46,13 +50,20 @@ export const Image = ({
         unsubscribe();
       };
     }
-  }, img);
+  }, [img]);
 
   return (
     <div className="flex items-center justify-center py-5 w-full">
-      <div className={`bg-grey-light w-full h-${size} max-w-${size}`}>
-        <div className="flex justify-center items-center h-full w-full">
-          {loading && <Loading />}
+      <div
+        className={`bg-grey-darkest p-2 w-full h-${size} max-w-${size}${
+          selectable ? ' cursor-pointer' : ''
+        }${selected ? ' border-red-light border-2' : ''}`}
+      >
+        <div
+          className={`flex  justify-center items-center h-full w-full`}
+          onClick={() => handleClick()}
+        >
+          {loading && <Loading light />}
           <img
             ref={img}
             className={`${index > lazyLoadStart ? 'lozad ' : ''}${

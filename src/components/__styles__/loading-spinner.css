@@ -17,6 +17,10 @@
   border-color: #3d4852 transparent transparent transparent;
 }
 
+.light.loading div {
+  border-color: white transparent transparent transparent;
+}
+
 .loading div:nth-child(1) {
   animation-delay: -0.45s;
 }
