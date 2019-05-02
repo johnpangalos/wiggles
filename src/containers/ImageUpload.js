@@ -146,7 +146,12 @@ const SubmitScreen = ({
             <Button onClick={onCancel} className="mr-2">
               Cancel
             </Button>
-            <Button onClick={onSubmit(setUploading)} color="red" dark="true">
+            <Button
+              onClick={onSubmit(setUploading)}
+              color="red-light"
+              hoverColor="red"
+              dark="true"
+            >
               Submit
             </Button>
           </div>
@@ -179,7 +184,8 @@ const UploadScreen = ({ handleImageChange, alert, setAlert }) => {
 
       <div className="flex justify-center w-full py-3">
         <CircleButton
-          color="red"
+          color="red-light"
+          hoverColor="red"
           dark="true"
           onClick={event => handleClick(event)}
         >

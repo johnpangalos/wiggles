@@ -11,7 +11,7 @@ export const Feed = () => {
     return () => {
       imagesRef.off('value', callback);
     };
-  }, []);
+  }, [images]);
 
   return (
     <div className="h-full pb-16">
@@ -19,6 +19,7 @@ export const Feed = () => {
         <div className="p-8">
           {Object.keys(images).length > 0 &&
             Object.values(images)
+              .filter(image => image.uploadFinished)
               .sort((a, b) => (a.timestamp - b.timestamp) * -1)
               .map((image, index) => (
                 <Image

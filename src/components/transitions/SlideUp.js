@@ -8,21 +8,26 @@ const defaultStyle = {
   height: 0
 };
 
-const transitionStyles = {
-  entering: { height: '100%' },
-  entered: { height: '100%' },
+const transitionStyles = height => ({
+  entering: { height },
+  entered: { height },
   exiting: { height: 0 },
   exited: { height: 0 }
-};
+});
 
-export const SlideUp = ({ children, show = true, ...rest }) => (
+export const SlideUp = ({
+  children,
+  show = true,
+  height = '100%',
+  ...rest
+}) => (
   <Transition in={show} timeout={duration} {...rest}>
     {state => (
       <div
         className="overflow-y-hidden"
         style={{
           ...defaultStyle,
-          ...transitionStyles[state]
+          ...transitionStyles(height)[state]
         }}
       >
         {children}
