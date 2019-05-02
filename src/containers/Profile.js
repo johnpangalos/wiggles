@@ -26,10 +26,13 @@ export const Profile = ({ signOut, user }) => {
       const account = accountSnap.val();
       setAccount(account);
 
-      imageRef.orderByChild('timestamp').on('value', imagesSnap => {
-        setImages({ ...images, ...imagesSnap.val() });
-        setLoading(false);
-      });
+      imageRef
+        .orderByChild('userId')
+        .equalTo(account.id)
+        .on('value', imagesSnap => {
+          setImages({ ...images, ...imagesSnap.val() });
+          setLoading(false);
+        });
     });
 
     return () => {
