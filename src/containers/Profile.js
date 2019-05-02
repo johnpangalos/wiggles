@@ -56,9 +56,22 @@ export const Profile = ({ signOut, user }) => {
             </div>
           </div>
 
-          <div className="flex flex-col pt-1">
-            <div className="text-xl font-bold">{account.displayName}</div>
-            <div className="text-sm">{account.email}</div>
+          <div className="flex flex-grow flex-col pt-1 overflow-hidden pr-2">
+            <div className="text-xl font-bold truncate">
+              {account.displayName}
+            </div>
+            <div className="text-sm truncate">{account.email}</div>
+          </div>
+
+          <div>
+            <Button
+              color="red-light"
+              hoverColor="red"
+              dark
+              onClick={() => signOut()}
+            >
+              Logout
+            </Button>
           </div>
         </div>
         <Thumbnails
@@ -68,16 +81,6 @@ export const Profile = ({ signOut, user }) => {
           handleClick={handleClick}
         />
       </div>
-      <div className="pb-5">
-        <Button
-          color="red-light"
-          hoverColor="red"
-          dark
-          onClick={() => signOut()}
-        >
-          Logout
-        </Button>
-      </div>
       <ImageSelectedBar selected={selected} setSelected={setSelected} />
     </div>
   );
@@ -86,7 +89,7 @@ export const Profile = ({ signOut, user }) => {
 const Thumbnails = ({ loading, images, selected, handleClick }) => {
   return (
     <div className="flex flex-col h-full py-5">
-      <div className="text-xl font-bold pb-2 pl-2">Images</div>
+      <div className="text-xl font-bold pb-2">Images</div>
       {loading && (
         <div className="flex h-full items-center justify-center">
           <Loading />
