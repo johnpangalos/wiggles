@@ -28,32 +28,36 @@ export const SelectToolbar = ({ selected, dispatch, selectMode }) => {
     <>
       <div className="w-full">
         <SlideUp show={selectMode}>
-          <div className="w-full h-12 bg-grey-darkest text-white">
+          <div className="w-full py-3 bg-grey-darkest text-white">
             <div className="flex h-full items-center">
               <div className="pl-4">
-                <FontAwesomeIcon
-                  onClick={() => {
-                    dispatch({ type: constants.RESET_SELECTED });
-                    dispatch({
-                      type: constants.SET_SELECT_MODE,
-                      payload: false
-                    });
-                  }}
-                  role="button"
-                  className={`text-xl fill-current`}
-                  icon={faTimes}
-                />
+                <div className="flex justify-center items-center w-8 h-8 rounded-full hover:bg-grey-darker p-1">
+                  <FontAwesomeIcon
+                    onClick={() => {
+                      dispatch({ type: constants.RESET_SELECTED });
+                      dispatch({
+                        type: constants.SET_SELECT_MODE,
+                        payload: false
+                      });
+                    }}
+                    role="button"
+                    className={`text-xl fill-current`}
+                    icon={faTimes}
+                  />
+                </div>
               </div>
               <div className="flex-grow text-lg pl-4">
                 {numImages} Images Selected
               </div>
               <div className="pr-4">
-                <FontAwesomeIcon
-                  onClick={() => setShowDeleteModal(true)}
-                  role="button"
-                  className={`text-xl fill-current`}
-                  icon={faTrash}
-                />
+                <div className="flex justify-center items-center w-8 h-8 rounded-full hover:bg-grey-darker p-1">
+                  <FontAwesomeIcon
+                    onClick={() => setShowDeleteModal(true)}
+                    role="button"
+                    className={`text-xl fill-current`}
+                    icon={faTrash}
+                  />
+                </div>
               </div>
             </div>
           </div>

@@ -31,7 +31,7 @@ export const Menu = ({ activator: Activator, id, items }) => {
         <Activator />
       </div>
       <div
-        className={`items-center absolute bg-white pin-t pin-r mt-6 ${
+        className={`items-center absolute bg-white pin-t pin-r ${
           showing ? 'visible' : 'invisible'
         }`}
       >

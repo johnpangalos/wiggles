@@ -15,18 +15,20 @@ export const Thumbnails = ({
 }) => {
   return (
     <div className="flex flex-col h-full py-5">
-      <div className="flex">
+      <div className="flex items-center">
         <div className="flex-grow text-xl font-bold pb-2">Images</div>
-        <div className="relative pr-4">
+        <div className="relative">
           {!selectMode && (
             <Menu
               id="images-menu"
               activator={() => (
-                <FontAwesomeIcon
-                  role="button"
-                  className={`text-xl fill-current text`}
-                  icon={faEllipsisV}
-                />
+                <div className="flex justify-center items-center w-8 h-8 rounded-full hover:bg-grey-light p-1">
+                  <FontAwesomeIcon
+                    role="button"
+                    className={`text-xl fill-current text`}
+                    icon={faEllipsisV}
+                  />
+                </div>
               )}
               items={[
                 ({ onClose }) => (
