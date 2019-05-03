@@ -2,7 +2,8 @@ export const initialState = {
   account: {},
   images: {},
   loading: false,
-  selected: {}
+  selected: {},
+  selectMode: false
 };
 
 export const constants = {
@@ -12,7 +13,8 @@ export const constants = {
   NOT_LOADING: 'not-loading',
   ADD_SELECTED: 'add-selected',
   REMOVE_SELECTED: 'remove-selected',
-  RESET_SELECTED: 'reset-selected'
+  RESET_SELECTED: 'reset-selected',
+  SET_SELECT_MODE: 'set-select-mode'
 };
 
 export const reducer = (state, action) => {
@@ -46,6 +48,12 @@ export const reducer = (state, action) => {
       return {
         ...state,
         selected: initialState.selected
+      };
+    }
+    case constants.SET_SELECT_MODE: {
+      return {
+        ...state,
+        selectMode: action.payload
       };
     }
     default: {

@@ -8,7 +8,7 @@ import {
 import { NavLink } from 'react-router-dom';
 import '~/components/transitions';
 export const BottomNavigation = () => (
-  <div className="z-10 bg-grey-darkest flex items-center justify-center w-full h-16 border-t-2 border-red-light absolute pin-b px-12">
+  <div className="z-10 bg-grey-darkest flex items-center justify-center w-full py-3 border-t-2 border-red-light pin-b px-12">
     <div className="flex items-center justify-around flex-shrink w-full max-w-lg">
       <NavButton to="/" icon={faHome} text={'Feed'} />
       <NavButton to="/camera" icon={faCameraRetro} text={'Camera'} />

@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Alert, CircleButton, Button, Loading, Image } from '~/components';
 import { getExtenstion } from '~/utils';
-import { Fade } from '~/components/transitions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCameraRetro } from '@fortawesome/free-solid-svg-icons';
 import EXIF from 'exif-js';
@@ -92,25 +91,20 @@ export const ImageUpload = ({ user }) => {
     }
   };
 
-  return (
-    <>
-      <Fade in={!!imagePreview}>
-        <SubmitScreen
-          uploadMessage={uploadMessage}
-          imagePreview={imagePreview}
-          onCancel={onCancel}
-          onSubmit={onSubmit}
-          orientation={orientation}
-        />
-      </Fade>
-      <Fade in={!imagePreview}>
-        <UploadScreen
-          alert={alert}
-          setAlert={setAlert}
-          handleImageChange={handleImageChange}
-        />
-      </Fade>
-    </>
+  return imagePreview ? (
+    <SubmitScreen
+      uploadMessage={uploadMessage}
+      imagePreview={imagePreview}
+      onCancel={onCancel}
+      onSubmit={onSubmit}
+      orientation={orientation}
+    />
+  ) : (
+    <UploadScreen
+      alert={alert}
+      setAlert={setAlert}
+      handleImageChange={handleImageChange}
+    />
   );
 };
 
@@ -122,42 +116,40 @@ const SubmitScreen = ({
   orientation
 }) => {
   const [uploading, setUploading] = useState(false);
-  return (
-    <>
-      <Fade in={uploading}>
-        <div className="h-full w-full pb-16">
-          <Loading message={uploadMessage} />
+  return uploading ? (
+    <div className="h-full w-full">
+      <Loading message={uploadMessage} />
+    </div>
+  ) : (
+    <div className="flex flex-col justify-center items-center w-full h-full">
+      {imagePreview && (
+        <div className="flex flex-grow items-center w-full">
+          <Image
+            style={{ transform: rotation[orientation] }}
+            url={imagePreview}
+            index={0}
+            size="500"
+            preloaded
+          />
         </div>
-      </Fade>
+      )}
 
-      <Fade in={!uploading}>
-        <div className="flex flex-col justify-center items-center w-full h-full pb-16">
-          {imagePreview && (
-            <Image
-              style={{ transform: rotation[orientation] }}
-              url={imagePreview}
-              index={0}
-              size="500"
-              preloaded
-            />
-          )}
-
-          <div className="flex justify-end w-full py-3 pr-3">
-            <Button onClick={onCancel} className="mr-2">
-              Cancel
-            </Button>
-            <Button
-              onClick={onSubmit(setUploading)}
-              color="red-light"
-              hoverColor="red"
-              dark="true"
-            >
-              Submit
-            </Button>
-          </div>
+      <div className="flex justify-end w-full py-3 pr-3">
+        <div className="pr-2">
+          <Button onClick={onCancel}>Cancel</Button>
         </div>
-      </Fade>
-    </>
+        <div>
+          <Button
+            onClick={onSubmit(setUploading)}
+            color="red-light"
+            hoverColor="red"
+            dark="true"
+          >
+            Submit
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -170,7 +162,7 @@ const UploadScreen = ({ handleImageChange, alert, setAlert }) => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center h-full w-full pb-16">
+    <div className="flex flex-col justify-center items-center h-full w-full">
       <div className="w-full">
         <Alert show={alert} onClose={() => setAlert(false)} type="success">
           Upload Successful

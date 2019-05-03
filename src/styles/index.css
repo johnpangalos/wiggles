@@ -12,3 +12,7 @@
 .max-w-500 {
   max-width: 500px;
 }
+
+.bg-modal {
+  background-color: rgba(0, 0, 0, 0.45);
+}

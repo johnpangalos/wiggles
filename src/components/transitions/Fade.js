@@ -7,13 +7,13 @@ const defaultStyle = {
 };
 
 const transitionStyles = {
-  entering: { opacity: 1, zIndex: 2 },
-  entered: { opacity: 1, zIndex: 2 },
-  exiting: { opacity: 0, zIndex: 1 },
-  exited: { opacity: 0, zIndex: 1 }
+  entering: { opacity: 1 },
+  entered: { opacity: 1 },
+  exiting: { opacity: 0 },
+  exited: { opacity: 0 }
 };
 
-export const Fade = ({ children, show = true, className, ...rest }) => (
+export const Fade = ({ children, show = true, className = '', ...rest }) => (
   <Transition
     in={show}
     timeout={{
@@ -24,7 +24,7 @@ export const Fade = ({ children, show = true, className, ...rest }) => (
   >
     {state => (
       <div
-        className={`${className} absolute h-full w-full`}
+        className={`${className} w-full`}
         style={{
           ...defaultStyle,
           ...transitionStyles[state]

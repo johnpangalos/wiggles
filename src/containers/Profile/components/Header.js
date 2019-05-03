@@ -14,7 +14,7 @@ export const Header = ({ account, signOut }) => (
       <div className="text-sm truncate">{account.email}</div>
     </div>
 
-    <div>
+    <div className="pt-1">
       <Button color="red-light" hoverColor="red" dark onClick={() => signOut()}>
         Logout
       </Button>

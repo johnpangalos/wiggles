@@ -14,7 +14,7 @@ export const Feed = () => {
   }, [images]);
 
   return (
-    <div className="h-full pb-16">
+    <div className="h-full">
       <div className="h-full overflow-x-hidden overflow-y-scroll">
         <div className="p-8">
           {Object.keys(images).length > 0 &&
