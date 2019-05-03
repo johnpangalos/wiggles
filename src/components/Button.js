@@ -2,20 +2,17 @@ import React from 'react';
 
 export const Button = ({
   children,
-  className,
-  onClick,
-  color,
-  hoverColor,
+  className = '',
+  onClick = () => null,
+  color = 'transparent',
+  hoverColor = 'grey-light',
   dark = false
 }) => {
-  let colorClasses = color
-    ? `bg-${color} hover:bg-${hoverColor}`
-    : 'bg-transparent hover:bg-grey-light';
   let textClass = dark ? 'text-white' : 'text-grey-darkest';
   return (
     <button
       onClick={event => onClick(event)}
-      className={`${colorClasses} ${textClass} ${className} rounded py-3 px-4`}
+      className={`bg-${color} hover:bg-${hoverColor} ${textClass}${className} text-sm rounded p-2 tracking-wide uppercase`}
     >
       {children}
     </button>

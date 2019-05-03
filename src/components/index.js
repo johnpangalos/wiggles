@@ -5,3 +5,6 @@ export { Loading } from './Loading';
 export { BottomNavigation } from './BottomNavigation';
 export { ProfileImage } from './ProfileImage';
 export { Image } from './Image';
+export { Menu } from './Menu';
+export { SnackBar } from './SnackBar';
+export { Modal } from './Modal';
