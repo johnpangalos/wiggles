@@ -2,20 +2,17 @@ import React, { useState } from 'react';
 import { SlideUp } from '~/components/transitions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { constants } from './reducer';
+import { constants } from '../reducer';
+import { deleteImages } from '../actions';
 
 export const DeleteSnackbar = ({ selected, dispatch }) => {
   const [loading, setLoading] = useState(false);
   const numImages = Object.values(selected).filter(item => item).length;
 
-  const deleteImages = async () => {
+  const handleClick = async () => {
     setLoading(true);
     try {
-      await Promise.all(
-        Object.keys(selected)
-          .filter(id => selected[id])
-          .map(id => deleteImage(id))
-      );
+      await deleteImages(Object.keys(selected));
       dispatch({ type: constants.RESET_SELECTED });
       setLoading(false);
     } catch (err) {
@@ -40,7 +37,7 @@ export const DeleteSnackbar = ({ selected, dispatch }) => {
                   role="button"
                   className={`text-2xl fill-current text`}
                   icon={faTrash}
-                  onClick={() => deleteImages()}
+                  onClick={() => handleClick()}
                 />
               </div>
             </div>
@@ -49,9 +46,4 @@ export const DeleteSnackbar = ({ selected, dispatch }) => {
       </SlideUp>
     </div>
   );
-};
-
-const deleteImage = id => {
-  const imageRef = window.firebase.database().ref(`images/${id}`);
-  return imageRef.remove();
 };

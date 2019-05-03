@@ -21,7 +21,7 @@ export const reducer = (state, action) => {
       return { ...state, account: action.payload };
     }
     case constants.ADD_IMAGES: {
-      return { ...state, images: { ...state.images, ...action.payload } };
+      return { ...state, images: action.payload };
     }
     case constants.LOADING: {
       return { ...state, loading: true };
