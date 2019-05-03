@@ -22,7 +22,7 @@ const NavButton = ({ icon, text, to }) => (
     exact
     to={to}
     activeClassName="text-red-light"
-    className="flex flex-col items-center px-4 text-white border-white no-underline color-transition"
+    className="flex flex-col items-center px-4 text-white border-white no-underline color-transition outline-none"
   >
     <FontAwesomeIcon className="pb-1" role="button" size="2x" icon={icon} />
     <div className="text-xs">{text}</div>
