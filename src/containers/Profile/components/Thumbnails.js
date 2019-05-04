@@ -72,7 +72,7 @@ export const Thumbnails = ({
                     selected={selected[image.id]}
                     url={image.thumbnail}
                     index={index}
-                    size="24"
+                    size="32"
                     lazyLoadStart={20}
                   />
                 </div>
