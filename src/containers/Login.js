@@ -24,29 +24,27 @@ const LoginModal = () => {
     getFirebaseToken();
   };
 
-  return (
-    <>
-      <Fade in={loading}>
-        <div className="flex flex-col items-center flex-grow h-full w-full">
-          <Loading />
+  return loading ? (
+    <div className="flex flex-col items-center flex-grow h-full w-full">
+      <Loading />
+    </div>
+  ) : (
+    <div className="flex justify-center items-center h-full w-full px-5 bg-secondary-dark">
+      <div className="flex flex-col bg-grey-lightest p-4 sm:w-64 w-full shadow">
+        <div className="font-bold text-2xl pb-2">Please Login</div>
+        <div className="text-xl pb-2 pb-6">
+          Right now only Google login is supported.
         </div>
-      </Fade>
-      <Fade in={!loading}>
-        <div className="flex justify-center items-center h-full w-full px-5 bg-grey-darkest ">
-          <div className="flex flex-col bg-grey-lightest p-4 sm:w-64 w-full shadow">
-            <div className="text-xl pb-2">Please Login</div>
-            <button
-              onClick={() => handleClick()}
-              className="flex items-baseline bg-red py-2 text-white"
-            >
-              <div className="px-3">
-                <FontAwesomeIcon color="white" icon={faGoogle} />
-              </div>
-              <div>Login with Google</div>
-            </button>
+        <button
+          onClick={() => handleClick()}
+          className="flex items-baseline bg-red py-2 text-xl text-white"
+        >
+          <div className="px-3">
+            <FontAwesomeIcon color="white" icon={faGoogle} />
           </div>
-        </div>
-      </Fade>
-    </>
+          <div>Login with Google</div>
+        </button>
+      </div>
+    </div>
   );
 };
