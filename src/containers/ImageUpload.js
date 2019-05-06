@@ -123,12 +123,12 @@ const SubmitScreen = ({
   ) : (
     <div className="flex flex-col justify-center items-center w-full h-full">
       {imagePreview && (
-        <div className="flex flex-grow items-center w-full">
+        <div className="flex flex-grow items-center h-full w-full px-8">
           <Image
             style={{ transform: rotation[orientation] }}
             url={imagePreview}
             index={0}
-            size="500"
+            size="100"
             preloaded
           />
         </div>
@@ -141,8 +141,8 @@ const SubmitScreen = ({
         <div>
           <Button
             onClick={onSubmit(setUploading)}
-            color="red-light"
-            hoverColor="red"
+            color="primary"
+            hoverColor="primary-dark"
             dark="true"
           >
             Submit
@@ -176,8 +176,8 @@ const UploadScreen = ({ handleImageChange, alert, setAlert }) => {
 
       <div className="flex justify-center w-full py-3">
         <CircleButton
-          color="red-light"
-          hoverColor="red"
+          color="primary"
+          hoverColor="primary-light"
           dark="true"
           onClick={event => handleClick(event)}
         >

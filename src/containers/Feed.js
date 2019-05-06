@@ -14,20 +14,22 @@ export const Feed = () => {
   }, [images]);
 
   return (
-    <div className="h-full">
-      <div className="h-full overflow-x-hidden overflow-y-scroll">
-        <div className="p-8">
+    <div className="h-full w-full">
+      <div className="h-full w-full overflow-x-hidden overflow-y-scroll">
+        <div className="px-8 py-6">
           {Object.keys(images).length > 0 &&
             Object.values(images)
               .filter(image => image.uploadFinished)
               .sort((a, b) => (a.timestamp - b.timestamp) * -1)
               .map((image, index) => (
-                <Image
-                  key={image.id}
-                  url={image.web}
-                  index={index}
-                  size="500"
-                />
+                <div className="pb-4">
+                  <Image
+                    key={image.id}
+                    url={image.web}
+                    index={index}
+                    size="100"
+                  />
+                </div>
               ))}
         </div>
       </div>

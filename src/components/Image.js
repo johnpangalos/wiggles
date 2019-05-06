@@ -53,17 +53,17 @@ export const Image = ({
   }, [img]);
 
   return (
-    <div className="flex items-center justify-center py-5 w-full">
+    <div className="flex items-center justify-center w-full">
       <div
-        className={`bg-grey-darkest p-2 w-full h-${size} max-w-${size}${
+        className={`bg-white shadow-lg rounded px-2 pt-3 pb-8 w-full h-${size} max-w-${size}${
           selectable ? ' cursor-pointer' : ''
-        }${selected ? ' border-red-light border-2' : ''}`}
+        }${selected ? ' border-primary border-2' : ''}`}
       >
         <div
-          className={`flex  justify-center items-center h-full w-full`}
+          className="flex bg-secondary-dark p-1 rounded justify-center items-center h-full w-full"
           onClick={() => handleClick()}
         >
-          {loading && <Loading light />}
+          {loading && <Loading />}
           <img
             ref={img}
             className={`${index > lazyLoadStart ? 'lozad ' : ''}${

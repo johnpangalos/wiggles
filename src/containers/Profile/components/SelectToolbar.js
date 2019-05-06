@@ -28,10 +28,10 @@ export const SelectToolbar = ({ selected, dispatch, selectMode }) => {
     <>
       <div className="w-full">
         <SlideUp show={selectMode}>
-          <div className="w-full py-3 bg-grey-darkest text-white">
+          <div className="w-full py-3 bg-secondary text-white text-primary">
             <div className="flex h-full items-center">
               <div className="pl-4">
-                <div className="flex justify-center items-center w-8 h-8 rounded-full hover:bg-grey-darker p-1">
+                <div className="flex justify-center items-center w-8 h-8 rounded-full hover:bg-secondary-dark p-1">
                   <FontAwesomeIcon
                     onClick={() => {
                       dispatch({ type: constants.RESET_SELECTED });
@@ -50,7 +50,7 @@ export const SelectToolbar = ({ selected, dispatch, selectMode }) => {
                 {numImages} Images Selected
               </div>
               <div className="pr-4">
-                <div className="flex justify-center items-center w-8 h-8 rounded-full hover:bg-grey-darker p-1">
+                <div className="flex justify-center items-center w-8 h-8 rounded-full hover:bg-secondary-dark p-1">
                   <FontAwesomeIcon
                     onClick={() => setShowDeleteModal(true)}
                     role="button"

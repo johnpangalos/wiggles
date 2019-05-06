@@ -1,6 +1,6 @@
 {
-    "name": "",
-    "short_name": "",
+    "name": "Wiggle Room",
+    "short_name": "Wiggle Room",
     "icons": [
         {
             "src": "/icons/android-chrome-192x192.png",
@@ -13,7 +13,7 @@
             "type": "image/png"
         }
     ],
-    "theme_color": "#3d4852",
+    "theme_color": "#7553bb",
     "background_color": "#ffffff",
     "display": "standalone"
 }
