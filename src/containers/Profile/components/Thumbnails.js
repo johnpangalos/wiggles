@@ -65,7 +65,7 @@ export const Thumbnails = ({
               if ((index + 1) % 3 === 1) paddingClass = 'pr-2';
               if ((index + 1) % 3 === 0) paddingClass = 'pl-2';
               return (
-                <div key={image.id} className={`w-1/3 ${paddingClass}`}>
+                <div key={image.id} className={`pb-2 w-1/3 ${paddingClass}`}>
                   <Image
                     handleClick={() => handleClick(image.id)}
                     selectable={selectMode}
