@@ -9,7 +9,6 @@
     "@fortawesome/react-fontawesome": "^0.1.4",
     "bowser": "^2.4.0",
     "exif-js": "^2.3.0",
-    "fsevents": "^2.0.6",
     "husky": "^2.2.0",
     "lint-staged": "^8.1.5",
     "prettier": "^1.17.0",
