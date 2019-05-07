@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Loading } from '~/components';
 import {
   BrowserRouter as Router,
   Route,
@@ -7,7 +6,8 @@ import {
   withRouter
 } from 'react-router-dom';
 
-import { BottomNavigation } from '~/components';
+import { Loading, BottomNavigation } from '~/components';
+import { Fade } from '~/components/transitions';
 import { Login, ImageUpload, Feed, Profile } from '~/containers';
 
 export default () => {
@@ -53,38 +53,42 @@ export default () => {
     >
       <Router>
         <div className="h-screen flex flex-col w-full">
-          <div className="flex-grow w-full overflow-y-scroll">
-            {loading ? (
+          <div className="flex-grow w-full overflow-y-hidden">
+            <Fade unmountOnExit appear in={loading}>
               <Loading />
-            ) : (
-              <>
-                <PrivateRoute
-                  signOut={signOut}
-                  user={user}
-                  path="/camera"
-                  component={() => <ImageUpload user={user} />}
-                />
-                <PrivateRoute
-                  exact
-                  signOut={signOut}
-                  user={user}
-                  path="/"
-                  component={() => <Feed />}
-                />
-                <PrivateRoute
-                  signOut={signOut}
-                  user={user}
-                  path="/profile"
-                  component={() => <Profile signOut={signOut} user={user} />}
-                />
-                <PublicRoute
-                  path="/login"
-                  component={() => <Login user={user} />}
-                />
-              </>
-            )}
+            </Fade>
+            <>
+              <PrivateRoute
+                signOut={signOut}
+                user={user}
+                path="/camera"
+                component={() => <ImageUpload user={user} />}
+              />
+              <PrivateRoute
+                exact
+                signOut={signOut}
+                user={user}
+                path="/"
+                component={() => <Feed />}
+              />
+              <PrivateRoute
+                signOut={signOut}
+                user={user}
+                path="/profile"
+                component={() => <Profile signOut={signOut} user={user} />}
+              />
+              <PublicRoute
+                path="/login"
+                component={() => <Login user={user} />}
+              />
+            </>
           </div>
-          {user && <BottomNavigation />}
+
+          {user && (
+            <Fade appear in={!loading}>
+              <BottomNavigation />
+            </Fade>
+          )}
         </div>
       </Router>
     </div>
@@ -104,7 +108,9 @@ const PrivateRoute = withRouter(
         {...rest}
         render={props =>
           user ? (
-            <Component {...props} />
+            <Fade appear in={location.pathname === rest.path}>
+              <Component {...props} />
+            </Fade>
           ) : (
             <Redirect
               to={{
