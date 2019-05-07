@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Loading } from '~/components';
 import { Fade } from '~/components/transitions';
 
 export const Image = ({
