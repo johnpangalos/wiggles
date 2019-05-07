@@ -1,37 +1,20 @@
 import React from 'react';
-import { Transition } from 'react-transition-group';
+import { CSSTransition } from 'react-transition-group';
 
-const defaultStyle = {
-  transition: `opacity 500ms ease-in-out`,
-  opacity: 0
-};
-
-const transitionStyles = {
-  entering: { opacity: 1 },
-  entered: { opacity: 1 },
-  exiting: { opacity: 0 },
-  exited: { opacity: 0 }
+const classNames = {
+  appear: 'opacity-0',
+  appearActive: 'fadeIn an-1s',
+  appearDone: 'active-done opacity-100',
+  enter: 'opacity-0',
+  enterActive: 'fadeIn an-1s',
+  enterDone: 'enter-done opacity-100',
+  exit: 'opacity-100',
+  exitActive: 'fadeOut an-1s',
+  exitDone: 'opacity-0'
 };
 
 export const Fade = ({ children, show = true, className = '', ...rest }) => (
-  <Transition
-    in={show}
-    timeout={{
-      enter: 500,
-      exit: 300
-    }}
-    {...rest}
-  >
-    {state => (
-      <div
-        className={`${className} w-full`}
-        style={{
-          ...defaultStyle,
-          ...transitionStyles[state]
-        }}
-      >
-        {children}
-      </div>
-    )}
-  </Transition>
+  <CSSTransition in={show} timeout={1000} classNames={classNames} {...rest}>
+    {state => <>{children}</>}
+  </CSSTransition>
 );

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Loading } from '~/components';
+import { Fade } from '~/components/transitions';
 
 export const Image = ({
   url,
@@ -18,7 +19,8 @@ export const Image = ({
 
   const getImageUrl = async () => {
     var storage = window.firebase.storage();
-    setImageUrl(await storage.ref(url).getDownloadURL());
+    const temp = await storage.ref(url).getDownloadURL();
+    setImageUrl(temp);
   };
 
   const imageLoaded = () => setLoading(false);
@@ -53,29 +55,34 @@ export const Image = ({
   }, [img]);
 
   return (
-    <div className="flex items-center justify-center w-full">
+    <Fade appear show={!loading}>
       <div
-        className={`bg-white shadow-lg rounded px-2 pt-3 pb-8 w-full h-${size} max-w-${size}${
-          selectable ? ' cursor-pointer' : ''
-        }${selected ? ' border-primary border-2' : ''}`}
+        className={`flex items-center justify-center w-full${
+          loading ? ' invisible w-0' : ''
+        }`}
       >
         <div
-          className="flex bg-secondary-dark p-1 rounded justify-center items-center h-full w-full"
-          onClick={() => handleClick()}
+          className={`bg-white shadow-lg rounded px-2 pt-3 pb-8 w-full h-${size} max-w-${size}${
+            selectable ? ' cursor-pointer' : ''
+          }${selected ? ' border-primary border-2' : ''}`}
         >
-          {loading && <Loading />}
-          <img
-            ref={img}
-            className={`${index > lazyLoadStart ? 'lozad ' : ''}${
-              loading ? 'invisible w-0 ' : ''
-            }max-h-full`}
-            src={index > lazyLoadStart ? '' : imageUrl}
-            data-src={index > lazyLoadStart ? imageUrl : ''}
-            alt={index}
-            style={style}
-          />
+          <div
+            className="flex bg-secondary-dark p-1 rounded justify-center items-center h-full w-full"
+            onClick={() => handleClick()}
+          >
+            <img
+              ref={img}
+              className={`${index > lazyLoadStart ? 'lozad ' : ''}${
+                loading ? 'invisible w-0 ' : ''
+              }max-h-full`}
+              src={index > lazyLoadStart ? '' : imageUrl}
+              data-src={index > lazyLoadStart ? imageUrl : ''}
+              alt={index}
+              style={style}
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </Fade>
   );
 };

@@ -16,3 +16,39 @@
 .bg-modal {
   background-color: rgba(0, 0, 0, 0.45);
 }
+
+.an-500ms {
+  animation-duration: 500ms;
+}
+
+.an-750ms {
+  animation-duration: 750s;
+}
+
+.an-1s {
+  animation-duration: 1s;
+}
+
+.an-2s {
+  animation-duration: 2s;
+}
+
+.an-3s {
+  animation-duration: 3s;
+}
+
+.an-delay-250ms {
+  animation-delay: 250ms;
+}
+
+.an-delay-500ms {
+  animation-delay: 500ms;
+}
+
+.an-delay-750ms {
+  animation-delay: 750ms;
+}
+
+.an-delay-1s {
+  animation-delay: 1s;
+}

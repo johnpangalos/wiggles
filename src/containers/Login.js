@@ -4,7 +4,6 @@ import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { Redirect, withRouter } from 'react-router-dom';
 
 import { Loading } from '~/components';
-import { Fade } from '~/components/transitions';
 
 const getFirebaseToken = () => {
   window.firebase.auth().useDeviceLanguage();
