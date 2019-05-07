@@ -108,7 +108,7 @@ const PrivateRoute = withRouter(
         {...rest}
         render={props =>
           user ? (
-            <Fade appear in={location.pathname === rest.path}>
+            <Fade unmountOnExit appear in={location.pathname === rest.path}>
               <Component {...props} />
             </Fade>
           ) : (
