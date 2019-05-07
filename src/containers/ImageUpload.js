@@ -63,7 +63,10 @@ export const ImageUpload = ({ user }) => {
     const timestamp = +new Date();
     const name = `${timestamp}.${getExtenstion(file.name)}`;
     const ref = storageRef.child(name);
-    const metadata = { customMetadata: { userId: user.claims.sub } };
+    const metadata = {
+      customMetadata: { userId: user.claims.sub },
+      cacheControl: 'public,max-age=31536000'
+    };
 
     const imageDataRef = window.firebase.database().ref('images/');
     const unsubscribe = () => imageDataRef.off('child_changed', endLoading);
@@ -123,7 +126,7 @@ const SubmitScreen = ({
   ) : (
     <div className="flex flex-col justify-center items-center w-full h-full">
       {imagePreview && (
-        <div className="flex flex-grow items-center h-full w-full px-8">
+        <div className="flex flex-grow items-center h-full max-w-500 w-full px-8">
           <Image
             style={{ transform: rotation[orientation] }}
             url={imagePreview}
