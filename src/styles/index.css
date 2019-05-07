@@ -52,7 +52,3 @@
 .an-delay-1s {
   animation-delay: 1s;
 }
-
-.h-screen.android-chrome {
-  height: calc(100vh - 56px);
-}

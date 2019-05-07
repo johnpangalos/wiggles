@@ -549,7 +549,7 @@ module.exports = {
     '64': '16rem',
     '100': '25rem',
     full: '100%',
-    screen: '100vh'
+    screen: 'calc(var(--vh, 1vh) * 100)'
   },
 
   /*
