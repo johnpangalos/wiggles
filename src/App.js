@@ -6,6 +6,7 @@ import {
   Redirect,
   withRouter
 } from 'react-router-dom';
+import Bowser from 'bowser';
 
 import { BottomNavigation } from '~/components';
 import { Login, ImageUpload, Feed, Profile } from '~/containers';
@@ -46,13 +47,19 @@ export default () => {
     setUser(null);
   };
 
+  const browser = Bowser.getParser(window.navigator.userAgent);
+
   return (
     <div
       id="App"
       className="flex flex-col w-full items-center text-grey-darkest"
     >
       <Router>
-        <div className="h-screen flex flex-col w-full">
+        <div
+          className={`h-screen flex flex-col w-full ${browser
+            .getOS()
+            .name.toLowerCase()}-${browser.getBrowser().name.toLowerCase()}`}
+        >
           <div className="flex-grow w-full overflow-y-scroll">
             {loading ? (
               <Loading />
