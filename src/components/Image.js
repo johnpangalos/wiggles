@@ -61,7 +61,7 @@ export const Image = ({
         }`}
       >
         <div
-          className={`bg-white shadow-lg rounded px-2 pt-3 pb-8 w-full h-${size} max-w-${size}${
+          className={`bg-white shadow-md rounded px-2 pt-3 pb-8 w-full h-${size} max-w-${size}${
             selectable ? ' cursor-pointer' : ''
           }${selected ? ' border-primary border-2' : ''}`}
         >
