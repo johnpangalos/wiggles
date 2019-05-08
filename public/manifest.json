@@ -1,19 +1,26 @@
 {
-    "name": "Wiggle Room",
-    "short_name": "Wiggle Room",
-    "icons": [
-        {
-            "src": "/icons/android-chrome-192x192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        },
-        {
-            "src": "/icons/android-chrome-512x512.png",
-            "sizes": "512x512",
-            "type": "image/png"
-        }
-    ],
-    "theme_color": "#7553bb",
-    "background_color": "#ffffff",
-    "display": "standalone"
+  "name": "Wiggle Room",
+  "short_name": "Wiggle Room",
+  "icons": [
+    {
+      "src": "/icons/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#7553bb",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "prefer_related_applications": true,
+  "related_applications": [
+    {
+      "platform": "play",
+      "id": "com.google.samples.apps.iosched"
+    }
+  ]
 }
