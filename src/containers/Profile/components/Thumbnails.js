@@ -15,7 +15,7 @@ export const Thumbnails = ({
 }) => {
   return (
     <div className="flex flex-col h-full py-5">
-      <div className="flex items-center">
+      <div className="flex items-center h-12">
         <div className="flex-grow text-xl font-bold pb-2">Images</div>
         <div className="relative">
           {!selectMode && (
@@ -60,24 +60,22 @@ export const Thumbnails = ({
           {Object.values(images)
             .filter(image => image.uploadFinished)
             .sort((a, b) => Number(b.timestamp) - Number(a.timestamp))
-            .map((image, index) => {
-              let paddingClass = 'px-1';
-              if ((index + 1) % 3 === 1) paddingClass = 'pr-2';
-              if ((index + 1) % 3 === 0) paddingClass = 'pl-2';
-              return (
-                <div key={image.id} className={`pb-2 w-1/3 ${paddingClass}`}>
-                  <Image
-                    handleClick={() => handleClick(image.id)}
-                    selectable={selectMode}
-                    selected={selected[image.id]}
-                    url={image.thumbnail}
-                    index={index}
-                    size="32"
-                    lazyLoadStart={20}
-                  />
-                </div>
-              );
-            })}
+            .map((image, index) => (
+              <div
+                key={image.id}
+                className="pb-2 w-1/2 xs:w-1/3 sm:w-1/4 lg:w-1/5 px-1"
+              >
+                <Image
+                  handleClick={() => handleClick(image.id)}
+                  selectable={selectMode}
+                  selected={selected[image.id]}
+                  url={image.thumbnail}
+                  index={index}
+                  size="32"
+                  lazyLoadStart={20}
+                />
+              </div>
+            ))}
         </div>
       )}
     </div>

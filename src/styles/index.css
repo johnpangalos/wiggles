@@ -17,6 +17,18 @@
   background-color: rgba(0, 0, 0, 0.45);
 }
 
+.an-250ms {
+  animation-duration: 500ms;
+}
+
+.an-300ms {
+  animation-duration: 500ms;
+}
+
+.an-400ms {
+  animation-duration: 500ms;
+}
+
 .an-500ms {
   animation-duration: 500ms;
 }
@@ -25,15 +37,18 @@
   animation-duration: 750s;
 }
 
-.an-1s {
+.an-1s,
+.an-1000ms {
   animation-duration: 1s;
 }
 
-.an-2s {
+.an-2s,
+.an-2000ms {
   animation-duration: 2s;
 }
 
-.an-3s {
+.an-3s,
+.an-3000ms {
   animation-duration: 3s;
 }
 
