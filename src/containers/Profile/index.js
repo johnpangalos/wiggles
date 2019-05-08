@@ -46,7 +46,7 @@ export const Profile = ({ signOut, user }) => {
   }, [account.id]);
 
   return (
-    <div className="overflow-y-scroll">
+    <>
       <div className="flex flex-col items-center h-full max-w-lg m-auto">
         <SelectToolbar
           selectMode={selectMode}
@@ -65,6 +65,6 @@ export const Profile = ({ signOut, user }) => {
           />
         </div>
       </div>
-    </div>
+    </>
   );
 };
