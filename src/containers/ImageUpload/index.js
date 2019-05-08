@@ -57,11 +57,11 @@ export const ImageUpload = ({ user }) => {
   };
 
   return (
-    <div className="max-w-lg h-full w-full m-auto">
-      <Fade unmountOnExit show={state.showSubmit}>
+    <div className="max-w-lg h-full w-full m-auto overflow-y-hidden">
+      <Fade appear mountOnEnter unmountOnExit show={state.showSubmit}>
         <SubmitScreen state={state} dispatch={dispatch} onSubmit={onSubmit} />
       </Fade>
-      <Fade unmountOnExit show={!state.showSubmit}>
+      <Fade appear mountOnEnter unmountOnExit show={!state.showSubmit}>
         <UploadScreen
           alert={state.alert}
           dispatch={dispatch}
