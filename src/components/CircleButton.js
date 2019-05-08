@@ -15,7 +15,7 @@ export const CircleButton = ({
   return (
     <button
       onClick={event => onClick(event)}
-      className={`${colorClasses} ${textClass} ${className} flex items-center justify-center rounded-full h-16 w-16`}
+      className={`focus:outline-none ${colorClasses} ${textClass} ${className} flex items-center justify-center rounded-full h-16 w-16`}
     >
       {children}
     </button>

@@ -12,7 +12,7 @@ export const Button = ({
   return (
     <button
       onClick={event => onClick(event)}
-      className={`bg-${color} hover:bg-${hoverColor} ${textClass}${className} text-sm rounded p-2 tracking-wide uppercase`}
+      className={`focus:outline-none bg-${color} hover:bg-${hoverColor} ${textClass}${className} text-sm rounded p-2 tracking-wide uppercase`}
     >
       {children}
     </button>

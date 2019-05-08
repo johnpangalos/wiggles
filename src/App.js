@@ -53,35 +53,38 @@ export default () => {
     >
       <Router>
         <div className="h-screen flex flex-col w-full">
-          <div className="flex-grow w-full overflow-y-scroll">
-            <Fade unmountOnExit appear in={loading}>
-              <Loading />
-            </Fade>
-            <>
-              <PrivateRoute
-                signOut={signOut}
-                user={user}
-                path="/camera"
-                component={() => <ImageUpload user={user} />}
-              />
-              <PrivateRoute
-                exact
-                signOut={signOut}
-                user={user}
-                path="/"
-                component={() => <Feed />}
-              />
-              <PrivateRoute
-                signOut={signOut}
-                user={user}
-                path="/profile"
-                component={() => <Profile signOut={signOut} user={user} />}
-              />
-              <PublicRoute
-                path="/login"
-                component={() => <Login user={user} />}
-              />
-            </>
+          <div className="flex-grow w-full overflow-y-auto">
+            {loading ? (
+              <Fade appear in={loading}>
+                <Loading />
+              </Fade>
+            ) : (
+              <>
+                <PrivateRoute
+                  signOut={signOut}
+                  user={user}
+                  path="/camera"
+                  component={() => <ImageUpload user={user} />}
+                />
+                <PrivateRoute
+                  exact
+                  signOut={signOut}
+                  user={user}
+                  path="/"
+                  component={() => <Feed />}
+                />
+                <PrivateRoute
+                  signOut={signOut}
+                  user={user}
+                  path="/profile"
+                  component={() => <Profile signOut={signOut} user={user} />}
+                />
+                <PublicRoute
+                  path="/login"
+                  component={() => <Login user={user} />}
+                />
+              </>
+            )}
           </div>
 
           {user && (
@@ -97,7 +100,14 @@ export default () => {
 
 const PublicRoute = withRouter(
   ({ location, component: Component, user, ...rest }) => (
-    <Route {...rest} render={props => <Component {...props} />} />
+    <Fade
+      mountOnEnter
+      unmountOnExit
+      appear
+      in={location.pathname === rest.path}
+    >
+      <Route {...rest} render={props => <Component {...props} />} />
+    </Fade>
   )
 );
 
@@ -108,7 +118,12 @@ const PrivateRoute = withRouter(
         {...rest}
         render={props =>
           user ? (
-            <Fade unmountOnExit appear in={location.pathname === rest.path}>
+            <Fade
+              mountOnEnter
+              unmountOnExit
+              appear
+              in={location.pathname === rest.path}
+            >
               <Component {...props} />
             </Fade>
           ) : (

@@ -12,7 +12,7 @@ const classNames = {
 };
 
 export const Fade = ({ children, show = true, className = '', ...rest }) => (
-  <CSSTransition in={show} timeout={1000} classNames={classNames} {...rest}>
+  <CSSTransition in={show} timeout={950} classNames={classNames} {...rest}>
     {state => <>{children}</>}
   </CSSTransition>
 );
