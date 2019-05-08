@@ -1,7 +1,7 @@
 import React from 'react';
 import { Transition } from 'react-transition-group';
 
-const duration = 300;
+const duration = 10000;
 
 const defaultStyle = {
   transition: `all ${duration}ms ease-in-out`,

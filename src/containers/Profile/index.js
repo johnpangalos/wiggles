@@ -46,22 +46,24 @@ export const Profile = ({ signOut, user }) => {
   }, [account.id]);
 
   return (
-    <div className="flex flex-col items-center h-full max-w-lg m-auto">
-      <SelectToolbar
-        selectMode={selectMode}
-        selected={selected}
-        dispatch={dispatch}
-      />
-      <div className="flex flex-grow flex-col h-full w-full p-4">
-        <Header account={account} signOut={signOut} />
-        <Thumbnails
+    <div className="overflow-y-scroll">
+      <div className="flex flex-col items-center h-full max-w-lg m-auto">
+        <SelectToolbar
           selectMode={selectMode}
-          loading={loading}
-          images={images}
           selected={selected}
-          handleClick={handleClick}
           dispatch={dispatch}
         />
+        <div className="flex flex-grow flex-col h-full w-full p-4">
+          <Header account={account} signOut={signOut} />
+          <Thumbnails
+            selectMode={selectMode}
+            loading={loading}
+            images={images}
+            selected={selected}
+            handleClick={handleClick}
+            dispatch={dispatch}
+          />
+        </div>
       </div>
     </div>
   );

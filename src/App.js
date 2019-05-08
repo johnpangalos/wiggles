@@ -53,7 +53,7 @@ export default () => {
     >
       <Router>
         <div className="h-screen flex flex-col w-full">
-          <div className="flex-grow w-full overflow-y-hidden">
+          <div className="flex-grow w-full overflow-y-scroll">
             <Fade unmountOnExit appear in={loading}>
               <Loading />
             </Fade>

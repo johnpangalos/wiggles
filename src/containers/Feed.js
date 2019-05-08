@@ -15,7 +15,7 @@ export const Feed = () => {
 
   return (
     <div className="h-full w-full">
-      <div className="h-full w-full overflow-x-hidden overflow-y-scroll">
+      <div className="h-full w-full">
         <div className="px-8 py-6 max-w-500 m-auto">
           {Object.keys(images).length > 0 &&
             Object.values(images)

@@ -8,3 +8,4 @@ export { Image } from './Image';
 export { Menu } from './Menu';
 export { SnackBar } from './SnackBar';
 export { Modal } from './Modal';
+export { Toolbar } from './Toolbar';
