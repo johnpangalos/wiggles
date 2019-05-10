@@ -2,7 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 
-import { Image, Loading, Menu } from '~/components';
+import { Post, Image, Loading, Menu } from '~/components';
 import { constants } from '../reducer';
 
 export const Thumbnails = ({
@@ -65,15 +65,14 @@ export const Thumbnails = ({
                 key={image.id}
                 className="pb-2 w-1/2 xs:w-1/3 sm:w-1/4 lg:w-1/5 px-1"
               >
-                <Image
+                <Post
                   handleClick={() => handleClick(image.id)}
                   selectable={selectMode}
                   selected={selected[image.id]}
-                  url={image.thumbnail}
-                  index={index}
                   size="32"
-                  lazyLoadStart={20}
-                />
+                >
+                  <Image url={image.thumbnail} />
+                </Post>
               </div>
             ))}
         </div>
