@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Fade } from '~/components/transitions';
 
-export const Image = ({ url }) => {
+export const Image = ({ url, noFetch }) => {
   const [imageUrl, setImageUrl] = useState(null);
 
   const getImageUrl = async () => {
@@ -11,6 +11,10 @@ export const Image = ({ url }) => {
   };
 
   useEffect(() => {
+    if (noFetch) {
+      setImageUrl(url);
+      return;
+    }
     getImageUrl();
   }, [url]);
 

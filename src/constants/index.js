@@ -7,5 +7,9 @@ export const constants = {
   ADD_IMAGES: 'add-images',
   REMOVE_IMAGE: 'remove-image',
   ADD_QUOTES: 'add-quotes',
-  REMOVE_QUOTE: 'remove-quote'
+  REMOVE_QUOTE: 'remove-quote',
+  SET_UPLOAD_MESSAGE: 'set-upload-message',
+  SET_FILE: 'set-file',
+  START_UPLOADING: 'start-uploading',
+  END_UPLOADING: 'end-uploading'
 };

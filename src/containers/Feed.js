@@ -7,7 +7,9 @@ import { PostWrapper } from './PostWrapper';
 export const Feed = () => {
   const mapState = useCallback(
     state => ({
-      posts: state.posts
+      posts: Object.values(state.posts).sort(
+        (a, b) => (a.timestamp - b.timestamp) * -1
+      )
     }),
     []
   );
@@ -33,10 +35,8 @@ export const Feed = () => {
     <div className="h-full w-full">
       <div className="px-8 py-6 max-w-500 m-auto">
         {posts &&
-          Object.keys(posts).length > 0 &&
-          Object.values(posts)
-            .sort((a, b) => (a.timestamp - b.timestamp) * -1)
-            .map((post, index) => <PostWrapper key={post.id} post={post} />)}
+          posts.length > 0 &&
+          posts.map((post, index) => <PostWrapper key={post.id} post={post} />)}
       </div>
     </div>
   );
