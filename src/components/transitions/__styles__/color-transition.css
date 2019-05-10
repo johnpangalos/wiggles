@@ -2,3 +2,8 @@
   transition-property: color;
   transition-duration: 500ms;
 }
+
+.border-color-transition {
+  transition-property: border-color;
+  transition-duration: 500ms;
+}

@@ -9,7 +9,8 @@ export const initialState = {
   orientation: null,
   file: null,
   uploading: false,
-  timestamp: null
+  timestamp: null,
+  currentTab: 'images'
 };
 
 export const constants = {
@@ -24,7 +25,8 @@ export const constants = {
   START_UPLOADING: 'start-uploading',
   END_UPLOADING: 'end-uploading',
   SET_TIMESTAMP: 'set-timestamp',
-  RESET: 'reset'
+  RESET: 'reset',
+  SET_CURRENT_TAB: 'set-current-tab'
 };
 
 export const reducer = (state, action) => {
@@ -64,6 +66,9 @@ export const reducer = (state, action) => {
     }
     case constants.RESET: {
       return initialState;
+    }
+    case constants.SET_CURRENT_TAB: {
+      return { ...state, currentTab: action.payload };
     }
     default: {
       return state;

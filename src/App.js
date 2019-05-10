@@ -5,10 +5,11 @@ import {
   Redirect,
   withRouter
 } from 'react-router-dom';
+import { matchPath } from 'react-router';
 
 import { Loading, BottomNavigation } from '~/components';
 import { Fade } from '~/components/transitions';
-import { Login, ImageUpload, Feed, Profile } from '~/containers';
+import { Login, Upload, Feed, Profile } from '~/containers';
 
 export default () => {
   const [user, setUser] = useState(null);
@@ -63,8 +64,9 @@ export default () => {
                 <PrivateRoute
                   signOut={signOut}
                   user={user}
-                  path="/camera"
-                  component={() => <ImageUpload user={user} />}
+                  exact
+                  path={['/upload', '/upload/:currentTab']}
+                  component={args => <Upload user={user} {...args} />}
                 />
                 <PrivateRoute
                   exact
@@ -104,12 +106,17 @@ const PublicRoute = withRouter(
       mountOnEnter
       unmountOnExit
       appear
-      in={location.pathname === rest.path}
+      in={locationEqualToPath(location.pathname, rest.path)}
     >
       <Route {...rest} render={props => <Component {...props} />} />
     </Fade>
   )
 );
+
+const locationEqualToPath = (name, path) => {
+  if (typeof path === 'string') return name === path;
+  return path.some(item => matchPath(name, item));
+};
 
 const PrivateRoute = withRouter(
   ({ location, component: Component, user, signOut, ...rest }) => {
@@ -122,7 +129,7 @@ const PrivateRoute = withRouter(
               mountOnEnter
               unmountOnExit
               appear
-              in={location.pathname === rest.path}
+              in={locationEqualToPath(location.pathname, rest.path)}
             >
               <Component {...props} />
             </Fade>
