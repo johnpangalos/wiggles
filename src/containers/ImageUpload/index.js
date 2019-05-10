@@ -1,5 +1,6 @@
-import React, { useReducer, useEffect } from 'react';
-
+import React, { useReducer, useEffect, useCallback } from 'react';
+import { useDispatch, useMappedState } from 'redux-react-hook';
+import { setFile } from '~/actions';
 import { Fade } from '~/components/transitions';
 import { initialState, constants, reducer, actions } from './store';
 import { UploadScreen, SubmitScreen } from './components';
@@ -7,19 +8,29 @@ import { UploadScreen, SubmitScreen } from './components';
 export const ImageUpload = ({ user }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  const mapState = useCallback(
+    state => ({
+      file: state.imageFile.file
+    }),
+    []
+  );
+  const dispatch2 = useDispatch();
+  const { file } = useMappedState(mapState);
+
   const handleImageChange = async event => {
     event.preventDefault();
     dispatch({ type: constants.RESET });
 
     const eventFile = event.target.files[0];
-    dispatch({ type: constants.SET_FILE, payload: eventFile });
-    const [url, direction] = await Promise.all([
+    // dispatch({ type: constants.SET_FILE, payload: eventFile });
+    const [imagePreview, orientation] = await Promise.all([
       actions.getUrlFromFile(eventFile),
       actions.getOrientation(eventFile)
     ]);
+    dispatch2(setFile({ imagePreview, orientation, file: eventFile }));
     dispatch({ type: constants.SHOW_SUBMIT });
-    dispatch({ type: constants.SET_IMAGE_PREVIEW, payload: url });
-    dispatch({ type: constants.SET_ORIENTATION, payload: direction });
+    // dispatch({ type: constants.SET_IMAGE_PREVIEW, payload: url });
+    // dispatch({ type: constants.SET_ORIENTATION, payload: direction });
   };
 
   const imageListnerCallback = snapshot => {
@@ -49,7 +60,7 @@ export const ImageUpload = ({ user }) => {
 
     try {
       dispatch({ type: constants.SET_TIMESTAMP, payload: timestamp });
-      await actions.uploadImage(state.file, user, timestamp);
+      await actions.uploadImage(file, user, timestamp);
     } catch (error) {
       dispatch({ type: constants.END_UPLOADING });
       console.error(error);

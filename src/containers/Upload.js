@@ -1,0 +1,51 @@
+import React, { useEffect, useCallback } from 'react';
+import { setMediaTab } from '~/actions';
+import { useDispatch, useMappedState } from 'redux-react-hook';
+import { ImageUpload, Quotes } from '~/containers';
+import { Tabs, TabContent } from '~/components';
+
+const getTabs = user => ({
+  images: {
+    name: 'images',
+    component: ImageUpload
+  },
+  quotes: {
+    name: 'quotes',
+    component: () => <Quotes user={user} />
+  },
+  videos: {
+    name: 'videos',
+    component: () => <div>Not implemented yet</div>
+  }
+});
+
+export const Upload = ({ user, match }) => {
+  const mapState = useCallback(
+    state => ({
+      currentTab: state.mediaTabs.currentTab
+    }),
+    [user]
+  );
+
+  const { currentTab } = useMappedState(mapState);
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (!match.params.currentTab) {
+      dispatch(setMediaTab('images'));
+      return;
+    }
+    dispatch(setMediaTab(match.params.currentTab));
+  }, [match.params.currentTab]);
+
+  const tabs = getTabs(user);
+
+  return (
+    <div className="flex flex-col h-full w-full items-center overflow-y-hidden">
+      <Tabs tabs={tabs} currentTab={currentTab} />
+      <div className="flex flex-col max-w-lg h-full w-full overflow-y-hidden">
+        <TabContent component={tabs[currentTab].component} />
+      </div>
+    </div>
+  );
+};
