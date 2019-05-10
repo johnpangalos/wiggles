@@ -1,47 +1,55 @@
-import React, { useReducer, useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-
-import { initialState, constants, reducer } from './store';
+import { setMediaTab } from '~/actions';
+import { useDispatch, useMappedState } from 'redux-react-hook';
 import { ImageUpload, Quotes } from '~/containers';
 
+const getTabs = user => ({
+  images: {
+    name: 'images',
+    component: ImageUpload
+  },
+  quotes: {
+    name: 'quotes',
+    component: () => <Quotes user={user} />
+  },
+  videos: {
+    name: 'videos',
+    component: () => <div>Not implemented yet</div>
+  }
+});
 export const Upload = ({ user, match }) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const mapState = useCallback(
+    state => ({
+      currentTab: state.mediaTabs.currentTab
+    }),
+    [user]
+  );
+
+  const { currentTab } = useMappedState(mapState);
+
+  const dispatch = useDispatch();
   useEffect(() => {
-    if (!match.params.currentTab)
-      return dispatch({
-        type: constants.SET_CURRENT_TAB,
-        payload: 'images'
-      });
-    dispatch({
-      type: constants.SET_CURRENT_TAB,
-      payload: match.params.currentTab
-    });
-  }, [match.params.currentTab]);
-  const tabs = {
-    images: {
-      name: 'images',
-      component: ImageUpload
-    },
-    quotes: {
-      name: 'quotes',
-      component: () => <Quotes user={user} />
-    },
-    videos: {
-      name: 'videos',
-      component: () => <div>Not implemented yet</div>
+    if (!match.params.currentTab) {
+      dispatch(setMediaTab('images'));
+      return;
     }
-  };
+    dispatch(setMediaTab(match.params.currentTab));
+  }, [match.params.currentTab]);
+
+  const tabs = getTabs(user);
+
   return (
     <div className="flex flex-col h-full w-full items-center overflow-y-hidden">
-      <Tabs tabs={tabs} currentTab={state.currentTab} dispatch={dispatch} />
+      <Tabs tabs={tabs} currentTab={currentTab} />
       <div className="flex flex-col max-w-lg h-full w-full overflow-y-hidden">
-        <TabContent component={tabs[state.currentTab].component} />
+        <TabContent component={tabs[currentTab].component} />
       </div>
     </div>
   );
 };
 
-const Tabs = ({ currentTab, dispatch, tabs }) => {
+const Tabs = ({ currentTab, tabs }) => {
   return (
     <div className="flex justify-center text-white h-12 w-full bg-primary shadow-md">
       <div className="flex items-end max-w-lg h-ful w-full">

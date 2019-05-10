@@ -1,12 +1,10 @@
-export const initialState = {
+import { constants } from '~/constants';
+
+const initialState = {
   currentTab: 'images'
 };
 
-export const constants = {
-  SET_CURRENT_TAB: 'set-current-tab'
-};
-
-export const reducer = (state, action) => {
+export const mediaTabs = (state = initialState, action) => {
   switch (action.type) {
     case constants.SET_CURRENT_TAB: {
       return { ...state, currentTab: action.payload };
