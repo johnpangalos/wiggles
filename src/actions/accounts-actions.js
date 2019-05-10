@@ -5,7 +5,7 @@ export const addAccount = account => ({
   payload: { [account.id]: account }
 });
 
-export const removeQuote = id => ({
+export const removeAccount = id => ({
   type: constants.REMOVE_ACCOUNT,
   payload: id
 });
