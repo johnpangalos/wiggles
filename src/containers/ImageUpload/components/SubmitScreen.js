@@ -4,12 +4,12 @@ import { constants } from '../store';
 import { Fade } from '~/components/transitions';
 import { useMappedState } from 'redux-react-hook';
 
-var rotation = {
-  1: 'rotate(0deg)',
-  3: 'rotate(180deg)',
-  6: 'rotate(90deg)',
-  8: 'rotate(270deg)'
-};
+// var rotation = {
+// 1: 'rotate(0deg)',
+// 3: 'rotate(180deg)',
+// 6: 'rotate(90deg)',
+// 8: 'rotate(270deg)'
+// };
 
 export const SubmitScreen = ({
   state: { uploading, uploadMessage },
@@ -23,7 +23,8 @@ export const SubmitScreen = ({
     }),
     []
   );
-  const { imagePreview, orientation } = useMappedState(mapState);
+  // add back in orientation
+  const { imagePreview } = useMappedState(mapState);
 
   return (
     <>

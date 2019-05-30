@@ -6,7 +6,9 @@ import {
   withRouter
 } from 'react-router-dom';
 import { matchPath } from 'react-router';
+import { useDispatch } from 'redux-react-hook';
 
+import { constants } from '~/constants';
 import { Loading, BottomNavigation } from '~/components';
 import { Fade } from '~/components/transitions';
 import { Login, Upload, Feed, Profile } from '~/containers';
@@ -14,7 +16,7 @@ import { Login, Upload, Feed, Profile } from '~/containers';
 export default () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const distpatch = useDispatch();
   useEffect(() => {
     let callback = null;
     let metadataRef = null;
@@ -32,6 +34,7 @@ export default () => {
             .auth()
             .currentUser.getIdTokenResult();
           setUser(idToken);
+          distpatch({ type: constants.UPDATE_USER, payload: idToken });
           setLoading(false);
         };
         metadataRef.on('value', callback);
