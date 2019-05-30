@@ -5,17 +5,18 @@ import { Fade } from '~/components/transitions';
 import { initialState, constants, reducer, actions } from './store';
 import { UploadScreen, SubmitScreen } from './components';
 
-export const ImageUpload = ({ user }) => {
+export const ImageUpload = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const mapState = useCallback(
     state => ({
-      file: state.imageFile.file
+      file: state.imageFile.file,
+      user: state.user
     }),
     []
   );
   const dispatch2 = useDispatch();
-  const { file } = useMappedState(mapState);
+  const { user, file } = useMappedState(mapState);
 
   const handleImageChange = async event => {
     event.preventDefault();

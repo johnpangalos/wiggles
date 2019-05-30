@@ -11,5 +11,6 @@ export const constants = {
   SET_UPLOAD_MESSAGE: 'set-upload-message',
   SET_FILE: 'set-file',
   START_UPLOADING: 'start-uploading',
-  END_UPLOADING: 'end-uploading'
+  END_UPLOADING: 'end-uploading',
+  UPDATE_USER: 'update-user'
 };
