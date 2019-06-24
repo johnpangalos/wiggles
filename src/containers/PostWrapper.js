@@ -23,12 +23,11 @@ export const PostWrapper = ({ post }) => {
     let didCancel = false;
 
     const fetchAccount = async () => {
-      const accountRef = window.firebase
-        .database()
-        .ref(`accounts/${post.userId}`);
-      const snap = await accountRef.once('value');
-      const val = snap.val();
-      if (!didCancel && val) dispatch(addAccount(val));
+      const account = await window.db
+        .collection('accounts')
+        .doc(post.userId)
+        .get();
+      if (!didCancel) dispatch(addAccount(account.data()));
     };
 
     fetchAccount();

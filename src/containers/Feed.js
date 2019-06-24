@@ -20,9 +20,16 @@ export const Feed = () => {
     let didCancel = false;
 
     const fetchPosts = async () => {
-      const postsRef = window.firebase.database().ref('posts/');
-      const posts = await postsRef.once('value');
-      if (!didCancel) dispatch(addPosts(posts.val()));
+      const posts = await window.db.collection('posts').get();
+      if (!didCancel)
+        dispatch(
+          addPosts(
+            posts.docs.reduce(
+              (acc, curr) => ({ ...acc, [curr.data().id]: curr.data() }),
+              {}
+            )
+          )
+        );
     };
 
     fetchPosts();

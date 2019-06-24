@@ -14,24 +14,27 @@ export const Quotes = ({ user }) => {
 
     const timestamp = +new Date();
 
-    const quoteRef = window.firebase.database().ref(`quotes/${quoteId}`);
-    const postRef = window.firebase.database().ref(`posts/${quoteId}`);
-
     try {
       await Promise.all([
-        quoteRef.set({
-          id: quoteId,
-          text,
-          timestamp,
-          userId: user.claims.sub
-        }),
-        postRef.set({
-          id: postId,
-          refId: quoteId,
-          timestamp,
-          type: 'quote',
-          userId: user.claims.sub
-        })
+        window.db
+          .collection('quotes')
+          .doc(quoteId)
+          .set({
+            id: quoteId,
+            text,
+            timestamp,
+            userId: user.claims.sub
+          }),
+        window.db
+          .collection('posts')
+          .doc(postId)
+          .set({
+            id: postId,
+            refId: quoteId,
+            timestamp,
+            type: 'quote',
+            userId: user.claims.sub
+          })
       ]);
       setAlert('Quote successfully added.');
     } catch (err) {

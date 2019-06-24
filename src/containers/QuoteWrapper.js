@@ -19,10 +19,11 @@ export const QuoteWrapper = ({ id }) => {
     let didCancel = false;
 
     const fetchPosts = async () => {
-      const quoteRef = window.firebase.database().ref(`quotes/${id}`);
-      const snap = await quoteRef.once('value');
-      const val = snap.val();
-      if (!didCancel && val) dispatch(addQuote(val));
+      const quote = await window.db
+        .collection('quotes')
+        .doc(id)
+        .get();
+      if (!didCancel) dispatch(addQuote(quote.data()));
     };
 
     fetchPosts();
