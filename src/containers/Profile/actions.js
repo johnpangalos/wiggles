@@ -1,22 +1,27 @@
 export const accountData = async user => {
-  const accountRef = window.firebase
-    .database()
-    .ref(`accounts/${user.claims.sub}`);
-  const accountSnap = await accountRef.once('value');
-  return accountSnap.val();
+  const account = await window.db
+    .collection('accounts')
+    .doc(user.claims.sub)
+    .get();
+  return account.data();
 };
 
-export const imageByUserSub = (id, callback) => {
-  const imageRef = window.firebase.database().ref(`images/`);
-  return imageRef
-    .orderByChild('userId')
-    .equalTo(id)
-    .on('value', callback);
+export const imageByUserSub = async (id, callback) => {
+  const imagesRef = window.db.collection('images');
+  const images = await imagesRef.where('userId', '==', id).get();
+  callback(
+    images.docs.reduce(
+      (acc, curr) => ({ ...acc, [curr.data().id]: curr.data() }),
+      {}
+    )
+  );
 };
 
 const deleteImage = id => {
-  const imageRef = window.firebase.database().ref(`images/${id}`);
-  return imageRef.remove();
+  return window.db
+    .collection('posts')
+    .doc(id)
+    .delete();
 };
 
 export const deleteImages = ids => Promise.all(ids.map(id => deleteImage(id)));

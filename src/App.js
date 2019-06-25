@@ -17,17 +17,16 @@ export default () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const distpatch = useDispatch();
+
   useEffect(() => {
     let callback = null;
     let metadataRef = null;
-
+    let metadataUnsub = null;
     const unsubscribe = window.firebase.auth().onAuthStateChanged(res => {
-      if (callback) metadataRef.off('value', callback);
+      if (callback && metadataUnsub) metadataUnsub();
 
       if (res) {
-        metadataRef = window.firebase
-          .database()
-          .ref('metadata/' + res.uid + '/refreshTime');
+        metadataRef = window.db.collection('metadata');
         callback = async snapshot => {
           res.getIdToken(true);
           const idToken = await window.firebase
@@ -37,7 +36,7 @@ export default () => {
           distpatch({ type: constants.UPDATE_USER, payload: idToken });
           setLoading(false);
         };
-        metadataRef.on('value', callback);
+        metadataUnsub = metadataRef.onSnapshot(callback);
       } else {
         setLoading(false);
       }

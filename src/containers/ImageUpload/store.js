@@ -98,13 +98,11 @@ export const actions = {
     }),
 
   uploadListener: (timestamp, callback) => {
-    const imageDataRef = window.firebase.database().ref('images/');
+    const imagesRef = window.db.collection('images');
 
-    imageDataRef
-      .orderByChild('timestamp')
-      .equalTo(timestamp.toString())
-      .on('child_changed', callback);
-    return () => imageDataRef.off('value', callback);
+    return imagesRef
+      .where('timestamp', '==', timestamp.toString())
+      .onSnapshot(callback);
   },
 
   uploadImage: (file, user, timestamp) => {

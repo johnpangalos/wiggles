@@ -34,15 +34,13 @@ export const Profile = ({ signOut, user }) => {
 
   useEffect(() => {
     if (!account.id) return;
-    const imageUnsubscribe = imageByUserSub(account.id, imagesSnap => {
-      if (!imagesSnap) return;
-      dispatch({ type: constants.ADD_IMAGES, payload: imagesSnap.val() });
+    imageByUserSub(account.id, images => {
+      if (!images) return;
+      dispatch({ type: constants.ADD_IMAGES, payload: images });
       dispatch({ type: constants.NOT_LOADING });
     });
 
-    return () => {
-      imageUnsubscribe();
-    };
+    return () => {};
   }, [account.id]);
 
   return (

@@ -20,10 +20,11 @@ export const ImageWrapper = ({ id }) => {
     let didCancel = false;
 
     const fetchAccount = async () => {
-      const imageRef = window.firebase.database().ref(`images/${id}`);
-      const snap = await imageRef.once('value');
-      const val = snap.val();
-      if (!didCancel && val) dispatch(addImage(val));
+      const image = await window.db
+        .collection('images')
+        .doc(id)
+        .get();
+      if (!didCancel) dispatch(addImage(image.data()));
     };
 
     fetchAccount();

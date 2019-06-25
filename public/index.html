@@ -54,11 +54,11 @@
     <script src="https://www.gstatic.com/firebasejs/5.9.4/firebase-app.js"></script>
 
     <script src="https://www.gstatic.com/firebasejs/5.9.4/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.9.4/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.9.4/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.2.2/firebase-firestore.js"></script>
     <script>
       var config = {
-        apiKey: 'AIzaSyAFp8tpwDeUhRFB4ruP-Wk6FyujzpGyon4',
+        apiKey: 'AIzaSyDcx5xDlQS3ixEFF8mESoxUzTk9f56uQhA',
         authDomain: 'wiggles-f0bd9.firebaseapp.com',
         databaseURL: 'https://wiggles-f0bd9.firebaseio.com',
         projectId: 'wiggles-f0bd9',
@@ -67,6 +67,7 @@
       };
       firebase.initializeApp(config);
       window.firebase = firebase;
+      window.db = window.firebase.firestore();
     </script>
   </body>
 </html>
