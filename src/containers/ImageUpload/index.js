@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect, useCallback } from 'react';
+import React, { useReducer, useCallback } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
 import { setFile } from '~/actions';
 import { Fade } from '~/components/transitions';
@@ -34,27 +34,6 @@ export const ImageUpload = () => {
     // dispatch({ type: constants.SET_ORIENTATION, payload: direction });
   };
 
-  const imageListnerCallback = snapshot => {
-    const val = snapshot.val();
-
-    if (val.uploadFinished) {
-      // Includes change uploading to false
-      dispatch({ type: constants.SHOW_UPLOAD });
-      dispatch({ type: constants.SHOW_ALERT });
-      return;
-    }
-    dispatch({ type: constants.SET_UPLOAD_MESSAGE, payload: val.status });
-  };
-
-  useEffect(() => {
-    if (!state.timestamp) return;
-    const unsubscribe = actions.uploadListener(
-      state.timestamp,
-      imageListnerCallback
-    );
-    return unsubscribe();
-  }, [state.timestamp]);
-
   const onSubmit = () => async () => {
     dispatch({ type: constants.START_UPLOADING });
     const timestamp = +new Date();
@@ -62,6 +41,8 @@ export const ImageUpload = () => {
     try {
       dispatch({ type: constants.SET_TIMESTAMP, payload: timestamp });
       await actions.uploadImage(file, user, timestamp);
+      dispatch({ type: constants.SHOW_UPLOAD });
+      dispatch({ type: constants.SHOW_ALERT });
     } catch (error) {
       dispatch({ type: constants.END_UPLOADING });
       console.error(error);
