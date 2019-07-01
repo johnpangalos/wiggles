@@ -28,7 +28,7 @@ export const SubmitScreen = ({
 
   return (
     <>
-      <Fade unmountOnExit show={uploading}>
+      <Fade mountOnEnter unmountOnExit appear in={uploading}>
         <div className="h-full w-full">
           <Loading message={uploadMessage} />
         </div>
