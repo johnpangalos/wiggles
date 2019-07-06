@@ -8,7 +8,7 @@ export const initialState = {
 
 export const constants = {
   ADD_ACCOUNT: 'add-account',
-  ADD_IMAGES: 'add-images',
+  ADD_POSTS: 'add-posts',
   LOADING: 'loading',
   NOT_LOADING: 'not-loading',
   ADD_SELECTED: 'add-selected',
@@ -22,7 +22,7 @@ export const reducer = (state, action) => {
     case constants.ADD_ACCOUNT: {
       return { ...state, account: action.payload };
     }
-    case constants.ADD_IMAGES: {
+    case constants.ADD_POSTS: {
       return { ...state, posts: action.payload };
     }
     case constants.LOADING: {

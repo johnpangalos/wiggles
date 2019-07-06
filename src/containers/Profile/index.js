@@ -36,7 +36,7 @@ export const Profile = ({ signOut, user }) => {
     if (!account.id) return;
     imageByUserSub(account.id, images => {
       if (!images) return;
-      dispatch({ type: constants.ADD_IMAGES, payload: images });
+      dispatch({ type: constants.ADD_POSTS, payload: images });
       dispatch({ type: constants.NOT_LOADING });
     });
 
