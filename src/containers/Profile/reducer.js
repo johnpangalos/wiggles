@@ -1,6 +1,6 @@
 export const initialState = {
   account: {},
-  images: {},
+  posts: {},
   loading: false,
   selected: {},
   selectMode: false
@@ -23,7 +23,7 @@ export const reducer = (state, action) => {
       return { ...state, account: action.payload };
     }
     case constants.ADD_IMAGES: {
-      return { ...state, images: action.payload };
+      return { ...state, posts: action.payload };
     }
     case constants.LOADING: {
       return { ...state, loading: true };

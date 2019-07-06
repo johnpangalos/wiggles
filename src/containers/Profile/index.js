@@ -5,7 +5,7 @@ import { accountData, imageByUserSub } from './actions';
 
 export const Profile = ({ signOut, user }) => {
   const [
-    { account, loading, images, selected, selectMode },
+    { account, loading, posts, selected, selectMode },
     dispatch
   ] = useReducer(reducer, initialState);
 
@@ -55,7 +55,7 @@ export const Profile = ({ signOut, user }) => {
         <Thumbnails
           selectMode={selectMode}
           loading={loading}
-          images={images}
+          posts={posts}
           selected={selected}
           handleClick={handleClick}
           dispatch={dispatch}

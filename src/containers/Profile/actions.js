@@ -7,7 +7,7 @@ export const accountData = async user => {
 };
 
 export const imageByUserSub = async (id, callback) => {
-  const imagesRef = window.db.collection('images');
+  const imagesRef = window.db.collection('posts');
   const images = await imagesRef.where('userId', '==', id).get();
   callback(
     images.docs.reduce(

@@ -2,12 +2,14 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 
-import { Post, Image, Loading, Menu } from '~/components';
+import { ImageWrapper } from '../../ImageWrapper';
+import { QuoteWrapper } from '../../QuoteWrapper';
+import { Post, Loading, Menu } from '~/components';
 import { constants } from '../reducer';
 
 export const Thumbnails = ({
   loading,
-  images,
+  posts,
   selected,
   handleClick,
   dispatch,
@@ -57,21 +59,21 @@ export const Thumbnails = ({
       )}
       {!loading && (
         <div className="flex flex-wrap">
-          {Object.values(images)
-            .filter(image => image.uploadFinished)
+          {Object.values(posts)
             .sort((a, b) => Number(b.timestamp) - Number(a.timestamp))
-            .map((image, index) => (
+            .map((post, index) => (
               <div
-                key={image.id}
+                key={post.id}
                 className="pb-2 w-1/2 xs:w-1/3 sm:w-1/4 lg:w-1/5 px-1"
               >
                 <Post
-                  handleClick={() => handleClick(image.id)}
+                  handleClick={() => handleClick(post.id)}
                   selectable={selectMode}
-                  selected={selected[image.id]}
+                  selected={selected[post.id]}
                   size="32"
                 >
-                  <Image url={image.thumbnail} />
+                  {post.type === 'image' && <ImageWrapper id={post.refId} />}
+                  {post.type === 'quote' && <QuoteWrapper id={post.refId} />}
                 </Post>
               </div>
             ))}
