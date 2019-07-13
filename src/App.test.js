@@ -1,6 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import App from './App';
+import { StoreContext } from 'redux-react-hook';
 
 global.firebase = {
   auth: jest.fn(() => ({
@@ -18,6 +19,10 @@ global.firebase = {
 };
 
 it("Doesn't render the loading spinner", () => {
-  const wrapper = shallow(<App />);
+  const wrapper = shallow(
+    <StoreContext.Provider>
+      <App />
+    </StoreContext.Provider>
+  );
   expect(wrapper.find('.loading').length).toEqual(0);
 });
