@@ -24,7 +24,7 @@ export const Upload = ({ user, match }) => {
     state => ({
       currentTab: state.mediaTabs.currentTab
     }),
-    [user]
+    []
   );
 
   const { currentTab } = useMappedState(mapState);
@@ -36,7 +36,7 @@ export const Upload = ({ user, match }) => {
       return;
     }
     dispatch(setMediaTab(match.params.currentTab));
-  }, [match.params.currentTab]);
+  }, [dispatch, match.params.currentTab]);
 
   const tabs = getTabs(user);
 

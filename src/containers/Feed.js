@@ -36,7 +36,7 @@ export const Feed = () => {
     return () => {
       didCancel = true;
     };
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className="h-full w-full">

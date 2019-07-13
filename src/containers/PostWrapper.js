@@ -11,7 +11,7 @@ export const PostWrapper = ({ post }) => {
     state => ({
       account: state.accounts[post.userId]
     }),
-    []
+    [post]
   );
 
   const dispatch = useDispatch();
@@ -34,7 +34,7 @@ export const PostWrapper = ({ post }) => {
     return () => {
       didCancel = true;
     };
-  }, [post.userId]);
+  }, [account, dispatch, post.userId]);
 
   return (
     !!account && (
