@@ -30,7 +30,7 @@ export const Profile = ({ signOut, user }) => {
     return () => {
       didCancel = true;
     };
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (!account.id) return;

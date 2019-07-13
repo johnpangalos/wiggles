@@ -7,7 +7,7 @@ export const QuoteWrapper = ({ id }) => {
     state => ({
       quote: state.quotes[id]
     }),
-    []
+    [id]
   );
 
   const dispatch = useDispatch();
@@ -30,7 +30,7 @@ export const QuoteWrapper = ({ id }) => {
     return () => {
       didCancel = true;
     };
-  }, [id]);
+  }, [quote, dispatch, id]);
 
   return (
     !!quote && (

@@ -4,19 +4,19 @@ import { Fade } from '~/components/transitions';
 export const Image = ({ url, noFetch }) => {
   const [imageUrl, setImageUrl] = useState(null);
 
-  const getImageUrl = async () => {
-    var storage = window.firebase.storage();
-    const temp = await storage.ref(url).getDownloadURL();
-    setImageUrl(temp);
-  };
-
   useEffect(() => {
+    const getImageUrl = async () => {
+      var storage = window.firebase.storage();
+      const temp = await storage.ref(url).getDownloadURL();
+      setImageUrl(temp);
+    };
+
     if (noFetch) {
       setImageUrl(url);
       return;
     }
     getImageUrl();
-  }, [url]);
+  }, [noFetch, url]);
 
   return (
     imageUrl && (

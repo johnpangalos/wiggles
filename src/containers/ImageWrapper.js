@@ -8,7 +8,7 @@ export const ImageWrapper = ({ id }) => {
     state => ({
       image: state.images[id]
     }),
-    []
+    [id]
   );
 
   const dispatch = useDispatch();
@@ -31,7 +31,7 @@ export const ImageWrapper = ({ id }) => {
     return () => {
       didCancel = true;
     };
-  }, [id]);
+  }, [dispatch, image, id]);
 
   return !!image && <Image url={image.web} />;
 };

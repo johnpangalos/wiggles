@@ -42,7 +42,7 @@ export default () => {
       }
     });
     return () => unsubscribe();
-  }, []);
+  }, [distpatch]);
 
   const signOut = () => {
     window.firebase.auth().signOut();
