@@ -11,9 +11,9 @@ module.exports = {
       }
     ])
   ),
-  jest: (config) => {
+  jest: config => {
     config.moduleNameMapper = {
-      "^~/(.*)$": "<rootDir>/src/$1"
+      '^~/(.*)$': '<rootDir>/src/$1'
     };
     return config;
   }
