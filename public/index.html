@@ -68,30 +68,11 @@
       firebase.initializeApp(config);
       window.firebase = firebase;
       window.db = window.firebase.firestore();
-    </script>
-
-    <script type="module">
-      import {Workbox} from 'https://storage.googleapis.com/workbox-cdn/releases/4.1.0/workbox-window.prod.mjs';
-
-      if ('serviceWorker' in navigator) {
-        const wb = new Workbox('/sw.js');
-        wb.addEventListener('waiting', (event) => {
-          const prompt = createUIPrompt({
-            onAccept: async () => {
-              wb.addEventListener('controlling', (event) => {
-                window.location.reload();
-              });
-              wb.messageSW({type: 'SKIP_WAITING'});
-            },
-
-            onReject: () => {
-              prompt.dismiss();
-            }
-          })
+      window.db.enablePersistence()
+        .catch(function(err) {
+          console.error('Not able to enable persistence.', err);
         });
 
-        wb.register();
-      }
     </script>
 
   </body>
