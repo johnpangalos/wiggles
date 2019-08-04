@@ -72,7 +72,9 @@ export const Thumbnails = ({
                   selected={selected[post.id]}
                   size="32"
                 >
-                  {post.type === 'image' && <ImageWrapper id={post.refId} />}
+                  {post.type === 'image' && (
+                    <ImageWrapper thumb id={post.refId} />
+                  )}
                   {post.type === 'quote' && <QuoteWrapper id={post.refId} />}
                 </Post>
               </div>

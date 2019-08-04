@@ -3,7 +3,7 @@ import { useDispatch, useMappedState } from 'redux-react-hook';
 import { Image } from '~/components';
 import { addImage } from '~/actions';
 
-export const ImageWrapper = ({ id }) => {
+export const ImageWrapper = ({ id, thumb = false }) => {
   const mapState = useCallback(
     state => ({
       image: state.images[id]
@@ -31,7 +31,7 @@ export const ImageWrapper = ({ id }) => {
     return () => {
       didCancel = true;
     };
-  }, [dispatch, image, id]);
+  }, [dispatch, image, id, thumb]);
 
-  return !!image && <Image url={image.web} />;
+  return !!image && <Image url={thumb ? image.thumbnail : image.web} />;
 };

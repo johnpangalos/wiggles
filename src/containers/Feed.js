@@ -51,7 +51,7 @@ export const Feed = () => {
             window.location.reload();
           }}
         >
-          Refesh
+          Refresh
         </Button>
       </div>
 

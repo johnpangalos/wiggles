@@ -6,6 +6,11 @@ import * as serviceWorker from './serviceWorker';
 import { StoreContext } from 'redux-react-hook';
 import { store } from './store';
 
+if (process.env.NODE_ENV === 'production')
+  window.db.enablePersistence().catch(function(err) {
+    console.error('Not able to enable persistence.', err);
+  });
+
 window.observer = window.lozad();
 
 // Set vertical height for weird browsers (android chrome)

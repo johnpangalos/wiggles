@@ -68,11 +68,6 @@
       firebase.initializeApp(config);
       window.firebase = firebase;
       window.db = window.firebase.firestore();
-      window.db.enablePersistence()
-        .catch(function(err) {
-          console.error('Not able to enable persistence.', err);
-        });
-
     </script>
 
   </body>
