@@ -18,12 +18,14 @@ export const Image = ({ url, noFetch }) => {
     getImageUrl();
   }, [noFetch, url]);
 
+  useEffect(() => window.observer.observe(), []);
+
   return (
     imageUrl && (
       <Fade show={true} appear>
         <div
-          className="w-full h-full bg-no-repeat bg-contain bg-center"
-          style={{ backgroundImage: `url(${imageUrl})` }}
+          className="w-full h-full bg-no-repeat bg-contain bg-center lozad"
+          data-background-image={imageUrl}
         />
       </Fade>
     )

@@ -27,7 +27,7 @@ export const PostWrapper = ({ post }) => {
         .collection('accounts')
         .doc(post.userId)
         .get();
-      if (!didCancel) dispatch(addAccount(account.data()));
+      if (!didCancel && account.data()) dispatch(addAccount(account.data()));
     };
 
     fetchAccount();

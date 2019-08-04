@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
-
+import { Button } from '~/components';
 import { addPosts } from '~/actions';
 import { PostWrapper } from './PostWrapper';
 
@@ -40,7 +40,22 @@ export const Feed = () => {
 
   return (
     <div className="h-full w-full">
-      <div className="px-8 py-6 max-w-500 m-auto">
+      <div className="w-full flex p-2">
+        <div className="flex-grow" />
+        <Button
+          dark
+          className=""
+          color="primary"
+          onClick={e => {
+            e.preventDefault();
+            window.location.reload();
+          }}
+        >
+          Refesh
+        </Button>
+      </div>
+
+      <div className="px-8 pt-2 pb-6 max-w-500 m-auto">
         {posts &&
           posts.length > 0 &&
           posts.map((post, index) => <PostWrapper key={post.id} post={post} />)}
