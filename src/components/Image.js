@@ -18,7 +18,7 @@ export const Image = ({ url, noFetch }) => {
     getImageUrl();
   }, [noFetch, url]);
 
-  useEffect(() => window.observer.observe(), []);
+  useEffect(() => window.observer.observe(), [imageUrl]);
 
   return (
     imageUrl && (
