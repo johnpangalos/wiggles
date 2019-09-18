@@ -16,7 +16,10 @@ export const Post = ({
   return (
     <Fade show={true} appear>
       <div
-        className={`flex flex-col bg-white shadow-md rounded px-2 pt-3 pb-4 w-full h-${size} max-w-${size}${
+        className={`
+          flex flex-col bg-white shadow-md 
+          rounded px-2 pt-3 pb-4 w-full xs:max-h-sm 
+          sm:max-h-500 max-h-xs h-${size} max-w-${size}${
           selectable ? ' cursor-pointer' : ''
         }${selected ? ' border-primary border-2' : ''}`}
       >
