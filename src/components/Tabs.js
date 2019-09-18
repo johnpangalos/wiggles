@@ -28,8 +28,4 @@ const TabItem = ({ text, active }) => (
   </Link>
 );
 
-export const TabContent = ({ component: Component }) => (
-  <div className="flex-grow">
-    <Component />
-  </div>
-);
+export const TabContent = ({ component: Component }) => <Component />;

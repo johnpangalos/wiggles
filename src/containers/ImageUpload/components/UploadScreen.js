@@ -13,9 +13,9 @@ export const UploadScreen = ({ handleImageChange, alert, dispatch }) => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center h-full w-full">
-      <div className="relative flex-grow w-full">
-        <div className="flex flex-col h-full justify-center items-center m-auto max-w-xs w-full text-center">
+    <div className="flex flex-col h-full">
+      <div className="flex flex-col items-center justify-center flex-auto h-0 relative">
+        <div className="max-w-xs w-full text-center">
           <div className="text-xl font-bold pb-2">Nothing to see here!</div>
           <div>When uploading an image a preview will show up here.</div>
         </div>

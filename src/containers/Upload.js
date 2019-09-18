@@ -41,11 +41,9 @@ export const Upload = ({ user, match }) => {
   const tabs = getTabs(user);
 
   return (
-    <div className="flex flex-col h-full w-full items-center overflow-y-hidden">
+    <div className="flex flex-col h-full">
       <Tabs tabs={tabs} currentTab={currentTab} />
-      <div className="flex flex-col max-w-lg h-full w-full overflow-y-hidden">
-        <TabContent component={tabs[currentTab].component} />
-      </div>
+      <TabContent component={tabs[currentTab].component} />
     </div>
   );
 };

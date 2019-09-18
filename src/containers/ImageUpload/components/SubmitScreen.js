@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
-import { Post, Button, Loading, Image } from '~/components';
+import { Post, Button, Image } from '~/components';
 import { constants } from '../store';
-import { Fade } from '~/components/transitions';
+//import { Fade } from '~/components/transitions';
 import { useMappedState } from 'redux-react-hook';
 
 // var rotation = {
@@ -27,41 +27,40 @@ export const SubmitScreen = ({
   const { imagePreview } = useMappedState(mapState);
 
   return (
-    <>
-      <Fade mountOnEnter unmountOnExit appear in={uploading}>
-        <div className="h-full w-full">
-          <Loading message={uploadMessage} />
-        </div>
-      </Fade>
-      <div className="flex flex-col justify-center items-center w-full h-full">
-        <div className="flex flex-grow items-center h-full max-w-500 w-full px-8">
-          <Post size={500}>
-            <Image url={imagePreview} noFetch />
-          </Post>
-        </div>
+    <div className="flex flex-col">
+      <div className="flex items-center max-w-500 w-full px-8">
+        <Post size={500}>
+          <Image url={imagePreview} noFetch />
+        </Post>
+      </div>
 
-        <div className="flex justify-end w-full py-3 pr-3">
-          <div className="pr-2">
-            <Button
-              onClick={() => {
-                dispatch({ type: constants.SHOW_UPLOAD });
-              }}
-            >
-              Cancel
-            </Button>
-          </div>
-          <div>
-            <Button
-              onClick={onSubmit()}
-              color="primary"
-              hoverColor="primary-dark"
-              dark="true"
-            >
-              Submit
-            </Button>
-          </div>
+      <div className="flex justify-end w-full py-3 pr-3">
+        <div className="pr-2">
+          <Button
+            onClick={() => {
+              dispatch({ type: constants.SHOW_UPLOAD });
+            }}
+          >
+            Cancel
+          </Button>
+        </div>
+        <div>
+          <Button
+            onClick={onSubmit()}
+            color="primary"
+            hoverColor="primary-dark"
+            dark="true"
+          >
+            Submit
+          </Button>
         </div>
       </div>
-    </>
+    </div>
   );
 };
+
+//<Fade mountOnEnter unmountOnExit appear in={uploading}>
+//<div className="h-full w-full">
+//<Loading message={uploadMessage} />
+//</div>
+//</Fade>
