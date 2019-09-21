@@ -2,6 +2,7 @@ import React, { useReducer, useCallback } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
 import { setFile } from '~/actions';
 import { Fade } from '~/components/transitions';
+import { Loading } from '~/components';
 import { initialState, constants, reducer, actions } from './store';
 import { UploadScreen, SubmitScreen } from './components';
 
@@ -23,15 +24,15 @@ export const ImageUpload = () => {
     dispatch({ type: constants.RESET });
 
     const eventFile = event.target.files[0];
-    // dispatch({ type: constants.SET_FILE, payload: eventFile });
+    dispatch({ type: constants.SET_FILE, payload: eventFile });
     const [imagePreview, orientation] = await Promise.all([
       actions.getUrlFromFile(eventFile),
       actions.getOrientation(eventFile)
     ]);
     dispatch2(setFile({ imagePreview, orientation, file: eventFile }));
     dispatch({ type: constants.SHOW_SUBMIT });
-    // dispatch({ type: constants.SET_IMAGE_PREVIEW, payload: url });
-    // dispatch({ type: constants.SET_ORIENTATION, payload: direction });
+    //dispatch({ type: constants.SET_IMAGE_PREVIEW, payload: url });
+    //dispatch({ type: constants.SET_ORIENTATION, payload: direction });
   };
 
   const onSubmit = () => async () => {
@@ -41,6 +42,7 @@ export const ImageUpload = () => {
     try {
       dispatch({ type: constants.SET_TIMESTAMP, payload: timestamp });
       await actions.uploadImage(file, user, timestamp);
+      dispatch({ type: constants.END_UPLOADING });
       dispatch({ type: constants.SHOW_UPLOAD });
       dispatch({ type: constants.SHOW_ALERT });
     } catch (error) {
@@ -52,10 +54,24 @@ export const ImageUpload = () => {
   return (
     <div className="flex flex-col max-w-lg h-full w-full m-auto overflow-y-hidden">
       <div className="flex-grow">
-        <Fade appear mountOnEnter unmountOnExit show={state.showSubmit}>
+        <Fade mountOnEnter unmountOnExit appear in={state.uploading}>
+          <div className="h-full w-full">
+            <Loading />
+          </div>
+        </Fade>
+        <Fade
+          appear
+          mountOnEnter
+          unmountOnExit
+          show={!state.uploading && state.showSubmit}
+        >
           <SubmitScreen state={state} dispatch={dispatch} onSubmit={onSubmit} />
         </Fade>
-        <Fade appear mountOnEnter unmountOnExit show={!state.showSubmit}>
+        <Fade
+          mountOnEnter
+          unmountOnExit
+          show={!state.showSubmit && !state.uploading}
+        >
           <UploadScreen
             alert={state.alert}
             dispatch={dispatch}

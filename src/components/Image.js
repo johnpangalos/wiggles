@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Fade } from '~/components/transitions';
 
-export const Image = ({ url, noFetch }) => {
+export const Image = ({ url, noFetch, style }) => {
   const [imageUrl, setImageUrl] = useState(null);
 
   useEffect(() => {
@@ -24,6 +24,7 @@ export const Image = ({ url, noFetch }) => {
     imageUrl && (
       <Fade show={true} appear>
         <div
+          style={style}
           className="w-full h-full bg-no-repeat bg-contain bg-center lozad"
           data-background-image={imageUrl}
         />
