@@ -22,8 +22,8 @@ export const SubmitScreen = ({ state: { uploading }, dispatch, onSubmit }) => {
   const { imagePreview, orientation } = useMappedState(mapState);
 
   return (
-    <div className="flex flex-col justify-center items-center w-full h-full">
-      <div className="flex flex-grow items-center h-full max-w-500 w-full px-8">
+    <>
+      <div className="flex justify-items items-center max-w-500 w-full px-8">
         <Post size={500}>
           <Image
             style={{ transform: rotation[orientation] }}
@@ -54,6 +54,6 @@ export const SubmitScreen = ({ state: { uploading }, dispatch, onSubmit }) => {
           </Button>
         </div>
       </div>
-    </div>
+    </>
   );
 };

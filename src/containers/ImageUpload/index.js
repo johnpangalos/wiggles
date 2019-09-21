@@ -52,33 +52,31 @@ export const ImageUpload = () => {
   };
 
   return (
-    <div className="flex flex-col max-w-lg h-full w-full m-auto overflow-y-hidden">
-      <div className="flex-grow">
-        <Fade mountOnEnter unmountOnExit appear in={state.uploading}>
-          <div className="h-full w-full">
-            <Loading />
-          </div>
-        </Fade>
-        <Fade
-          appear
-          mountOnEnter
-          unmountOnExit
-          show={!state.uploading && state.showSubmit}
-        >
-          <SubmitScreen state={state} dispatch={dispatch} onSubmit={onSubmit} />
-        </Fade>
-        <Fade
-          mountOnEnter
-          unmountOnExit
-          show={!state.showSubmit && !state.uploading}
-        >
-          <UploadScreen
-            alert={state.alert}
-            dispatch={dispatch}
-            handleImageChange={handleImageChange}
-          />
-        </Fade>
-      </div>
+    <div className="flex-auto h-0">
+      <Fade mountOnEnter unmountOnExit appear in={state.uploading}>
+        <div className="h-full w-full">
+          <Loading />
+        </div>
+      </Fade>
+      <Fade
+        appear
+        mountOnEnter
+        unmountOnExit
+        show={!state.uploading && state.showSubmit}
+      >
+        <SubmitScreen state={state} dispatch={dispatch} onSubmit={onSubmit} />
+      </Fade>
+      <Fade
+        mountOnEnter
+        unmountOnExit
+        show={!state.showSubmit && !state.uploading}
+      >
+        <UploadScreen
+          alert={state.alert}
+          dispatch={dispatch}
+          handleImageChange={handleImageChange}
+        />
+      </Fade>
     </div>
   );
 };

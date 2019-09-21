@@ -50,13 +50,10 @@ export default () => {
   };
 
   return (
-    <div
-      id="App"
-      className="h-full flex flex-col w-full items-center text-grey-darkest"
-    >
+    <div id="App" className="text-grey-darkest">
       <Router>
-        <div className="h-screen flex flex-col w-full">
-          <div className="h-full flex-grow w-full overflow-y-auto">
+        <div className="flex flex-col h-screen w-full">
+          <div className="h-0 flex-auto w-full overflow-y-auto">
             {loading ? (
               <Fade appear in={loading}>
                 <Loading />
