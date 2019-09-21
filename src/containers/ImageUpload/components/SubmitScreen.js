@@ -1,21 +1,16 @@
 import React, { useCallback } from 'react';
 import { Post, Button, Image } from '~/components';
 import { constants } from '../store';
-//import { Fade } from '~/components/transitions';
 import { useMappedState } from 'redux-react-hook';
 
-// var rotation = {
-// 1: 'rotate(0deg)',
-// 3: 'rotate(180deg)',
-// 6: 'rotate(90deg)',
-// 8: 'rotate(270deg)'
-// };
+var rotation = {
+  1: 'rotate(0deg)',
+  3: 'rotate(180deg)',
+  6: 'rotate(90deg)',
+  8: 'rotate(270deg)'
+};
 
-export const SubmitScreen = ({
-  state: { uploading, uploadMessage },
-  dispatch,
-  onSubmit
-}) => {
+export const SubmitScreen = ({ state: { uploading }, dispatch, onSubmit }) => {
   const mapState = useCallback(
     state => ({
       imagePreview: state.imageFile.imagePreview,
@@ -24,13 +19,17 @@ export const SubmitScreen = ({
     []
   );
   // add back in orientation
-  const { imagePreview } = useMappedState(mapState);
+  const { imagePreview, orientation } = useMappedState(mapState);
 
   return (
-    <div className="flex flex-col">
-      <div className="flex items-center max-w-500 w-full px-8">
+    <div className="flex flex-col h-full items-center">
+      <div className="flex-auto flex items-center max-w-500 w-full px-8">
         <Post size={500}>
-          <Image url={imagePreview} noFetch />
+          <Image
+            style={{ transform: rotation[orientation] }}
+            url={imagePreview}
+            noFetch
+          />
         </Post>
       </div>
 
@@ -58,9 +57,3 @@ export const SubmitScreen = ({
     </div>
   );
 };
-
-//<Fade mountOnEnter unmountOnExit appear in={uploading}>
-//<div className="h-full w-full">
-//<Loading message={uploadMessage} />
-//</div>
-//</Fade>
