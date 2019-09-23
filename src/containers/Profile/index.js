@@ -2,12 +2,23 @@ import React, { useEffect, useReducer } from 'react';
 import { Header, Thumbnails, SelectToolbar } from './components';
 import { initialState, reducer, constants } from './reducer';
 import { accountData, imageByUserSub } from './actions';
+import { addPosts, addImages, addQuotes } from '~/actions';
+import { useDispatch } from 'redux-react-hook';
+
+const firestoreToObject = ({ docs }) => {
+  const obj = {};
+  docs.forEach(doc => {
+    obj[doc.data().id] = doc.data();
+  });
+  return obj;
+};
 
 export const Profile = ({ signOut, user }) => {
   const [
     { account, loading, posts, selected, selectMode },
     dispatch
   ] = useReducer(reducer, initialState);
+  const dispatch2 = useDispatch();
 
   const handleClick = id => {
     if (!selectMode) return;
@@ -31,6 +42,27 @@ export const Profile = ({ signOut, user }) => {
       didCancel = true;
     };
   }, [user]);
+
+  useEffect(() => {
+    let didCancel = false;
+
+    const fetchPosts = async () => {
+      const collections = ['posts', 'quotes', 'images'];
+      const [posts, quotes, images] = await Promise.all(
+        collections.map(name => window.db.collection(name).get())
+      );
+      if (!didCancel) {
+        dispatch2(addPosts(firestoreToObject(posts)));
+        dispatch2(addImages(firestoreToObject(images)));
+        dispatch2(addQuotes(firestoreToObject(quotes)));
+      }
+    };
+
+    fetchPosts();
+    return () => {
+      didCancel = true;
+    };
+  }, [dispatch2]);
 
   useEffect(() => {
     if (!account.id) return;
