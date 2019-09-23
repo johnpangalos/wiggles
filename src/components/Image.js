@@ -1,34 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { Fade } from '~/components/transitions';
+/*global lozad*/
+import React, { useEffect } from 'react';
 
 export const Image = ({ url, noFetch, style }) => {
-  const [imageUrl, setImageUrl] = useState(null);
-
   useEffect(() => {
-    const getImageUrl = async () => {
+    const load = async el => {
+      const url = el.getAttribute('data-url');
+      if (noFetch) {
+        el.style.backgroundImage = `url('${url}')`;
+        return;
+      }
       var storage = window.firebase.storage();
-      const temp = await storage.ref(url).getDownloadURL();
-      setImageUrl(temp);
+      const image = await storage.ref(url).getDownloadURL();
+
+      el.classList.add('fadeIn', 'an-2s');
+      el.style.backgroundImage = `url('${image}')`;
     };
 
-    if (noFetch) {
-      setImageUrl(url);
-      return;
-    }
-    getImageUrl();
+    const observer = lozad('.lozad', {
+      load
+    });
+    observer.observe();
   }, [noFetch, url]);
 
-  useEffect(() => window.observer.observe(), [imageUrl]);
-
   return (
-    imageUrl && (
-      <Fade show={true} appear>
-        <div
-          style={style}
-          className="w-full h-full bg-no-repeat bg-contain bg-center lozad"
-          data-background-image={imageUrl}
-        />
-      </Fade>
-    )
+    <div
+      data-url={url}
+      style={style}
+      className="w-full h-full bg-no-repeat bg-contain bg-center lozad"
+    />
   );
 };
