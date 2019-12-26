@@ -39,7 +39,12 @@ export const PostWrapper = ({ post }) => {
   return (
     !!account && (
       <div className="pb-4">
-        <Post size="500" account={account} timestamp={post.timestamp}>
+        <Post
+          size="500"
+          id={post.refId}
+          account={account}
+          timestamp={post.timestamp}
+        >
           {post.type === 'image' && <ImageWrapper id={post.refId} />}
           {post.type === 'quote' && <QuoteWrapper id={post.refId} />}
         </Post>

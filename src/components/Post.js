@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useMappedState } from 'redux-react-hook';
 import { ProfileImage } from '~/components';
 import { Fade } from '~/components/transitions';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 export const Post = ({
   children,
@@ -9,9 +12,58 @@ export const Post = ({
   selected = false,
   selectable = false,
   handleClick = () => null,
-  account
+  account,
+  id
 }) => {
+  const [url, setUrl] = useState('');
   const date = new Date(Number(timestamp));
+  const mapState = useCallback(
+    state => ({
+      image: state.images[id]
+    }),
+    [id]
+  );
+
+  const { image } = useMappedState(mapState);
+  useEffect(() => {
+    const load = async () => {
+      const storage = window.firebase.storage();
+      setUrl(await storage.ref(image.path).getDownloadURL());
+    };
+    if (image) {
+      load();
+    }
+  }, [image]);
+
+  const forceDownload = (blob, filename) => {
+    var a = document.createElement('a');
+    a.download = filename;
+    a.href = blob;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  };
+
+  const downloadResource = (url, filename) => {
+    if (!filename)
+      filename = url
+        .split('\\')
+        .pop()
+        .split('/')
+        .pop();
+    fetch(url, {
+      headers: new Headers({
+        Origin: window.location.origin
+      }),
+      mode: 'cors'
+    })
+      .then(response => response.blob())
+      .then(blob => {
+        let blobUrl = window.URL.createObjectURL(blob);
+        forceDownload(blobUrl, filename);
+      })
+      .catch(e => console.error(e));
+  };
 
   return (
     <Fade show={true} appear>
@@ -34,10 +86,19 @@ export const Post = ({
             <div className="h-10 w-10">
               <ProfileImage url={account.photoURL} />
             </div>
-            <div className="pl-3">
+            <div className="flex-grow pl-3">
               <div className="text-xl font-bold">{account.displayName}</div>
               <div className="text-sm">Uploaded: {date.toLocaleString()}</div>
             </div>
+            {url && (
+              <FontAwesomeIcon
+                className="pb-1 self-center text-primary"
+                size="2x"
+                role="button"
+                icon={faDownload}
+                onClick={() => downloadResource(url)}
+              />
+            )}
           </div>
         )}
       </div>
