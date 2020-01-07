@@ -7,33 +7,38 @@
     "@fortawesome/free-brands-svg-icons": "^5.9.0",
     "@fortawesome/free-solid-svg-icons": "^5.9.0",
     "@fortawesome/react-fontawesome": "^0.1.4",
+    "@types/jest": "^24.0.25",
+    "@types/node": "^13.1.4",
+    "@types/react": "^16.9.17",
+    "@types/react-dom": "^16.9.4",
     "exif-js": "^2.3.0",
     "husky": "^3.0.0",
     "lint-staged": "^9.2.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-router-dom": "^5.0.0",
-    "react-scripts": "3.0.1",
+    "react-scripts": "3.3.0",
     "react-transition-group": "^4.0.0",
     "redux": "^4.0.1",
     "redux-logger": "^3.0.6",
     "redux-react-hook": "^3.3.2",
     "tinycolor2": "^1.4.1",
+    "typescript": "^3.7.4",
     "uuid": "^3.3.2"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-      "eslint ./ --fix",
+      "prettier --write",
       "git add"
     ]
   },
   "scripts": {
     "build:css": "postcss src/styles/index.css -o src/tailwind.css",
     "watch:css": "postcss src/styles/index.css -o src/tailwind.css -w",
-    "start": "yarn run watch:css & cross-env BROWSER=none react-app-rewired start",
-    "build": "yarn run build:css && react-app-rewired build",
-    "test": "react-app-rewired test --verbose=false",
-    "eject": "react-app-rewired eject",
+    "start": "yarn run watch:css & react-scripts start",
+    "build": "yarn run build:css && react-scripts build",
+    "test": "react-scripts test --verbose=false",
+    "eject": "react-scripts eject",
     "lint": "eslint ./ --fix"
   },
   "browserslist": [
@@ -53,7 +58,6 @@
     "eslint-plugin-prettier": "^3.1.0",
     "postcss-cli": "^6.1.2",
     "prettier": "^1.18.2",
-    "react-app-rewired": "^2.1.1",
     "tailwindcss": "^0.7.4"
   },
   "husky": {
