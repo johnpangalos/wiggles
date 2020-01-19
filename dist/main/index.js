@@ -1,0 +1,1 @@
+var b=a({},require("react")),c=a({},require("react-dom"));function a(e,r){return Object.keys(r).forEach((function(t){"default"!==t&&"__esModule"!==t&&Object.defineProperty(e,t,{enumerable:!0,get:function(){return r[t]}})})),e}c.render(b.createElement("div",null,"Hello World"),document.getElementById("app"));
