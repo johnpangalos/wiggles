@@ -15,6 +15,8 @@
     "react-router-dom": "^5.0.0",
     "react-scripts": "3.0.1",
     "react-transition-group": "^4.0.0",
+    "react-virtualized-auto-sizer": "^1.0.2",
+    "react-window": "^1.8.5",
     "redux": "^4.0.1",
     "redux-logger": "^3.0.6",
     "redux-react-hook": "^3.3.2",
@@ -30,7 +32,7 @@
   "scripts": {
     "build:css": "postcss src/styles/index.css -o src/tailwind.css",
     "watch:css": "postcss src/styles/index.css -o src/tailwind.css -w",
-    "start": "yarn run watch:css & cross-env BROWSER=none react-app-rewired start",
+    "start": "yarn run build:css && cross-env BROWSER=none react-app-rewired start",
     "build": "yarn run build:css && react-app-rewired build",
     "test": "react-app-rewired test --verbose=false",
     "eject": "react-app-rewired eject",

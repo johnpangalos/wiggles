@@ -1,8 +1,10 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, memo } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
 import { Button } from '~/components';
 import { addPosts, addImages, addQuotes } from '~/actions';
 import { PostWrapper } from './PostWrapper';
+import { VariableSizeList as List } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
 
 const firestoreToObject = ({ docs }) => {
   const obj = {};
@@ -12,6 +14,18 @@ const firestoreToObject = ({ docs }) => {
   return obj;
 };
 
+const ListItem = memo(({ data, index, style }) => {
+  const post = data[index];
+  return (
+    <div style={style}>
+      <PostWrapper key={post.id} post={post} />
+    </div>
+  );
+});
+
+const convertRemToPixels = rem => {
+  return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+};
 export const Feed = () => {
   const mapState = useCallback(
     state => ({
@@ -48,7 +62,7 @@ export const Feed = () => {
   }, [dispatch]);
 
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full flex flex-col">
       <div className="w-full flex p-2">
         <div className="flex-grow" />
         <Button
@@ -64,10 +78,30 @@ export const Feed = () => {
         </Button>
       </div>
 
-      <div className="px-8 pt-2 pb-6 max-w-500 m-auto">
-        {posts &&
-          posts.length > 0 &&
-          posts.map((post, index) => <PostWrapper key={post.id} post={post} />)}
+      <div className="pt-2 w-full flex-grow">
+        {posts && (
+          <AutoSizer>
+            {({ height, width }) => (
+              <List
+                itemData={posts}
+                height={height}
+                width={width}
+                itemCount={posts.length}
+                itemSize={() => {
+                  if (window.screen.width > 500) return 530;
+                  if (window.screen.width > 383 && window.screen.width <= 500)
+                    return window.screen.width + convertRemToPixels(1);
+                  if (window.screen.width > 340 && window.screen.width <= 383)
+                    return window.screen.width + convertRemToPixels(2.5);
+                  return window.screen.width + convertRemToPixels(1.5);
+                }}
+                overscanCount={3}
+              >
+                {ListItem}
+              </List>
+            )}
+          </AutoSizer>
+        )}
       </div>
     </div>
   );
