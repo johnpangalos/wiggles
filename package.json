@@ -7,6 +7,7 @@
     "@fortawesome/free-brands-svg-icons": "^5.9.0",
     "@fortawesome/free-solid-svg-icons": "^5.9.0",
     "@fortawesome/react-fontawesome": "^0.1.4",
+    "@sentry/browser": "^5.11.1",
     "exif-js": "^2.3.0",
     "husky": "^3.0.0",
     "lint-staged": "^9.2.0",
