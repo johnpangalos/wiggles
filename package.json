@@ -1,32 +1,25 @@
 {
   "name": "wiggles",
   "version": "1.0.0",
-  "main": "dist/main/index.js",
-  "browserModern": "dist/modern/index.js",
   "repository": "git@github.com:johnny88/wiggles.git",
   "author": "John Pangalos <jpangs88@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "parcel index.html",
-    "build": "parcel build index.tsx"
-  },
-  "targets": {
-    "browserModern": {
-      "engines": {
-        "browsers": [
-          "> 1%",
-          "not dead"
-        ]
-      }
-    }
+    "start": "parcel public/index.html",
+    "build": "parcel build public/index.html"
   },
   "devDependencies": {
+    "@parcel/core": "^2.0.0-alpha.3.2",
     "@types/react": "^16.9.17",
     "@types/react-dom": "^16.9.4",
-    "parcel": "^2.0.0-alpha.3.2", 
-    "@parcel/core": "^2.0.0-alpha.3.2"
+    "autoprefixer": "^9.7.4",
+    "postcss-import": "^12.0.1",
+    "tailwindcss": "^1.1.4",
+    "typescript": "^3.7.5"
   },
   "dependencies": {
+    "classnames": "^2.2.6",
+    "parcel": "^1.12.4",
     "react": "^16.12.0",
     "react-dom": "^16.12.0"
   }
