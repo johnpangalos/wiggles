@@ -1,9 +1,13 @@
 {
   "compilerOptions": {
+    "allowJs": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "allowSyntheticDefaultImports": true,
     "jsx": "react",
-    "baseUrl": "./src",
-    "esModuleInterop": true,
-    "typeRoots": ["node_modules/@types"]
+    "baseUrl": "./src"
   },
-  "include": ["src/**/*"]
+  "include": [
+    "src/**/*"
+  ]
 }
