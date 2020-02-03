@@ -1,31 +1,73 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import * as firebase from 'firebase/app';
 import { normalize, schema } from 'normalizr';
 
+enum PostType {
+  Image = 'image',
+  Quote = 'quote',
+  Video = 'video'
+}
+
+export type Post = {
+  id: string;
+  refId: string;
+  timestamp: string;
+  type: PostType;
+  userId: string;
+};
+
+type NormalizedPosts = {
+  [id: string]: Post;
+};
+
+type PostState = {
+  error: string;
+  loading: boolean;
+  data: NormalizedPosts;
+  start: string | null;
+  currentImageIds: Array<string>;
+};
+
+const initialState: PostState = {
+  error: null,
+  loading: false,
+  data: {},
+  start: null,
+  currentImageIds: []
+};
+
 const postSchema = new schema.Entity('posts');
 
-const pageSize = 10;
+export const pageSize = 10;
 
 const postSlice = createSlice({
   name: 'posts',
   reducers: {
-    add: (state, action) => ({
+    add: (state, action: PayloadAction<NormalizedPosts>) => ({
       ...state,
-      data: action.payload.posts
+      data: {
+        ...state.data,
+        ...action.payload
+      }
     }),
-    loading: (state, action) => ({ ...state, loading: action.payload }),
-    error: (state, action) => ({ ...state, error: action.payload }),
-    next: (state, action) => ({
+    setCurrentImageIds: (state, action: PayloadAction<Array<string>>) => ({
+      ...state,
+      currentImageIds: action.payload
+    }),
+    loading: (state, action: PayloadAction<boolean>) => ({
+      ...state,
+      loading: action.payload
+    }),
+    error: (state, action: PayloadAction<string>) => ({
+      ...state,
+      error: action.payload
+    }),
+    next: (state, action: PayloadAction<string>) => ({
       ...state,
       start: action.payload
     })
   },
-  initialState: {
-    error: null,
-    loading: false,
-    data: {},
-    start: ''
-  }
+  initialState
 });
 
 const baseQuery = () =>
@@ -49,7 +91,12 @@ const fetchPosts = () => async (dispatch, getState) => {
     const postData = data.docs.map(doc => doc.data());
     const normData = normalize(postData, [postSchema]);
 
-    dispatch(postSlice.actions.add(normData.entities));
+    dispatch(postSlice.actions.add(normData.entities.posts));
+    dispatch(
+      postSlice.actions.setCurrentImageIds(
+        Object.values(normData.entities.posts).map((post: Post) => post.refId)
+      )
+    );
     dispatch(postSlice.actions.loading(false));
   } catch (err) {
     console.error(err);
