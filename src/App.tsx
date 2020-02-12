@@ -28,7 +28,7 @@ const App = () => {
   if (currUser)
     return (
       <>
-        <div className="h-0 flex-auto overflow-y-auto">
+        <div className="h-0 flex-auto">
           <FeedRoute />
           <Upload />
         </div>

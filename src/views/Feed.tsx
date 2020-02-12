@@ -1,16 +1,34 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, MutableRefObject } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDownloadURL } from 'react-firebase-hooks/storage';
 import * as firebase from 'firebase/app';
 
 import { posts, images, Image, Post } from '../reducers';
-import { Button } from '../lib';
 
 export const FeedRoute = () => {
   const match = useRouteMatch('/');
   if (!match.isExact) return <div />;
   return <Feed />;
+};
+
+const useInfiniteScroll = (callback: Function): MutableRefObject<any> => {
+  const list = useRef(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const current: HTMLElement = list.current;
+      const { offsetHeight, scrollTop, scrollHeight } = current;
+      if (offsetHeight + scrollTop !== scrollHeight) return;
+      callback();
+    };
+
+    const current: HTMLElement = list.current;
+    current.addEventListener('scroll', handleScroll);
+    return () => current.removeEventListener('scroll', handleScroll);
+  }, [callback]);
+
+  return list;
 };
 
 const Feed = () => {
@@ -20,6 +38,16 @@ const Feed = () => {
   const loading = useSelector(
     state => state.posts.loading || state.images.loading
   );
+
+  const loadNext = (): void => {
+    const next = Math.min(
+      ...Object.values(data).map((item: any) => Number(item.timestamp))
+    );
+    dispatch(posts.actions.next(String(next)));
+  };
+
+  const list = useInfiniteScroll(loadNext);
+
   useEffect(() => {
     dispatch(posts.actions.fetchPosts());
   }, [dispatch, start]);
@@ -34,9 +62,8 @@ const Feed = () => {
     <>
       {error && <strong>Error: {JSON.stringify(error)}</strong>}
       {!error && (
-        <div className="h-full">
+        <div ref={list} className="h-full overflow-y-auto">
           <Posts />
-          {!loading && <LoadNext />}
         </div>
       )}
       {loading && <span>Loading...</span>}
@@ -51,31 +78,13 @@ const Posts = () => {
   }));
 
   return (
-    <>
+    <div>
       {Object.values(postData).map((post: Post) => (
         <React.Fragment key={post.id}>
           {images[post.refId] && <ImageComponent image={images[post.refId]} />}
         </React.Fragment>
       ))}
-    </>
-  );
-};
-
-const LoadNext = () => {
-  const postData = useSelector(state => state.posts.data);
-  const dispatch = useDispatch();
-  const next = Math.min(
-    ...Object.values(postData).map((item: any) => Number(item.timestamp))
-  );
-  return (
-    <Button
-      onClick={(): null => {
-        dispatch(posts.actions.next(String(next)));
-        return;
-      }}
-    >
-      Next
-    </Button>
+    </div>
   );
 };
 
