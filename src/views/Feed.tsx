@@ -62,7 +62,10 @@ const Feed = () => {
     <>
       {error && <strong>Error: {JSON.stringify(error)}</strong>}
       {!error && (
-        <div ref={list} className="h-full overflow-y-auto">
+        <div
+          ref={list}
+          className="h-full overflow-y-auto flex flex-col items-center"
+        >
           <Posts />
         </div>
       )}
@@ -78,13 +81,13 @@ const Posts = () => {
   }));
 
   return (
-    <div>
+    <>
       {Object.values(postData).map((post: Post) => (
         <React.Fragment key={post.id}>
           {images[post.refId] && <ImageComponent image={images[post.refId]} />}
         </React.Fragment>
       ))}
-    </div>
+    </>
   );
 };
 
@@ -98,11 +101,11 @@ const ImageComponent = (props: ImageProps) => {
   );
 
   return (
-    <div className="h-64 w-64 bg-gray-400">
+    <div className="h-500 w-500 bg-gray-400">
       {error && <strong>Error: {error}</strong>}
       {loading && <span>Loading...</span>}
       {!loading && value && (
-        <img className="h-64 w-full object-contain" alt={value} src={value} />
+        <img className="h-500 w-full object-contain" alt={value} src={value} />
       )}
     </div>
   );
