@@ -5,7 +5,10 @@
     "emitDecoratorMetadata": true,
     "allowSyntheticDefaultImports": true,
     "jsx": "react",
-    "baseUrl": "./src"
+    "baseUrl": "./src",
+    "paths": {
+      "~*": ["./*"]
+    }
   },
   "include": [
     "src/**/*"

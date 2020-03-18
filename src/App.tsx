@@ -1,5 +1,5 @@
 import React from 'react';
-import { BottomNav, Button } from './lib';
+import { BottomNav, Button } from '~/components';
 import { BrowserRouter as Router, useRouteMatch } from 'react-router-dom';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import * as firebase from 'firebase/app';
