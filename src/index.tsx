@@ -1,11 +1,19 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import * as Sentry from '@sentry/browser';
 import './tailwind.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { StoreContext } from 'redux-react-hook';
 import { store } from './store';
+
+declare global {
+  interface Window {
+    db: any;
+    observer: any;
+    lozad: any;
+  }
+}
 
 if (process.env.NODE_ENV === 'production') {
   Sentry.init({
