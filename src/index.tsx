@@ -26,18 +26,6 @@ if (process.env.NODE_ENV === 'production') {
 
 window.observer = window.lozad();
 
-document.documentElement.style.setProperty(
-  '--app-height',
-  `${window.innerHeight}px`
-);
-
-window.addEventListener('resize', () => {
-  document.documentElement.style.setProperty(
-    '--app-height',
-    `${window.innerHeight}px`
-  );
-});
-
 ReactDOM.render(
   <StoreContext.Provider value={store}>
     <App />
