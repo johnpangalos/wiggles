@@ -5,10 +5,10 @@ export const Button = ({
   className = '',
   onClick = () => null,
   color = 'transparent',
-  hoverColor = 'grey-light',
+  hoverColor = 'gray-400',
   dark = false
 }) => {
-  let textClass = dark ? 'text-white' : 'text-grey-darkest';
+  let textClass = dark ? 'text-white' : 'text-gray-800';
   return (
     <button
       onClick={event => onClick(event)}

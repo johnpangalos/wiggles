@@ -46,8 +46,8 @@ export const SubmitScreen = ({ state: { uploading }, dispatch, onSubmit }) => {
         <div>
           <Button
             onClick={onSubmit()}
-            color="primary"
-            hoverColor="primary-dark"
+            color="purple-600"
+            hoverColor="purple-600"
             dark="true"
           >
             Submit

@@ -73,10 +73,10 @@ export const Post = ({
           rounded px-2 pt-3 pb-4 w-full xs:max-h-sm 
           sm:max-h-500 max-h-xs m-auto h-${size} max-w-${size}${
           selectable ? ' cursor-pointer' : ''
-        }${selected ? ' border-primary border-2' : ''}`}
+        }${selected ? ' border-purple-600 border-2' : ''}`}
       >
         <div
-          className="flex flex-grow bg-secondary-dark p-1 rounded justify-center items-center h-full"
+          className="flex flex-grow bg-gray-300 p-1 rounded justify-center items-center h-full"
           onClick={() => handleClick()}
         >
           {children}
@@ -92,7 +92,7 @@ export const Post = ({
             </div>
             {url && (
               <FontAwesomeIcon
-                className="pb-1 self-center text-primary"
+                className="pb-1 self-center text-purple-600"
                 size="2x"
                 role="button"
                 icon={faDownload}

@@ -30,8 +30,8 @@ export const UploadScreen = ({ handleImageChange, alert, dispatch }) => {
 
       <div className="flex justify-center w-full pb-3">
         <CircleButton
-          color="primary"
-          hoverColor="primary-light"
+          color="purple-600"
+          hoverColor="purple-500"
           dark="true"
           onClick={event => handleClick(event)}
         >

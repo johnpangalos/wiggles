@@ -23,9 +23,6 @@ const ListItem = memo(({ data, index, style }) => {
   );
 });
 
-const convertRemToPixels = rem => {
-  return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
-};
 export const Feed = () => {
   const mapState = useCallback(
     state => ({
@@ -68,7 +65,7 @@ export const Feed = () => {
         <Button
           dark
           className=""
-          color="primary"
+          color="purple-600"
           onClick={e => {
             e.preventDefault();
             window.location.reload();
@@ -87,14 +84,7 @@ export const Feed = () => {
                 height={height}
                 width={width}
                 itemCount={posts.length}
-                itemSize={() => {
-                  if (window.screen.width > 500) return 530;
-                  if (window.screen.width > 383 && window.screen.width <= 500)
-                    return window.screen.width + convertRemToPixels(1);
-                  if (window.screen.width > 340 && window.screen.width <= 383)
-                    return window.screen.width + convertRemToPixels(2.5);
-                  return window.screen.width + convertRemToPixels(1.5);
-                }}
+                itemSize={() => 520}
                 overscanCount={3}
               >
                 {ListItem}
