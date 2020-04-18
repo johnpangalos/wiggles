@@ -52,7 +52,7 @@ export default () => {
   return (
     <div id="App" className="text-gray-800">
       <Router>
-        <div className="flex flex-col h-screen w-full">
+        <div className="flex flex-col min-h-screen w-full">
           <div className="flex-1 w-full overflow-y-auto overflow-x-hidden">
             {loading ? (
               <Fade appear in={loading}>
