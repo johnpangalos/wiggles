@@ -12,7 +12,7 @@ const typeColorMap = {
 
 const colorClasses = type => {
   const color = typeColorMap[type];
-  return `bg-${color}-lightest border-${color}-light text-${color}-dark`;
+  return `bg-${color}-100 border-${color}-400 text-${color}-600`;
 };
 
 export const Alert = ({ show, children, type = 'info', onClose }) => (
@@ -31,7 +31,7 @@ export const Alert = ({ show, children, type = 'info', onClose }) => (
             <FontAwesomeIcon
               onClick={onClose}
               role="button"
-              className={`text-2xl fill-current text${typeColorMap[type]}-dark`}
+              className={`text-2xl fill-current text${typeColorMap[type]}-600`}
               icon={faTimes}
             />
           )}

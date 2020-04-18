@@ -8,7 +8,7 @@ export const Toolbar = ({ showing, children }) => {
         <div className="h-16" />
       </SlideInDown>
       <SlideInDown timeout={300} mountOnEnter unmountOnExit show={showing}>
-        <div className="w-full py-3 bg-secondary absolute text-white text-primary">
+        <div className="w-full py-3 bg-gray-500 absolute text-white text-purple-600">
           <div className="max-w-lg m-auto">{children}</div>
         </div>
       </SlideInDown>

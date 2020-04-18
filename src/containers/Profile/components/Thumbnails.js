@@ -24,7 +24,7 @@ export const Thumbnails = ({
             <Menu
               id="images-menu"
               activator={() => (
-                <div className="flex justify-center items-center w-8 h-8 rounded-full hover:bg-grey-light p-1">
+                <div className="flex justify-center items-center w-8 h-8 rounded-full hover:bg-gray-400 p-1">
                   <FontAwesomeIcon
                     role="button"
                     className={`text-xl fill-current text`}
@@ -35,7 +35,7 @@ export const Thumbnails = ({
               items={[
                 ({ onClose }) => (
                   <div
-                    className="w-32 px-4 py-2 hover:bg-grey-light cursor-pointer"
+                    className="w-32 px-4 py-2 hover:bg-grey-400 cursor-pointer"
                     onClick={() => {
                       dispatch({
                         type: constants.SET_SELECT_MODE,
@@ -62,10 +62,7 @@ export const Thumbnails = ({
           {Object.values(posts)
             .sort((a, b) => Number(b.timestamp) - Number(a.timestamp))
             .map((post, index) => (
-              <div
-                key={post.id}
-                className="pb-2 w-1/2 xs:w-1/3 sm:w-1/4 lg:w-1/5 px-1"
-              >
+              <div key={post.id} className="pb-2 w-1/3 md:w-1/4 xl:w-1/5 px-1">
                 <Post
                   handleClick={() => handleClick(post.id)}
                   selectable={selectMode}

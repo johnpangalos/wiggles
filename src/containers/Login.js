@@ -28,15 +28,15 @@ const LoginModal = () => {
       <Loading />
     </div>
   ) : (
-    <div className="flex justify-center items-center h-full w-full px-5 bg-secondary-dark">
-      <div className="flex flex-col bg-grey-lightest p-4 sm:w-64 w-full shadow">
+    <div className="flex justify-center items-center h-full w-full px-5 bg-gray-600">
+      <div className="flex flex-col bg-gray-100 p-4 sm:w-64 w-full shadow">
         <div className="font-bold text-2xl pb-2">Please Login</div>
         <div className="text-xl pb-2 pb-6">
           Right now only Google login is supported.
         </div>
         <button
           onClick={() => handleClick()}
-          className="flex items-baseline bg-red py-2 text-xl text-white"
+          className="flex items-baseline bg-red-400 py-2 text-xl text-white"
         >
           <div className="px-3">
             <FontAwesomeIcon color="white" icon={faGoogle} />

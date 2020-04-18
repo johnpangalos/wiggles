@@ -50,13 +50,13 @@ export const Quotes = ({ user }) => {
           <div className="text-xl font-bold py-5">Quotes</div>
           <div className="flex flex-col flex-grow h-full">
             <label
-              className="block text-grey-darker text-sm font-bold pb-2"
+              className="block text-gray-700 text-sm font-bold pb-2"
               htmlFor="username"
             >
               Text
             </label>
             <textarea
-              className="resize-none shadow appearance-none border rounded w-full h-full py-2 px-3 text-grey-darker leading-tight focus:outline-none focus:shadow-outline"
+              className="resize-none shadow appearance-none border rounded w-full h-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               onChange={event => setText(event.target.value)}
               id="username"
               type="text"
@@ -68,8 +68,8 @@ export const Quotes = ({ user }) => {
             <div>
               <Button
                 onClick={onSubmit()}
-                color="primary"
-                hoverColor="primary-dark"
+                color="purple-600"
+                hoverColor="purple-600"
                 dark="true"
               >
                 Submit

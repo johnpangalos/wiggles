@@ -32,13 +32,13 @@ export const SnackBar = ({ show, text, action, actionText }) => {
         timeout={250}
         classNames={classNames}
       >
-        <div className="w-full h-full py-2 bg-grey-darkest text-white rounded">
+        <div className="w-full h-full py-2 bg-grey-800 text-white rounded">
           <div className="flex items-center w-full h-full">
             <div className="flex-grow pl-4">{text}</div>
             {actionText && (
               <div className="pr-4">
-                <Button onClick={() => action()} dark hoverColor="grey-darker">
-                  <span className="text-primary">{actionText}</span>
+                <Button onClick={() => action()} dark hoverColor="gray-800">
+                  <span className="text-purple-600">{actionText}</span>
                 </Button>
               </div>
             )}

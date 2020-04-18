@@ -16,8 +16,8 @@ export const Header = ({ account, signOut }) => (
 
     <div className="pt-1">
       <Button
-        color="primary"
-        hoverColor="primary-light"
+        color="purple-600"
+        hoverColor="purple-500"
         dark
         onClick={() => signOut()}
       >
