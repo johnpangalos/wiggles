@@ -15,7 +15,7 @@
     "react-dom": "^16.8.6",
     "react-feather": "^2.0.9",
     "react-router-dom": "^5.0.0",
-    "react-scripts": "3.4.1",
+    "react-scripts": "3.4.4",
     "react-transition-group": "^4.0.0",
     "react-virtualized-auto-sizer": "^1.0.2",
     "react-window": "^1.8.5",
@@ -49,9 +49,7 @@
   ],
   "devDependencies": {
     "autoprefixer": "^9.5.1",
-    "babel-plugin-root-import": "^6.1.0",
     "cross-env": "^5.2.0",
-    "customize-cra": "^0.2.12",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.12.1",
     "eslint-config-prettier": "^6.0.0",
