@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Button, Toolbar } from '~/components';
 import { constants } from '../reducer';
 import { deleteImages } from '../actions';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { Trash, X } from 'react-feather';
 
 export const SelectToolbar = ({ selected, dispatch, selectMode }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -29,7 +28,7 @@ export const SelectToolbar = ({ selected, dispatch, selectMode }) => {
         <div className="flex h-full items-center">
           <div className="pl-4">
             <div className="flex justify-center items-center w-8 h-8 rounded-full hover:bg-gray-600 p-1">
-              <FontAwesomeIcon
+              <X
                 onClick={() => {
                   dispatch({ type: constants.RESET_SELECTED });
                   dispatch({
@@ -39,7 +38,6 @@ export const SelectToolbar = ({ selected, dispatch, selectMode }) => {
                 }}
                 role="button"
                 className={`text-xl fill-current`}
-                icon={faTimes}
               />
             </div>
           </div>
@@ -48,11 +46,10 @@ export const SelectToolbar = ({ selected, dispatch, selectMode }) => {
           </div>
           <div className="pr-4">
             <div className="flex justify-center items-center w-8 h-8 rounded-full hover:bg-gray-600 p-1">
-              <FontAwesomeIcon
+              <Trash
                 onClick={() => setShowDeleteModal(true)}
                 role="button"
                 className={`text-xl fill-current`}
-                icon={faTrash}
               />
             </div>
           </div>

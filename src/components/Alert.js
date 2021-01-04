@@ -1,6 +1,5 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { X } from 'react-feather';
 import { SlideUp } from '~/components/transitions';
 
 const typeColorMap = {
@@ -28,11 +27,10 @@ export const Alert = ({ show, children, type = 'info', onClose }) => (
           <div className="flex-grow">{children}</div>
 
           {onClose && (
-            <FontAwesomeIcon
+            <X
               onClick={onClose}
               role="button"
               className={`text-2xl fill-current text${typeColorMap[type]}-600`}
-              icon={faTimes}
             />
           )}
         </div>
