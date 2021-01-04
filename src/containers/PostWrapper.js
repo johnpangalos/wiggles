@@ -1,8 +1,8 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
 
-import { addAccount } from '~/actions';
-import { Post } from '~/components';
+import { addAccount } from '../actions';
+import { Post } from '../components';
 import { QuoteWrapper } from './QuoteWrapper';
 import { ImageWrapper } from './ImageWrapper';
 

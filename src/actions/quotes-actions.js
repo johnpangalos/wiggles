@@ -1,4 +1,4 @@
-import { constants } from '~/constants';
+import { constants } from '../constants';
 
 export const addQuotes = payload => ({
   type: constants.ADD_QUOTES,

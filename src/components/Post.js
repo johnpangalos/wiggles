@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useMappedState } from 'redux-react-hook';
-import { ProfileImage } from '~/components';
-import { Fade } from '~/components/transitions';
 import { Download } from 'react-feather';
+import { ProfileImage } from '../components';
+import { Fade } from '../components/transitions';
 
 export const Post = ({
   children,

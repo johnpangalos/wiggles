@@ -1,4 +1,4 @@
-import { constants } from '~/constants';
+import { constants } from '../constants';
 
 export const addPosts = posts => ({
   type: constants.ADD_POSTS,

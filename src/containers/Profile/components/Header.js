@@ -1,5 +1,5 @@
 import React from 'react';
-import { ProfileImage, Button } from '~/components';
+import { ProfileImage, Button } from '../../../components';
 
 export const Header = ({ account, signOut }) => (
   <div className="flex w-full">

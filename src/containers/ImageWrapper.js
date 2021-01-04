@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useMappedState } from 'redux-react-hook';
-import { Image } from '~/components';
+import { Image } from '../components';
 
 export const ImageWrapper = ({ id, thumb = false }) => {
   const mapState = useCallback(

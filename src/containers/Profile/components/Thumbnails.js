@@ -3,7 +3,7 @@ import { MoreVertical } from 'react-feather';
 
 import { ImageWrapper } from '../../ImageWrapper';
 import { QuoteWrapper } from '../../QuoteWrapper';
-import { Post, Loading, Menu } from '~/components';
+import { Post, Loading, Menu } from '../../../components';
 import { constants } from '../reducer';
 
 export const Thumbnails = ({

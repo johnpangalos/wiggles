@@ -1,8 +1,8 @@
 import React, { useEffect, useCallback } from 'react';
-import { setMediaTab } from '~/actions';
+import { setMediaTab } from '../actions';
 import { useDispatch, useMappedState } from 'redux-react-hook';
-import { ImageUpload, Quotes } from '~/containers';
-import { Tabs, TabContent } from '~/components';
+import { ImageUpload, Quotes } from '../containers';
+import { Tabs, TabContent } from '../components';
 
 const getTabs = user => ({
   images: {

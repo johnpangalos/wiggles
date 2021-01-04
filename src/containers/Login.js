@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Redirect, withRouter } from 'react-router-dom';
 
-import { Loading } from '~/components';
+import { Loading } from '../components';
 
 const getFirebaseToken = () => {
   window.firebase.auth().useDeviceLanguage();

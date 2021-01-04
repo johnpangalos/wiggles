@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Post, Button, Image } from '~/components';
+import { Post, Button, Image } from '../../../components';
 import { constants } from '../store';
 import { useMappedState } from 'redux-react-hook';
 

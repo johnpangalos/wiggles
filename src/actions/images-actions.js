@@ -1,4 +1,4 @@
-import { constants } from '~/constants';
+import { constants } from '../constants';
 
 export const addImages = payload => ({
   type: constants.ADD_IMAGES,

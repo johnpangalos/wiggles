@@ -1,6 +1,6 @@
 import React from 'react';
+import { SlideUp } from '../components/transitions';
 import { X } from 'react-feather';
-import { SlideUp } from '~/components/transitions';
 
 const typeColorMap = {
   info: 'blue',
