@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCameraRetro } from '@fortawesome/free-solid-svg-icons';
-import { SnackBar, CircleButton } from '~/components';
+import { SnackBar, CircleButton } from '../../../components/index';
 import { constants } from '../store';
 
 export const UploadScreen = ({ handleImageChange, alert, dispatch }) => {

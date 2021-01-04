@@ -1,8 +1,8 @@
 import React, { useReducer, useCallback } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
-import { setFile } from '~/actions';
-import { Fade } from '~/components/transitions';
-import { Loading } from '~/components';
+import { setFile } from '../../actions';
+import { Fade } from '../../components/transitions';
+import { Loading } from '../../components';
 import { initialState, constants, reducer, actions } from './store';
 import { UploadScreen, SubmitScreen } from './components';
 

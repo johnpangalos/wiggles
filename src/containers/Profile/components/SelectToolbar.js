@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Button, Toolbar } from '~/components';
+import { Modal, Button, Toolbar } from '../../../components';
 import { constants } from '../reducer';
 import { deleteImages } from '../actions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

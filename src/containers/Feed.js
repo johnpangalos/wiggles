@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, memo } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
-import { Button } from '~/components';
-import { addPosts, addImages, addQuotes } from '~/actions';
+import { Button } from '../components';
+import { addPosts, addImages, addQuotes } from '../actions';
 import { PostWrapper } from './PostWrapper';
 import { VariableSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';

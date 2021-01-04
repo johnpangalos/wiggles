@@ -8,10 +8,10 @@ import {
 import { matchPath } from 'react-router';
 import { useDispatch } from 'redux-react-hook';
 
-import { constants } from '~/constants';
-import { Loading, BottomNavigation } from '~/components';
-import { Fade } from '~/components/transitions';
-import { Login, Upload, Feed, Profile } from '~/containers';
+import { constants } from './constants';
+import { Loading, BottomNavigation } from './components';
+import { Fade } from './components/transitions';
+import { Login, Upload, Feed, Profile } from './containers';
 
 export default () => {
   const [user, setUser] = useState(null);

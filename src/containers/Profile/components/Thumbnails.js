@@ -4,7 +4,7 @@ import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 
 import { ImageWrapper } from '../../ImageWrapper';
 import { QuoteWrapper } from '../../QuoteWrapper';
-import { Post, Loading, Menu } from '~/components';
+import { Post, Loading, Menu } from '../../../components';
 import { constants } from '../reducer';
 
 export const Thumbnails = ({

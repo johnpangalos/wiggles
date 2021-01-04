@@ -2,7 +2,7 @@ import React, { useEffect, useReducer } from 'react';
 import { Header, Thumbnails, SelectToolbar } from './components';
 import { initialState, reducer, constants } from './reducer';
 import { accountData, imageByUserSub } from './actions';
-import { addPosts, addImages, addQuotes } from '~/actions';
+import { addPosts, addImages, addQuotes } from '../../actions';
 import { useDispatch } from 'redux-react-hook';
 
 const firestoreToObject = ({ docs }) => {

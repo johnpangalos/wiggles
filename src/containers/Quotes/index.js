@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import uuidv4 from 'uuid/v4';
 
-import { Button, SnackBar } from '~/components';
-import { Fade } from '~/components/transitions';
+import { Button, SnackBar } from '../../components';
+import { Fade } from '../../components/transitions';
 
 export const Quotes = ({ user }) => {
   const [text, setText] = useState('');

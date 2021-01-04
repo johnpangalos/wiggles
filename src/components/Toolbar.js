@@ -1,5 +1,5 @@
 import React from 'react';
-import { SlideInDown } from '~/components/transitions';
+import { SlideInDown } from '../components/transitions';
 
 export const Toolbar = ({ showing, children }) => {
   return (

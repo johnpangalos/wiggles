@@ -1,5 +1,5 @@
 import EXIF from 'exif-js';
-import { getExtenstion } from '~/utils';
+import { getExtenstion } from '../../utils';
 
 export const initialState = {
   showSubmit: false,

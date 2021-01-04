@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
-import { Button } from '~/components';
+import { Button } from '../components';
 
 const classNames = {
   appear: 'visible',

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { Redirect, withRouter } from 'react-router-dom';
 
-import { Loading } from '~/components';
+import { Loading } from '../components';
 
 const getFirebaseToken = () => {
   window.firebase.auth().useDeviceLanguage();

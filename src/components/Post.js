@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useMappedState } from 'redux-react-hook';
-import { ProfileImage } from '~/components';
-import { Fade } from '~/components/transitions';
+import { ProfileImage } from '../components';
+import { Fade } from '../components/transitions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
