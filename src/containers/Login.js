@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { Redirect, withRouter } from 'react-router-dom';
 
 import { Loading } from '../components';
@@ -38,9 +36,6 @@ const LoginModal = () => {
           onClick={() => handleClick()}
           className="flex items-baseline bg-red-400 py-2 text-xl text-white"
         >
-          <div className="px-3">
-            <FontAwesomeIcon color="white" icon={faGoogle} />
-          </div>
           <div>Login with Google</div>
         </button>
       </div>

@@ -1,6 +1,5 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
+import { MoreVertical } from 'react-feather';
 
 import { ImageWrapper } from '../../ImageWrapper';
 import { QuoteWrapper } from '../../QuoteWrapper';
@@ -25,10 +24,9 @@ export const Thumbnails = ({
               id="images-menu"
               activator={() => (
                 <div className="flex justify-center items-center w-8 h-8 rounded-full hover:bg-gray-400 p-1">
-                  <FontAwesomeIcon
+                  <MoreVertical
                     role="button"
                     className={`text-xl fill-current text`}
-                    icon={faEllipsisV}
                   />
                 </div>
               )}

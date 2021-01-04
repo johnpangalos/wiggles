@@ -1,6 +1,5 @@
 import React, { useRef } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCameraRetro } from '@fortawesome/free-solid-svg-icons';
+import { Camera } from 'react-feather';
 import { SnackBar, CircleButton } from '../../../components/index';
 import { constants } from '../store';
 
@@ -35,7 +34,7 @@ export const UploadScreen = ({ handleImageChange, alert, dispatch }) => {
           dark="true"
           onClick={event => handleClick(event)}
         >
-          <FontAwesomeIcon role="button" size="2x" icon={faCameraRetro} />
+          <Camera role="button" />
         </CircleButton>
         <input
           className="hidden"

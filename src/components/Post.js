@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useMappedState } from 'redux-react-hook';
+import { Download } from 'react-feather';
 import { ProfileImage } from '../components';
 import { Fade } from '../components/transitions';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 export const Post = ({
   children,
@@ -91,11 +90,9 @@ export const Post = ({
               <div className="text-sm">Uploaded: {date.toLocaleString()}</div>
             </div>
             {url && (
-              <FontAwesomeIcon
+              <Download
                 className="pb-1 self-center text-purple-600"
-                size="2x"
                 role="button"
-                icon={faDownload}
                 onClick={() => downloadResource(url)}
               />
             )}
