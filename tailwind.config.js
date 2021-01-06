@@ -1,5 +1,5 @@
 module.exports = {
-  purge: ['./src/**/*.jsx', './src/**/*.tsx'],
+  purge: ['./src/**/*.js', './src/**/*.tsx'],
   theme: {},
   variants: {},
   plugins: []
