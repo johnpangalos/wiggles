@@ -29,3 +29,4 @@ yarn-error.log*
 # Generated tailwind css file
 src/tailwind.css
 
+.eslintcache

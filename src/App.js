@@ -12,8 +12,9 @@ import { constants } from './constants';
 import { Loading, BottomNavigation } from './components';
 import { Fade } from './components/transitions';
 import { Login, Upload, Feed, Profile } from './containers';
+import { hot } from 'react-hot-loader/root';
 
-export default () => {
+const App = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const distpatch = useDispatch();
@@ -145,3 +146,5 @@ const PrivateRoute = withRouter(
     );
   }
 );
+
+export default hot(App);

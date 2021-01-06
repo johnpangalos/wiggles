@@ -7,11 +7,11 @@
     "exif-js": "^2.3.0",
     "husky": "^3.0.0",
     "lint-staged": "^9.2.0",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
     "react-feather": "^2.0.9",
     "react-router-dom": "^5.0.0",
-    "react-scripts": "3.4.4",
+    "react-scripts": "4.0.1",
     "react-transition-group": "^4.0.0",
     "react-virtualized-auto-sizer": "^1.0.2",
     "react-window": "^1.8.5",
@@ -52,15 +52,20 @@
     "cross-env": "^5.2.0",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.12.1",
-    "eslint-config-prettier": "^6.0.0",
-    "eslint-plugin-prettier": "^3.1.0",
     "postcss-cli": "^6.1.2",
     "prettier": "^1.18.2",
+    "react-hot-loader": "^4.13.0",
     "tailwindcss": "^1.2.0"
   },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
     }
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   }
 }
