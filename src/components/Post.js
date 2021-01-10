@@ -7,7 +7,6 @@ import { Fade } from '../components/transitions';
 export const Post = ({
   children,
   timestamp = 0,
-  size,
   selected = false,
   selectable = false,
   handleClick = () => null,
@@ -70,9 +69,9 @@ export const Post = ({
         className={`
           flex flex-col bg-white shadow-md 
           rounded px-2 pt-3 pb-4 w-full xs:max-h-sm 
-          sm:max-h-500 max-h-xs m-auto h-${size} max-w-${size}${
-          selectable ? ' cursor-pointer' : ''
-        }${selected ? ' border-purple-600 border-2' : ''}`}
+          sm:max-h-500 max-h-xs m-auto h-32 max-w-32 ${
+            selectable ? ' cursor-pointer' : ''
+          }${selected ? ' border-purple-600 border-2' : ''}`}
       >
         <div
           className="flex flex-grow bg-gray-300 p-1 rounded justify-center items-center h-full"
