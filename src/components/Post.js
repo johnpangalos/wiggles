@@ -69,7 +69,7 @@ export const Post = ({
         className={`
           flex flex-col bg-white shadow-md 
           rounded px-2 pt-3 pb-4 w-full xs:max-h-sm 
-          sm:max-h-500 max-h-xs m-auto h-32 max-w-32 ${
+          sm:max-h-500 max-h-xs m-auto h-full max-w-xl ${
             selectable ? ' cursor-pointer' : ''
           }${selected ? ' border-purple-600 border-2' : ''}`}
       >
