@@ -12,6 +12,7 @@ declare global {
     db: any;
     observer: any;
     lozad: any;
+    firebase: any;
   }
 }
 

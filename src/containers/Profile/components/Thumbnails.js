@@ -60,7 +60,10 @@ export const Thumbnails = ({
           {Object.values(posts)
             .sort((a, b) => Number(b.timestamp) - Number(a.timestamp))
             .map((post, index) => (
-              <div key={post.id} className="pb-2 w-1/3 md:w-1/4 xl:w-1/5 px-1">
+              <div
+                key={post.id}
+                className="pb-2 w-1/3 md:w-1/4 xl:w-1/5 px-1 h-44 md:h-44 xl:h-32"
+              >
                 <Post
                   handleClick={() => handleClick(post.id)}
                   selectable={selectMode}
