@@ -67,3 +67,9 @@ node_modules/
 # vim temp files
 *.swp
 *.swo
+
+.snowpack
+build
+node_module
+
+functions/lib

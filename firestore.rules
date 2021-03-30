@@ -1,0 +1,25 @@
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /posts/{document=**} {
+      allow read, create: if request.auth.uid != null;
+      allow delete: if request.auth.uid == resource.data.userId;
+    }
+    match /quotes/{document=**} {
+      allow read, create: if request.auth.uid != null;
+      allow delete: if request.auth.uid == resource.data.userId;
+    }
+    match /images/{document=**} {
+      allow read, create: if request.auth.uid != null;
+      allow delete: if request.auth.uid == resource.data.userId;
+    }
+    match /accounts/{document=**} {
+      allow read, create: if request.auth.uid != null;
+    }
+    match /allowed-emails/{document=**} {
+      allow read: if request.auth.uid != null;
+    }
+    match /metadata/{document=**} {
+      allow read, create: if request.auth.uid != null;
+    }
+  }
+}

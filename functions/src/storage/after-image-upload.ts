@@ -1,9 +1,9 @@
-const functions = require("firebase-functions");
-const admin = require("firebase-admin");
-const uuidv4 = require("uuid/v4");
-const path = require("path");
+import * as functions from "firebase-functions";
+import * as admin from "firebase-admin";
+import { v4 as uuidv4 } from "uuid";
+import * as path from "path";
 
-const convertImage = require("./convertImage").convertImage;
+import { convertImage } from "./convert-image";
 
 const exitMessages = {
   OBJECT_DOESNT_EXIST: "Image object does not exist, exiting early.",
@@ -20,13 +20,14 @@ const statusMessages = {
 const THUMB_PREFIX = "thumb_";
 const WEB_PREFIX = "web_";
 
-exports.afterImageUpload = functions.storage
+export const afterImageUpload = functions.storage
   .object()
   .onFinalize(async (object) => {
     if (!object) return console.log(exitMessages.OBJECT_DOESNT_EXIST);
     if (!isObjectImage(object))
       return console.log(exitMessages.OBJECT_NOT_IMAGE);
 
+    if (object.name === undefined) throw new Error("File requires a name");
     const fileName = path.basename(object.name);
 
     if (startsWithPrefix([THUMB_PREFIX, WEB_PREFIX], fileName)) {
@@ -46,7 +47,7 @@ exports.afterImageUpload = functions.storage
       id,
       path: object.name,
       contentType: object.contentType,
-      userId: object.metadata.userId,
+      userId: object.metadata?.userId,
       timestamp,
       uploadFinished: false,
     };
@@ -64,30 +65,27 @@ exports.afterImageUpload = functions.storage
 
     if (!thumbnail || !web) return;
 
-    await imageRef.update({
+    const finishedUpdate = {
       thumbnail,
       web,
       status: statusMessages.FINISHED,
       uploadFinished: true,
-    });
+    };
+
+    await imageRef.update(finishedUpdate);
 
     await postRef.set({
       id: postId,
       refId: id,
       timestamp,
       type: "image",
-      userId: object.metadata.userId,
-      media: {
-        ...image,
-        thumbnail,
-        web,
-        status: statusMessages.FINISHED,
-        uploadFinished: true,
-      },
+      userId: object.metadata?.userId,
+      media: Object.assign(image, finishedUpdate),
     });
   });
 
-const isObjectImage = ({ contentType }) => contentType.startsWith("image/");
+const isObjectImage = ({ contentType }: functions.storage.ObjectMetadata) =>
+  contentType?.startsWith("image/");
 
-const startsWithPrefix = (prefixes, fileName) =>
+const startsWithPrefix = (prefixes: string[], fileName: string) =>
   prefixes.some((prefix) => fileName.startsWith(prefix));

@@ -1,9 +1,9 @@
-const functions = require("firebase-functions");
-const admin = require("firebase-admin");
+import * as functions from "firebase-functions";
+import * as admin from "firebase-admin";
 
-exports.onDeleteImage = functions.firestore
+export const onDeleteImage = functions.firestore
   .document("/images/{imageId}")
-  .onDelete(async snap => {
+  .onDelete(async (snap) => {
     const imageObj = snap.data();
     console.log("Deleting images for: ", imageObj.path);
 
@@ -15,7 +15,7 @@ exports.onDeleteImage = functions.firestore
     await Promise.all([
       mainFile.delete(),
       webFile.delete(),
-      thumbnailFile.delete()
+      thumbnailFile.delete(),
     ]);
 
     return;
