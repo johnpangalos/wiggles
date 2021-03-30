@@ -1,9 +1,10 @@
-const admin = require("firebase-admin");
-const mkdirp = require("mkdirp-promise");
-const spawn = require("child-process-promise").spawn;
-const os = require("os");
-const fs = require("fs");
-const path = require("path");
+import { storage } from "firebase-functions";
+import * as admin from "firebase-admin";
+import mkdirp from "mkdirp";
+import { spawn } from "child-process-promise";
+import * as os from "os";
+import * as fs from "fs";
+import * as path from "path";
 //
 // Max height and width of the thumbnail in pixels.
 const THUMB_MAX_HEIGHT = 200;
@@ -12,8 +13,13 @@ const THUMB_MAX_WIDTH = 200;
 const WEB_MAX_HEIGHT = 1080;
 const WEB_MAX_WIDTH = 1080;
 
-exports.convertImage = async (object, prefix, thumbnail = false) => {
+export const convertImage = async (
+  object: storage.ObjectMetadata,
+  prefix: string,
+  thumbnail = false
+): Promise<string> => {
   // File and directory paths.
+  if (object.name === undefined) throw new Error("File requires a name");
   const filePath = object.name;
   const contentType = object.contentType; // This is the image MIME type
   const fileDir = path.dirname(filePath);
@@ -30,7 +36,7 @@ exports.convertImage = async (object, prefix, thumbnail = false) => {
 
   const metadata = {
     contentType: contentType,
-    cacheControl: "public,max-age=31536000"
+    cacheControl: "public,max-age=31536000",
   };
 
   // Create the temp directory where the storage file will be downloaded.
@@ -46,14 +52,14 @@ exports.convertImage = async (object, prefix, thumbnail = false) => {
         "-thumbnail",
         `${THUMB_MAX_WIDTH}x${THUMB_MAX_HEIGHT}>`,
         "-auto-orient",
-        tempLocalConvertFile
+        tempLocalConvertFile,
       ]
     : [
         tempLocalFile,
         "-resize",
         `${WEB_MAX_WIDTH}x${WEB_MAX_HEIGHT}>`,
         "-auto-orient",
-        tempLocalConvertFile
+        tempLocalConvertFile,
       ];
 
   // Generate a thumbnail using ImageMagick.
@@ -63,7 +69,7 @@ exports.convertImage = async (object, prefix, thumbnail = false) => {
   // Uploading the Thumbnail.
   await bucket.upload(tempLocalConvertFile, {
     destination: convertFilePath,
-    metadata: metadata
+    metadata: metadata,
   });
   console.log("Thumbnail uploaded to Storage at", convertFilePath);
 

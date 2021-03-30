@@ -1,0 +1,17 @@
+{
+  "name": "wiggles",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JohnPangalos/wiggles.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JohnPangalos/wiggles/issues"
+  },
+  "homepage": "https://github.com/JohnPangalos/wiggles#readme"
+}
