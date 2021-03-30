@@ -48,7 +48,6 @@ importers:
       react: 17.0.1
       react-dom: 17.0.1_react@17.0.1
       react-feather: 2.0.9_react@17.0.1
-      react-router: 5.2.0_react@17.0.1
       react-router-dom: 5.2.0_react@17.0.1
       react-scripts: 4.0.1_typescript@3.9.9
       react-transition-group: 4.4.1_react-dom@17.0.1+react@17.0.1
@@ -74,7 +73,6 @@ importers:
       postcss-cli: 8.3.1_postcss@8.2.8
       prettier: 1.19.1
       react-hot-loader: 4.13.0_e7f679bb44e65acafae8c76daf044727
-      react-refresh: 0.9.0
       tailwindcss: 2.0.4_caf414ac65a978d0d57907a0ec9fb41e
     specifiers:
       '@sentry/browser': ^5.11.1
@@ -97,8 +95,6 @@ importers:
       react-dom: ^17.0.1
       react-feather: ^2.0.9
       react-hot-loader: ^4.13.0
-      react-refresh: ^0.9.0
-      react-router: ^5.2.0
       react-router-dom: ^5.0.0
       react-scripts: 4.0.1
       react-transition-group: ^4.0.0
@@ -12669,12 +12665,6 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha512-X8jZHc7nCMjaCqoU+V2I0cOhNW+QMBwSUkeXnTi8IPe6zaRWfn60ZzvFDZqWPfmSJfjub7dDW1SP0jaHWLu/hg==
-  /react-refresh/0.9.0:
-    dev: true
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha512-Gvzk7OZpiqKSkxsQvO/mbTN1poglhmAV7gR/DdIrRrSMXraRQQlfikRJOr3Nb9GTMPC5kof948Zy6jJZIFtDvQ==
   /react-router-dom/5.2.0_react@17.0.1:
     dependencies:
       '@babel/runtime': 7.13.10
