@@ -1,5 +1,6 @@
 {
   "name": "functions",
+  "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.ts .",
     "clean": "rimraf lib",
@@ -34,6 +35,5 @@
   },
   "engines": {
     "node": "14"
-  },
-  "private": true
+  }
 }
