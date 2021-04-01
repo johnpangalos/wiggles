@@ -1,7 +1,7 @@
 <script lang="ts">
   import firebase from "firebase/app";
   import Counter from "./lib/Counter.svelte";
-  import { Button, Loading, DarkModeToggle } from "./lib";
+  import { Button, Loading } from "./lib";
   const provider = new firebase.auth.GoogleAuthProvider();
   enum LogInState {
     LoggedIn,
@@ -34,9 +34,8 @@
   }
 </script>
 
-<main class:dark={}>
+<main class:dark={darkMode}>
   <div class="w-full h-screen text-gray-800">
-    <DarkModeToggle />
     {#if loginState === LogInState.LoggedOut}
       <div class="flex h-full items-center justify-center">
         <div class="flex flex-col bg-gray-100 p-6 rounded">
@@ -48,8 +47,11 @@
         </div>
       </div>
     {:else if loginState === LogInState.LoggedIn}
-      <Button on:click={logout}>Log out</Button>
-      <Counter />
+      <div class="flex flex-col w-full h-full justify-center items-center">
+        <div>
+          <Button on:click={logout}>Log out</Button>
+        </div>
+      </div>
     {:else}
       <div class="flex h-full items-center justify-center">
         <Loading />

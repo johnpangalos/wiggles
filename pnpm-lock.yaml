@@ -1,4 +1,5 @@
 dependencies:
+  feather-icons: 4.28.0
   firebase: 8.3.1
   firebaseui: 4.8.0_firebase@8.3.1
 lockfileVersion: 5.2
@@ -386,6 +387,15 @@ packages:
     dev: false
     resolution:
       integrity: sha1-+OcRMvf/5uAaXJaXpMbz5I1cyBk=
+  /classnames/2.2.6:
+    dev: false
+    resolution:
+      integrity: sha512-JR/iSQOSt+LQIWwrwEzJ9uk0xfN3mTVYMwt1Ir5mUcSN6pU+V4zQFFaJsclJbPuAUQH+yfWef6tm7l1quW3C8Q==
+  /core-js/3.10.0:
+    dev: false
+    requiresBuild: true
+    resolution:
+      integrity: sha512-MQx/7TLgmmDVamSyfE+O+5BHvG1aUGj/gHhLn1wVtm2B5u1eVIPvh7vkfjwWKNCjrTJB8+He99IntSQ1qP+vYQ==
   /core-js/3.6.5:
     dev: false
     requiresBuild: true
@@ -440,6 +450,13 @@ packages:
       node: '>=0.8.0'
     resolution:
       integrity: sha512-D2y4bovYpzziGgbHYtGCMjlJM36vAl/y+xUyn1C+FVx8szd1E+86KwVw6XvYSzOP8iMpm1X0I4xJD+QtUb36OA==
+  /feather-icons/4.28.0:
+    dependencies:
+      classnames: 2.2.6
+      core-js: 3.10.0
+    dev: false
+    resolution:
+      integrity: sha512-gRdqKESXRBUZn6Nl0VBq2wPHKRJgZz7yblrrc2lYsS6odkNFDnA4bqvrlEVRUPjE1tFax+0TdbJKZ31ziJuzjg==
   /firebase/8.3.1:
     dependencies:
       '@firebase/analytics': 0.6.6_bfa63c2138452f21358e95375813bd14
@@ -677,5 +694,6 @@ packages:
     resolution:
       integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==
 specifiers:
+  feather-icons: ^4.28.0
   firebase: ^8.3.1
   firebaseui: ^4.8.0

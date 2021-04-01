@@ -19,6 +19,7 @@
     "./*"
   ],
   "dependencies": {
+    "feather-icons": "^4.28.0",
     "firebase": "^8.3.1",
     "firebaseui": "^4.8.0"
   }
