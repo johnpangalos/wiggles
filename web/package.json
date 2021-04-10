@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@tailwindcss/jit": "^0.1.17",
-    "firebase": "^8.3.1",
+    "firebase": "^0.900.23",
     "svelte-feather-icons": "^3.3.0",
     "tailwindcss": "^2.0.4"
   }
