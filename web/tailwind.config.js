@@ -5,12 +5,10 @@ module.exports = {
     content: ["./src/**/*.html", "./src/**/*.svelte"],
 
     options: {
-      whitelistPatterns: [/svelte-/],
-      defaultExtractor: (content) =>
-        [...content.matchAll(/(?:class:)*([\w\d-/:%.]+)/gm)].map(
-          ([_match, group, ..._rest]) => group
-        ),
-      keyframes: true,
+      defaultExtractor: content => [
+        ...(content.match(/[^<>"'`\s]*[^<>"'`\s:]/g) || []),
+        ...(content.match(/(?<=class:)[^=>\/\s]*/g) || []),
+      ],
     },
   },
   darkMode: "class", // or 'media' or 'class'

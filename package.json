@@ -17,7 +17,8 @@
     "functions"
   ],
   "scripts": {
-    "dev:web": "npm run dev --workspace=web"
+    "dev:web": "npm run dev --workspace=web",
+    "build:web": "npm run build --workspace=web"
   },
   "devDependencies": {
     "husky": "^6.0.0"
