@@ -22,7 +22,7 @@
 </script>
 
 <main class:dark={isDarkMode}>
-  <div class="w-full h-screen text-gray-800 dark:bg-gray-800 dark:text-white">
+  <div class="w-full h-m-screen text-gray-800 dark:bg-gray-800 dark:text-white">
     {#if loginState === LogInState.LoggedOut}
       <Login />
     {:else if loginState === LogInState.LoggedIn}

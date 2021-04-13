@@ -2,6 +2,14 @@ import App from "./App.svelte";
 import "./index.css";
 import { initializeApp } from "firebase/app";
 
+let vh = window.innerHeight * 0.01;
+document.documentElement.style.setProperty("--vh", `${vh}px`);
+window.addEventListener("resize", () => {
+  // We execute the same script as before
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty("--vh", `${vh}px`);
+});
+
 initializeApp({
   apiKey: "AIzaSyDcx5xDlQS3ixEFF8mESoxUzTk9f56uQhA",
   authDomain: "wiggles-f0bd9.firebaseapp.com",
