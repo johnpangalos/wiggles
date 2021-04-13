@@ -1,17 +1,24 @@
-const colors = require('tailwindcss/colors');
-
 module.exports = {
-  purge: ['./src/**/*.js', './src/**/*.tsx'],
-  theme: {
-    screens: {
-      xs: '340px',
-      sm: '640px',
-      md: '768px',
-      lg: '1024px',
-      xl: '1280px',
-      '2xl': '1536px'
-    }
+  mode: "jit",
+  purge: {
+    mode: "all",
+    content: ["./src/**/*.html", "./src/**/*.svelte"],
+
+    options: {
+      whitelistPatterns: [/svelte-/],
+      defaultExtractor: (content) =>
+        [...content.matchAll(/(?:class:)*([\w\d-/:%.]+)/gm)].map(
+          ([_match, group, ..._rest]) => group
+        ),
+      keyframes: true,
+    },
   },
-  variants: {},
-  plugins: []
+  darkMode: "class", // or 'media' or 'class'
+  theme: {
+    extend: {},
+  },
+  variants: {
+    extend: {},
+  },
+  plugins: [],
 };

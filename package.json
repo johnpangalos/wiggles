@@ -1,6 +1,7 @@
 {
   "name": "wiggles",
   "version": "1.0.0",
+  "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,5 +14,13 @@
   "bugs": {
     "url": "https://github.com/JohnPangalos/wiggles/issues"
   },
-  "homepage": "https://github.com/JohnPangalos/wiggles#readme"
+  "homepage": "https://github.com/JohnPangalos/wiggles#readme",
+  "workspaces": [
+    "./*"
+  ],
+  "dependencies": {
+    "feather-icons": "^4.28.0",
+    "firebase": "^8.3.1",
+    "firebaseui": "^4.8.0"
+  }
 }
