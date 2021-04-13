@@ -1,25 +1,5 @@
-<script lang="ts" context="module">
-  export type Post = {
-    id: string;
-    media: {
-      contentType: string;
-      id: string;
-      path: string;
-      status: string;
-      thumbnail: string;
-      timestamp: string;
-      uploadFinished: boolean;
-      userId: string;
-      web: string;
-    };
-    refId: string;
-    timestamp: string;
-    type: string;
-    userId: string;
-  };
-</script>
-
 <script lang="ts">
+  import type { Post } from "../types";
   import { getApp } from "firebase/app";
   import { getAuth, signOut } from "firebase/auth";
   import {
@@ -28,43 +8,70 @@
     query,
     limit,
     orderBy,
-    /* startAfter, */
+    startAfter,
     getDocs,
-    /* QueryDocumentSnapshot, */
+    QueryDocumentSnapshot,
     QuerySnapshot,
   } from "firebase/firestore";
+  import { getStorage, ref, getDownloadURL } from "firebase/storage";
+
   import DarkModeToggle from "../lib/DarkModeToggle.svelte";
+  import PostList from "../lib/PostList.svelte";
   import Button, { Color, Variant } from "../lib/Button.svelte";
   import Loading from "../lib/Loading.svelte";
+
+  import { onMount } from "svelte";
 
   const firebaseApp = getApp();
   const auth = getAuth(firebaseApp);
   const db = getFirestore(firebaseApp);
+  const storage = getStorage(firebaseApp);
 
-  /* let lastVisible: QueryDocumentSnapshot<unknown> | undefined; */
+  let lastVisible: QueryDocumentSnapshot<Post> | undefined;
   let documentSnapshots: QuerySnapshot<Post>;
 
+  let urls: string[] = [];
   async function fetchPosts() {
-    const first = query(
+    if (lastVisible !== undefined) return;
+    const q = query(
       collection(db, "posts"),
       orderBy("timestamp", "desc"),
       limit(10)
     );
-    documentSnapshots = await getDocs<Post>(first);
-    /* console.log(documentSnapshots.docs.map(doc => doc.data())); */
-    /* lastVisible = documentSnapshots.docs[documentSnapshots.docs.length - 1]; */
+    documentSnapshots = await getDocs<Post>(q);
+    lastVisible = documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    urls = await Promise.all(
+      documentSnapshots.docs.map((doc) => {
+        const post = doc.data();
+        const imgRef = ref(storage, post.media.web);
+        return getDownloadURL(imgRef);
+      })
+    );
+  }
+
+  async function next() {
+    if (lastVisible === undefined) return;
+    const q = query(
+      collection(db, "posts"),
+      orderBy("timestamp", "desc"),
+      startAfter(lastVisible),
+      limit(10)
+    );
+    documentSnapshots = await getDocs<Post>(q);
+    lastVisible = documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    const nextUrls = await Promise.all(
+      documentSnapshots.docs.map((doc) => {
+        const post = doc.data();
+        const imgRef = ref(storage, post.media.web);
+        return getDownloadURL(imgRef);
+      })
+    );
+
+    urls = [...urls, ...nextUrls];
   }
 
   let promise = fetchPosts();
-
-  // console.log("last", lastVisible);
-
-  // const next = query(
-  //   collection(db, "cities"),
-  //   orderBy("population"),
-  //   startAfter(lastVisible),
-  //   limit(25)
-  // );
+  let promise2: Promise<void> = Promise.resolve();
 </script>
 
 {#await promise}
@@ -77,16 +84,23 @@
       <Button
         variant={Variant.Text}
         color={Color.Secondary}
-        on:click={() => signOut(auth)}>
+        on:click={() => signOut(auth)}
+      >
         Log out
       </Button>
       <DarkModeToggle />
     </div>
-    <div class="flex-1" />
-    {#each documentSnapshots.docs.map((doc) => doc.data()) as post}
-      <div>{post.media.web}</div>
-    {/each}
-    <div class="flex-1" />
+    <PostList
+      {urls}
+      callback={() => {
+        promise2 = next();
+      }}
+    />
+    {#await promise2}
+      Loading...
+    {/await}
+
+    <div class="pt-4" />
   </div>
   <!-- {:catch error}
 	<p style="color: red">{error.message}</p> -->
