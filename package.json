@@ -2,9 +2,6 @@
   "name": "wiggles",
   "version": "1.0.0",
   "private": true,
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/JohnPangalos/wiggles.git"
@@ -16,11 +13,13 @@
   },
   "homepage": "https://github.com/JohnPangalos/wiggles#readme",
   "workspaces": [
-    "./*"
+    "web",
+    "functions"
   ],
-  "dependencies": {
-    "feather-icons": "^4.28.0",
-    "firebase": "^8.3.1",
-    "firebaseui": "^4.8.0"
+  "scripts": {
+    "dev:web": "npm run dev --workspace=web"
+  },
+  "devDependencies": {
+    "husky": "^6.0.0"
   }
 }
