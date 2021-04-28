@@ -12,7 +12,6 @@
 
 <script lang="ts">
   import clsx from "clsx";
-
   function createClasses(variant: Variant, color: Color) {
     if (color === Color.Primary)
       return [

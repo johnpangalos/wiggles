@@ -18,9 +18,14 @@
   ],
   "scripts": {
     "dev:web": "npm run dev --workspace=web",
-    "build:web": "npm run build --workspace=web"
+    "build:web": "npm run build --workspace=web",
+    "lint:web": "eslint ./web/src/**/*.{svelte,ts}"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
+    "eslint": "^7.25.0",
+    "eslint-plugin-svelte3": "^3.2.0",
     "husky": "^6.0.0"
   }
 }
