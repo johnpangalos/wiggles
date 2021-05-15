@@ -58,4 +58,9 @@
     {/each}
   </div>
   <div id="end" />
+  {#if loading}
+    <div class="py-8">
+      <Loading />
+    </div>
+  {/if}
 </section>
