@@ -10,7 +10,6 @@
     },
     {
       root: document.querySelector("#post-list"),
-      threshold: 0.5,
     }
   );
 

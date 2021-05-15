@@ -10,6 +10,7 @@ export type Post = {
     uploadFinished: boolean;
     userId: string;
     web: string;
+    webUrl: string;
   };
   refId: string;
   timestamp: string;

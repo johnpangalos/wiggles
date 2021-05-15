@@ -1,5 +1,5 @@
-const path = require("path");
 module.exports = {
+  env: { browser: true, node: true },
   parser: "@typescript-eslint/parser", // add the TypeScript parser
   plugins: [
     "svelte3",
@@ -16,7 +16,7 @@ module.exports = {
   },
   parserOptions: {
     // add these parser options
-    tsconfigRootDir: path.join(__dirname, "web"),
+    tsconfigRootDir: __dirname,
     project: ["./tsconfig.json"],
     extraFileExtensions: [".svelte"],
   },

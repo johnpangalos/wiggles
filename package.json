@@ -17,13 +17,17 @@
     "functions"
   ],
   "scripts": {
-    "dev:web": "npm run dev --workspace=web",
+    "dev": "concurrently -c 'bgBlue.bold.black,bgGreen.bold.black,bgRed.bold.black' 'npm:web' 'npm:functions' 'npm:functions-watch'",
+    "web": "npm run dev --workspace=web",
+    "functions": "npm run serve --workspace=functions",
+    "functions-watch": "npm run watch --workspace=functions",
     "build:web": "npm run build --workspace=web",
     "lint:web": "eslint ./web/src/**/*.{svelte,ts}"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
+    "concurrently": "^6.1.0",
     "eslint": "^7.25.0",
     "eslint-plugin-svelte3": "^3.2.0",
     "husky": "^6.0.0"
