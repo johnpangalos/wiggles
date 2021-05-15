@@ -3,6 +3,7 @@
   import type { Post } from "../types";
   import { getPosts } from "../utils/api";
   import Image from "../lib/Image.svelte"
+  import Loading from "../lib/Loading.svelte"
 
   let loading = true;
   let posts: Post[] = [];
@@ -49,14 +50,12 @@
   });
 </script>
 
-<section class="container" id="scrollArea">
+<section class="flex flex-col items-center justify-center w-full pt-6 px-2" id="scrollArea">
+  <div class="font-bold text-2xl pb-6">Wiggle Room</div>
   <div class="space-y-3">
     {#each posts as post}
       <Image {post} />
     {/each}
   </div>
   <div id="end" />
-  {#if loading}
-    Loading...
-  {/if}
 </section>

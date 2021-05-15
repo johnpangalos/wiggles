@@ -13,9 +13,9 @@
 </script>
 
 <div
-  class="h-72 w-72 border border-gray-700 flex items-center justify-center p-4 bg-white"
+  class="max-w-lg shadow rounded-lg flex items-center justify-center overflow-hidden"
 >
-  <div class="h-full w-full relative">
+  <div class="h-full w-full relative px-4 py-5 sm:p-6">
     <div
       class={clsx("h-full w-full absolute", {
         "opacity-100 animate-pulse": !loaded,

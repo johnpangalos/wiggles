@@ -13,7 +13,7 @@ export async function getPosts(last?: string): Promise<Post[]> {
 
   const token = await auth.currentUser.getIdToken();
   const res = await fetch(
-    `${import.meta.env.VITE_API}/posts${last ? `?last=${last}` : ""}`,
+    `${import.meta.env.VITE_API}/posts?limit=24${last ? `&last=${last}` : ""}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
