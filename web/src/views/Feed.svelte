@@ -40,7 +40,7 @@
     try {
       const data = await getPosts();
       posts = [...posts, ...data];
-      lastPostId = data.reverse()[data.length - 1].id;
+      lastPostId = data[data.length - 1].id;
       observer.observe(document.querySelector("#end"));
       loading = false;
     } catch (error) {

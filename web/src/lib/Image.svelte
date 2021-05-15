@@ -12,19 +12,19 @@
   });
 </script>
 
-<div
-  class="max-w-lg shadow rounded-lg flex items-center justify-center overflow-hidden"
->
-  <div class="h-full w-full relative px-4 py-5 sm:p-6">
+<div class="shadow rounded-lg  px-4 py-5 sm:p-6">
+  <div class={clsx("h-72 w-72 sm:h-[30rem] sm:w-[30rem] relative", {
+    "overflow-hidden": !loaded
+  })}>
     <div
-      class={clsx("h-full w-full absolute", {
+      class={clsx("h-full w-full absolute bg-gray-200", {
         "opacity-100 animate-pulse": !loaded,
         "opacity-0": loaded,
       })}
     />
     <img
       bind:this={imgRef}
-      class={clsx("h-full w-full object-contain relative", {
+      class={clsx("h-full w-full object-contain relative bg-gray-200", {
         "opacity-0": !loaded,
         "opacity-100": loaded,
       })}
@@ -33,4 +33,5 @@
       alt={`cat-${post.id}`}
     />
   </div>
+
 </div>

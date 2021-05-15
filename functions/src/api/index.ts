@@ -6,7 +6,7 @@ import { validateToken } from "./validate-token";
 
 const app = express();
 const BUCKET_NAME = "gs://wiggles-f0bd9.appspot.com/";
-const corsWrapper = cors({ origin: true });
+// const corsWrapper = cors({ origin: true });
 
 export type Post = {
   id: string;
@@ -39,10 +39,9 @@ async function getPosts(req: Request, res: Response) {
 
   if (last !== undefined)
     lastSnap = await postCol.where("id", "==", last).get();
-
   let postRef = postCol.orderBy("timestamp", "desc").limit(limit);
 
-  if (lastSnap !== undefined) postRef = postRef.startAt(lastSnap.docs[0]);
+  if (lastSnap !== undefined) postRef = postRef.startAfter(lastSnap.docs[0]);
 
   const snaps = await postRef.get();
   const posts: Post[] = [];
@@ -77,8 +76,8 @@ async function getPosts(req: Request, res: Response) {
   });
 }
 
-app.use(corsWrapper);
+app.use(cors());
 app.use(validateToken);
 app.get("/posts", getPosts);
 
-export const api = functions.https.onRequest(app);
+export const api = functions.runWith({ memory: "2GB" }).https.onRequest(app);
