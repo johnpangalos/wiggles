@@ -21,6 +21,7 @@
     "build:web": "npm run build --workspace=web"
   },
   "devDependencies": {
-    "husky": "^6.0.0"
+    "husky": "^7.0.4",
+    "prettier": "^2.4.1"
   }
 }

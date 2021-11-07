@@ -1,107 +1,43 @@
 <script lang="ts">
-  import type { Post } from "../types";
-  import { getApp } from "firebase/app";
-  import { getAuth, signOut } from "firebase/auth";
-  import {
-    getFirestore,
-    collection,
-    query,
-    limit,
-    orderBy,
-    startAfter,
-    getDocs,
-    QueryDocumentSnapshot,
-    QuerySnapshot,
-  } from "firebase/firestore";
-  import { getStorage, ref, getDownloadURL } from "firebase/storage";
+  import { useInfiniteQuery } from "@sveltestack/svelte-query";
+  import { fetchPosts } from "@/firebase";
+  import Image from "@/lib/Image.svelte";
+  import InfiniteScroll from "@/lib/InfiniteScroll.svelte";
+  import Loading from "@/lib/Loading.svelte";
 
-  import DarkModeToggle from "../lib/DarkModeToggle.svelte";
-  import PostList from "../lib/PostList.svelte";
-  import Button, { Color, Variant } from "../lib/Button.svelte";
-  import Loading from "../lib/Loading.svelte";
+  let postSnapshots = useInfiniteQuery({
+    queryKey: "posts",
+    queryFn: fetchPosts,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.length < 10) return;
+      return lastPage[lastPage.length - 1];
+    },
+  });
 
-  import { onMount } from "svelte";
-
-  const firebaseApp = getApp();
-  const auth = getAuth(firebaseApp);
-  const db = getFirestore(firebaseApp);
-  const storage = getStorage(firebaseApp);
-
-  let lastVisible: QueryDocumentSnapshot<Post> | undefined;
-  let documentSnapshots: QuerySnapshot<Post>;
-
-  let urls: string[] = [];
-  async function fetchPosts() {
-    if (lastVisible !== undefined) return;
-    const q = query(
-      collection(db, "posts"),
-      orderBy("timestamp", "desc"),
-      limit(10)
-    );
-    documentSnapshots = await getDocs<Post>(q);
-    lastVisible = documentSnapshots.docs[documentSnapshots.docs.length - 1];
-    urls = await Promise.all(
-      documentSnapshots.docs.map((doc) => {
-        const post = doc.data();
-        const imgRef = ref(storage, post.media.web);
-        return getDownloadURL(imgRef);
-      })
-    );
+  function isLazy(pageIdx, docIdx): boolean {
+    return pageIdx > 0 || (pageIdx === 0 && docIdx > 2);
   }
-
-  async function next() {
-    if (lastVisible === undefined) return;
-    const q = query(
-      collection(db, "posts"),
-      orderBy("timestamp", "desc"),
-      startAfter(lastVisible),
-      limit(10)
-    );
-    documentSnapshots = await getDocs<Post>(q);
-    lastVisible = documentSnapshots.docs[documentSnapshots.docs.length - 1];
-    const nextUrls = await Promise.all(
-      documentSnapshots.docs.map((doc) => {
-        const post = doc.data();
-        const imgRef = ref(storage, post.media.web);
-        return getDownloadURL(imgRef);
-      })
-    );
-
-    urls = [...urls, ...nextUrls];
-  }
-
-  let promise = fetchPosts();
-  let promise2: Promise<void> = Promise.resolve();
 </script>
 
-{#await promise}
+{#if $postSnapshots.status === "loading"}
   <div class="flex items-center justify-center h-full">
     <Loading />
   </div>
-{:then}
-  <div class="flex flex-col items-center justify-center w-full h-full">
-    <div class="flex items-center justify-end w-full p-3 space-x-1">
-      <Button
-        variant={Variant.Text}
-        color={Color.Secondary}
-        on:click={() => signOut(auth)}
-      >
-        Log out
-      </Button>
-      <DarkModeToggle />
-    </div>
-    <PostList
-      {urls}
-      callback={() => {
-        promise2 = next();
-      }}
-    />
-    {#await promise2}
-      Loading...
-    {/await}
-
-    <div class="pt-4" />
+{:else if $postSnapshots.status === "error"}
+  <div>Error</div>
+{:else}
+  <div class="space-y-3 px-2 md:px-0 h-full overflow-y-scroll">
+    <InfiniteScroll
+      id={"post-list-end"}
+      callback={() => $postSnapshots.fetchNextPage()}
+    >
+      {#each $postSnapshots.data.pages as page, pageIdx}
+        {#each page as doc, docIdx}
+          {#await doc.data() then post}
+            <Image {post} lazy={isLazy(pageIdx, docIdx)} />
+          {/await}
+        {/each}
+      {/each}
+    </InfiniteScroll>
   </div>
-  <!-- {:catch error}
-	<p style="color: red">{error.message}</p> -->
-{/await}
+{/if}

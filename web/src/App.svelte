@@ -4,9 +4,9 @@
   import { getAuth, onAuthStateChanged } from "firebase/auth";
   import Feed from "./views/Feed.svelte";
   import Login from "./views/Login.svelte";
-
+  import { QueryClient, QueryClientProvider } from "@sveltestack/svelte-query";
   import { darkMode, loggedIn, LogInState } from "./stores";
-
+  const queryClient = new QueryClient();
   const firebaseApp = getApp();
   const auth = getAuth(firebaseApp);
 
@@ -26,7 +26,9 @@
     {#if loginState === LogInState.LoggedOut}
       <Login />
     {:else if loginState === LogInState.LoggedIn}
-      <Feed />
+      <QueryClientProvider client={queryClient}>
+        <Feed />
+      </QueryClientProvider>
     {:else}
       <div class="flex items-center justify-center h-full">
         <Loading />

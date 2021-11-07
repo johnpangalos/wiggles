@@ -1,7 +1,13 @@
 <script lang="ts">
+  import { getApp } from "firebase/app";
+  import { getStorage, ref, getDownloadURL } from "firebase/storage";
   import { onMount } from "svelte";
-  export let urls: string[];
+  import type { Post } from "@/types";
+  export let posts: Post[];
   export let callback: IntersectionObserverCallback;
+
+  const firebaseApp = getApp();
+  const storage = getStorage(firebaseApp);
 
   const observer = new IntersectionObserver(
     (...args) => {
@@ -22,12 +28,19 @@
 </script>
 
 <div id="post-list" class="w-full px-4 overflow-y-scroll space-y-4">
-  {#each urls as url}
+  {#each posts as post}
     <div class="flex justify-center w-full mx-auto">
       <div
         class="flex items-center justify-center w-[500px] h-[500px] max-w-lg p-4 bg-gray-200"
       >
-        <img class="object-contain h-full" src={url} alt={url} />
+        {#await getDownloadURL(ref(storage, post.media.web)) then url}
+          <img
+            class="object-contain h-full"
+            src={url}
+            loading="lazy"
+            alt={url}
+          />
+        {/await}
       </div>
     </div>
   {/each}
