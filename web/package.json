@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@sentry/browser": "^5.11.1",
+    "@vitejs/plugin-react": "^2.0.1",
     "exif-js": "^2.3.0",
     "husky": "^3.0.0",
     "lint-staged": "^9.2.0",
@@ -11,7 +12,6 @@
     "react-dom": "^17.0.1",
     "react-feather": "^2.0.9",
     "react-router-dom": "^5.0.0",
-    "react-scripts": "4.0.1",
     "react-transition-group": "^4.0.0",
     "react-virtualized-auto-sizer": "^1.0.2",
     "react-window": "^1.8.5",
@@ -20,7 +20,8 @@
     "redux-react-hook": "^3.3.2",
     "tinycolor2": "^1.4.1",
     "typescript": "^3.8.3",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "vite": "^3.0.7"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx,json}": [
@@ -29,12 +30,8 @@
     ]
   },
   "scripts": {
-    "build:css": "postcss src/styles/index.css -o src/tailwind.css",
-    "watch:css": "postcss src/styles/index.css -o src/tailwind.css -w",
-    "start": "yarn run build:css && cross-env BROWSER=none react-scripts start",
-    "build": "NODE_ENV=production yarn run build:css && react-scripts build",
-    "test": "react-scripts test --verbose=false",
-    "eject": "react-scripts eject",
+    "dev": "vite dev",
+    "build": "vite build",
     "lint": "eslint ./ --fix"
   },
   "browserslist": [

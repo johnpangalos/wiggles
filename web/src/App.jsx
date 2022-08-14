@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Route,
   Redirect,
-  withRouter
-} from 'react-router-dom';
-import { matchPath } from 'react-router';
-import { useDispatch } from 'redux-react-hook';
+  withRouter,
+} from "react-router-dom";
+import { matchPath } from "react-router-dom";
+import { useDispatch } from "redux-react-hook";
 
-import { constants } from './constants';
-import { Loading, BottomNavigation } from './components';
-import { Fade } from './components/transitions';
-import { Login, Feed, Profile } from './containers';
-import { Upload } from './pages/Upload';
+import { constants } from "./constants";
+import { Loading, BottomNavigation } from "./components";
+import { Fade } from "./components/transitions";
+import { Login, Feed, Profile } from "./containers";
+import { Upload } from "./pages/Upload";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -23,12 +23,12 @@ const App = () => {
     let callback = null;
     let metadataRef = null;
     let metadataUnsub = null;
-    const unsubscribe = window.firebase.auth().onAuthStateChanged(res => {
+    const unsubscribe = window.firebase.auth().onAuthStateChanged((res) => {
       if (callback && metadataUnsub) metadataUnsub();
 
       if (res) {
-        metadataRef = window.db.collection('metadata');
-        callback = async snapshot => {
+        metadataRef = window.db.collection("metadata");
+        callback = async (snapshot) => {
           res.getIdToken(true);
           const idToken = await window.firebase
             .auth()
@@ -65,8 +65,8 @@ const App = () => {
                   signOut={signOut}
                   user={user}
                   exact
-                  path={['/upload', '/upload/:currentTab']}
-                  component={args => <Upload user={user} {...args} />}
+                  path={["/upload", "/upload/:currentTab"]}
+                  component={(args) => <Upload user={user} {...args} />}
                 />
                 <PrivateRoute
                   exact
@@ -108,14 +108,14 @@ const PublicRoute = withRouter(
       appear
       in={locationEqualToPath(location.pathname, rest.path)}
     >
-      <Route {...rest} render={props => <Component {...props} />} />
+      <Route {...rest} render={(props) => <Component {...props} />} />
     </Fade>
   )
 );
 
 const locationEqualToPath = (name, path) => {
-  if (typeof path === 'string') return name === path;
-  return path.some(item => matchPath(name, item));
+  if (typeof path === "string") return name === path;
+  return path.some((item) => matchPath(name, item));
 };
 
 const PrivateRoute = withRouter(
@@ -123,7 +123,7 @@ const PrivateRoute = withRouter(
     return (
       <Route
         {...rest}
-        render={props =>
+        render={(props) =>
           user ? (
             <Fade
               mountOnEnter
@@ -136,8 +136,8 @@ const PrivateRoute = withRouter(
           ) : (
             <Redirect
               to={{
-                pathname: '/login',
-                state: { from: props.location }
+                pathname: "/login",
+                state: { from: props.location },
               }}
             />
           )
