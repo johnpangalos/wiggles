@@ -1,0 +1,20 @@
+name: Typecheck
+on: 
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+
+    name: Typecheck
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        uses: ./.github/actions/install-deps
+
+      - name: Typecheck
+        run: pnpm tsc
