@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import uuidv4 from 'uuid/v4';
+import React, { useState } from "react";
+import uuidv4 from "uuid/v4";
 
-import { Button, SnackBar } from '../../components';
-import { Fade } from '../../components/transitions';
+import { Button, SnackBar } from "../../components";
+import { Fade } from "../../components/transitions";
 
 export const Quotes = ({ user }) => {
-  const [text, setText] = useState('');
+  const [text, setText] = useState("");
   const [alert, setAlert] = useState(false);
   const onSubmit = () => async () => {
-    if (text === '') return;
+    if (text === "") return;
     const quoteId = uuidv4();
     const postId = uuidv4();
 
@@ -16,30 +16,24 @@ export const Quotes = ({ user }) => {
 
     try {
       await Promise.all([
-        window.db
-          .collection('quotes')
-          .doc(quoteId)
-          .set({
-            id: quoteId,
-            text,
-            timestamp,
-            userId: user.claims.sub
-          }),
-        window.db
-          .collection('posts')
-          .doc(postId)
-          .set({
-            id: postId,
-            refId: quoteId,
-            timestamp,
-            type: 'quote',
-            userId: user.claims.sub
-          })
+        window.db.collection("quotes").doc(quoteId).set({
+          id: quoteId,
+          text,
+          timestamp,
+          userId: user.claims.sub,
+        }),
+        window.db.collection("posts").doc(postId).set({
+          id: postId,
+          refId: quoteId,
+          timestamp,
+          type: "quote",
+          userId: user.claims.sub,
+        }),
       ]);
-      setAlert('Quote successfully added.');
+      setAlert("Quote successfully added.");
     } catch (err) {
       console.err(err);
-      setAlert('Error: Unable to add quote.');
+      setAlert("Error: Unable to add quote.");
     }
   };
 
@@ -57,7 +51,7 @@ export const Quotes = ({ user }) => {
             </label>
             <textarea
               className="resize-none shadow appearance-none border rounded w-full h-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              onChange={event => setText(event.target.value)}
+              onChange={(event) => setText(event.target.value)}
               id="username"
               type="text"
               placeholder="Enter quote text here"
@@ -66,14 +60,7 @@ export const Quotes = ({ user }) => {
 
           <div className="flex justify-end w-full py-3">
             <div>
-              <Button
-                onClick={onSubmit()}
-                color="purple-600"
-                hoverColor="purple-600"
-                dark="true"
-              >
-                Submit
-              </Button>
+              <Button onClick={onSubmit()}>Submit</Button>
             </div>
           </div>
         </div>

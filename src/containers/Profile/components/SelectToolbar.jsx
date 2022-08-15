@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Modal, Button, Toolbar } from '../../../components';
-import { constants } from '../reducer';
-import { deleteImages } from '../actions';
-import { Trash, X } from 'react-feather';
+import React, { useState } from "react";
+import { Modal, Button, Toolbar } from "../../../components";
+import { constants } from "../reducer";
+import { deleteImages } from "../actions";
+import { Trash, X } from "react-feather";
 
 export const SelectToolbar = ({ selected, dispatch, selectMode }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -15,7 +15,7 @@ export const SelectToolbar = ({ selected, dispatch, selectMode }) => {
       dispatch({ type: constants.RESET_SELECTED });
       dispatch({
         type: constants.SET_SELECT_MODE,
-        payload: false
+        payload: false,
       });
     } catch (err) {
       console.error(err);
@@ -33,7 +33,7 @@ export const SelectToolbar = ({ selected, dispatch, selectMode }) => {
                   dispatch({ type: constants.RESET_SELECTED });
                   dispatch({
                     type: constants.SET_SELECT_MODE,
-                    payload: false
+                    payload: false,
                   });
                 }}
                 role="button"
@@ -59,8 +59,12 @@ export const SelectToolbar = ({ selected, dispatch, selectMode }) => {
         <Modal>
           <div className="pt-2 px-2 pb-8">Delete {numImages} Image(s)?</div>
           <div className="flex justify-end">
-            <Button onClick={() => setShowDeleteModal(false)}>Cancel</Button>
-            <Button onClick={() => handleClick()}> Delete </Button>
+            <Button onClick={() => setShowDeleteModal(false)} variant="link">
+              Cancel
+            </Button>
+            <Button onClick={() => handleClick()} variant="primary">
+              Delete
+            </Button>
           </div>
         </Modal>
       )}

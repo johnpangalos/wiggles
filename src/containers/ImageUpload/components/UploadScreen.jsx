@@ -1,12 +1,12 @@
-import React, { useRef } from 'react';
-import { Camera } from 'react-feather';
-import { SnackBar, CircleButton } from '../../../components/index';
-import { constants } from '../store';
+import React, { useRef } from "react";
+import { Camera } from "react-feather";
+import { SnackBar, CircleButton } from "../../../components/index";
+import { constants } from "../store";
 
 export const UploadScreen = ({ handleImageChange, alert, dispatch }) => {
   const uploadImage = useRef(null);
 
-  const handleClick = event => {
+  const handleClick = (event) => {
     event.preventDefault();
     uploadImage.current.click();
   };
@@ -28,12 +28,7 @@ export const UploadScreen = ({ handleImageChange, alert, dispatch }) => {
       </div>
 
       <div className="flex justify-center w-full pb-3">
-        <CircleButton
-          color="purple-600"
-          hoverColor="purple-500"
-          dark="true"
-          onClick={event => handleClick(event)}
-        >
+        <CircleButton onClick={(event) => handleClick(event)}>
           <Camera role="button" />
         </CircleButton>
         <input

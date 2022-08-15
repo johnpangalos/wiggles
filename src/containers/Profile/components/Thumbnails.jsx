@@ -1,10 +1,10 @@
-import React from 'react';
-import { MoreVertical } from 'react-feather';
+import React from "react";
+import { MoreVertical } from "react-feather";
 
-import { ImageWrapper } from '../../ImageWrapper';
-import { QuoteWrapper } from '../../QuoteWrapper';
-import { Post, Loading, Menu } from '../../../components';
-import { constants } from '../reducer';
+import { ImageWrapper } from "../../ImageWrapper";
+import { QuoteWrapper } from "../../QuoteWrapper";
+import { Post, Loading, Menu } from "../../../components";
+import { constants } from "../reducer";
 
 export const Thumbnails = ({
   loading,
@@ -12,7 +12,7 @@ export const Thumbnails = ({
   selected,
   handleClick,
   dispatch,
-  selectMode
+  selectMode,
 }) => {
   return (
     <div className="flex flex-col h-full py-5">
@@ -22,29 +22,30 @@ export const Thumbnails = ({
           {!selectMode && (
             <Menu
               id="images-menu"
-              activator={() => (
+              activator={
                 <div className="flex justify-center items-center w-8 h-8 rounded-full hover:bg-gray-400 p-1">
                   <MoreVertical
                     role="button"
                     className={`text-xl fill-current text`}
                   />
                 </div>
-              )}
+              }
               items={[
-                ({ onClose }) => (
+                ({ onClose, key }) => (
                   <div
+                    key={key}
                     className="w-32 px-4 py-2 hover:bg-grey-400 cursor-pointer"
                     onClick={() => {
                       dispatch({
                         type: constants.SET_SELECT_MODE,
-                        payload: true
+                        payload: true,
                       });
                       onClose();
                     }}
                   >
                     Select Mode
                   </div>
-                )
+                ),
               ]}
             />
           )}
@@ -59,6 +60,7 @@ export const Thumbnails = ({
         <div className="flex flex-wrap">
           {Object.values(posts)
             .sort((a, b) => Number(b.timestamp) - Number(a.timestamp))
+            .slice(0, 101)
             .map((post, index) => (
               <div
                 key={post.id}
@@ -70,10 +72,10 @@ export const Thumbnails = ({
                   selected={selected[post.id]}
                   size="32"
                 >
-                  {post.type === 'image' && (
+                  {post.type === "image" && (
                     <ImageWrapper thumb id={post.refId} />
                   )}
-                  {post.type === 'quote' && <QuoteWrapper id={post.refId} />}
+                  {post.type === "quote" && <QuoteWrapper id={post.refId} />}
                 </Post>
               </div>
             ))}

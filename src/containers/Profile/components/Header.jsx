@@ -1,5 +1,5 @@
-import React from 'react';
-import { ProfileImage, Button } from '../../../components';
+import React from "react";
+import { ProfileImage, Button } from "../../../components";
 
 export const Header = ({ account, signOut }) => (
   <div className="flex w-full">
@@ -15,14 +15,7 @@ export const Header = ({ account, signOut }) => (
     </div>
 
     <div className="pt-1">
-      <Button
-        color="purple-600"
-        hoverColor="purple-500"
-        dark
-        onClick={() => signOut()}
-      >
-        Logout
-      </Button>
+      <Button onClick={() => signOut()}>Logout</Button>
     </div>
   </div>
 );

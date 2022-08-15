@@ -1,14 +1,14 @@
-import React, { useEffect, useCallback, memo } from 'react';
-import { useDispatch, useMappedState } from 'redux-react-hook';
-import { Button } from '../components';
-import { addPosts, addImages, addQuotes } from '../actions';
-import { PostWrapper } from './PostWrapper';
-import { VariableSizeList as List } from 'react-window';
-import AutoSizer from 'react-virtualized-auto-sizer';
+import React, { useEffect, useCallback, memo } from "react";
+import { useDispatch, useMappedState } from "redux-react-hook";
+import { Button } from "../components";
+import { addPosts, addImages, addQuotes } from "../actions";
+import { PostWrapper } from "./PostWrapper";
+import { VariableSizeList as List } from "react-window";
+import AutoSizer from "react-virtualized-auto-sizer";
 
 const firestoreToObject = ({ docs }) => {
   const obj = {};
-  docs.forEach(doc => {
+  docs.forEach((doc) => {
     obj[doc.data().id] = doc.data();
   });
   return obj;
@@ -25,12 +25,12 @@ const ListItem = memo(({ data, index, style }) => {
 
 export const Feed = () => {
   const mapState = useCallback(
-    state => ({
+    (state) => ({
       posts: Object.values(state.posts).sort(
         (a, b) => (a.timestamp - b.timestamp) * -1
       ),
       images: state.images,
-      quotes: state.quotes
+      quotes: state.quotes,
     }),
     []
   );
@@ -41,9 +41,9 @@ export const Feed = () => {
     let didCancel = false;
 
     const fetchPosts = async () => {
-      const collections = ['posts', 'quotes', 'images'];
+      const collections = ["posts", "quotes", "images"];
       const [posts, quotes, images] = await Promise.all(
-        collections.map(name => window.db.collection(name).get())
+        collections.map((name) => window.db.collection(name).get())
       );
       if (!didCancel) {
         dispatch(addPosts(firestoreToObject(posts)));
@@ -63,10 +63,7 @@ export const Feed = () => {
       <div className="w-full flex p-2">
         <div className="flex-grow" />
         <Button
-          dark
-          className=""
-          color="purple-600"
-          onClick={e => {
+          onClick={(e) => {
             e.preventDefault();
             window.location.reload();
           }}

@@ -1,20 +1,20 @@
-import React, { useCallback } from 'react';
-import { Post, Button, Image } from '../../../components';
-import { constants } from '../store';
-import { useMappedState } from 'redux-react-hook';
+import React, { useCallback } from "react";
+import { Post, Button, Image } from "../../../components";
+import { constants } from "../store";
+import { useMappedState } from "redux-react-hook";
 
 var rotation = {
-  1: 'rotate(0deg)',
-  3: 'rotate(180deg)',
-  6: 'rotate(90deg)',
-  8: 'rotate(270deg)'
+  1: "rotate(0deg)",
+  3: "rotate(180deg)",
+  6: "rotate(90deg)",
+  8: "rotate(270deg)",
 };
 
 export const SubmitScreen = ({ state: { uploading }, dispatch, onSubmit }) => {
   const mapState = useCallback(
-    state => ({
+    (state) => ({
       imagePreview: state.imageFile.imagePreview,
-      orientation: state.imageFile.orientation
+      orientation: state.imageFile.orientation,
     }),
     []
   );
@@ -36,6 +36,7 @@ export const SubmitScreen = ({ state: { uploading }, dispatch, onSubmit }) => {
       <div className="flex justify-end w-full py-3 pr-3">
         <div className="pr-2">
           <Button
+            variant="link"
             onClick={() => {
               dispatch({ type: constants.SHOW_UPLOAD });
             }}
@@ -44,14 +45,7 @@ export const SubmitScreen = ({ state: { uploading }, dispatch, onSubmit }) => {
           </Button>
         </div>
         <div>
-          <Button
-            onClick={onSubmit()}
-            color="purple-600"
-            hoverColor="purple-600"
-            dark="true"
-          >
-            Submit
-          </Button>
+          <Button onClick={onSubmit()}>Submit</Button>
         </div>
       </div>
     </div>

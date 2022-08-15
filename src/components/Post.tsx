@@ -1,8 +1,19 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useMappedState } from 'redux-react-hook';
-import { Download } from 'react-feather';
-import { ProfileImage } from '../components';
-import { Fade } from '../components/transitions';
+import React, { useState, useEffect, useCallback, ReactNode } from "react";
+import { useMappedState } from "redux-react-hook";
+import { Download } from "react-feather";
+import { ProfileImage } from "../components";
+import { Fade } from "../components/transitions";
+import { Account } from "@/types";
+
+type PostProps = {
+  children: ReactNode | ReactNode[];
+  timestamp: number;
+  selected: boolean;
+  selectable: boolean;
+  handleClick: () => void;
+  account: Account;
+  id: string;
+};
 
 export const Post = ({
   children,
@@ -11,13 +22,13 @@ export const Post = ({
   selectable = false,
   handleClick = () => null,
   account,
-  id
-}) => {
-  const [url, setUrl] = useState('');
+  id,
+}: PostProps): JSX.Element => {
+  const [url, setUrl] = useState("");
   const date = new Date(Number(timestamp));
   const mapState = useCallback(
-    state => ({
-      image: state.images[id]
+    (state) => ({
+      image: state.images[id],
     }),
     [id]
   );
@@ -33,8 +44,8 @@ export const Post = ({
     }
   }, [image]);
 
-  const forceDownload = (blob, filename) => {
-    var a = document.createElement('a');
+  const forceDownload = (blob: string, filename: string) => {
+    var a = document.createElement("a");
     a.download = filename;
     a.href = blob;
     document.body.appendChild(a);
@@ -42,36 +53,32 @@ export const Post = ({
     a.remove();
   };
 
-  const downloadResource = (url, filename) => {
-    if (!filename)
-      filename = url
-        .split('\\')
-        .pop()
-        .split('/')
-        .pop();
+  const downloadResource = (url: string, filename?: string) => {
+    let name = filename;
+    if (!name) name = url.split("\\").pop()?.split("/").pop();
     fetch(url, {
       headers: new Headers({
-        Origin: window.location.origin
+        Origin: window.location.origin,
       }),
-      mode: 'cors'
+      mode: "cors",
     })
-      .then(response => response.blob())
-      .then(blob => {
+      .then((response) => response.blob())
+      .then((blob) => {
         let blobUrl = window.URL.createObjectURL(blob);
-        forceDownload(blobUrl, filename);
+        forceDownload(blobUrl, name as string);
       })
-      .catch(e => console.error(e));
+      .catch((e) => console.error(e));
   };
 
   return (
-    <Fade show={true} appear>
+    <Fade show={true} appear addEndListener={() => null}>
       <div
         className={`
           flex flex-col bg-white shadow-md 
           rounded px-2 pt-3 pb-4 w-full xs:max-h-sm 
           sm:max-h-500 max-h-xs m-auto h-full max-w-xl ${
-            selectable ? ' cursor-pointer' : ''
-          }${selected ? ' border-purple-600 border-2' : ''}`}
+            selectable ? " cursor-pointer" : ""
+          }${selected ? " border-purple-600 border-2" : ""}`}
       >
         <div
           className="flex flex-grow bg-gray-300 p-1 rounded justify-center items-center h-full"
