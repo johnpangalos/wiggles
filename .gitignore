@@ -73,3 +73,5 @@ build
 node_module
 
 functions/lib
+dist
+
