@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "@sentry/browser": "^5.11.1",
-    "@vitejs/plugin-react": "^2.0.1",
     "exif-js": "^2.3.0",
     "husky": "^3.0.0",
     "lint-staged": "^9.2.0",
@@ -46,8 +45,10 @@
     "@types/react": "^16.9.34",
     "@types/react-dom": "^16.9.6",
     "@types/react-router-dom": "^5.1.7",
+    "@types/react-transition-group": "^4.4.5",
     "@typescript-eslint/eslint-plugin": "^4.0.0",
     "@typescript-eslint/parser": "^4.0.0",
+    "@vitejs/plugin-react": "^2.0.1",
     "autoprefixer": "^10.2.0",
     "babel-eslint": "^10.0.0",
     "cross-env": "^5.2.0",
