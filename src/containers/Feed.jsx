@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, memo } from "react";
 import { useDispatch, useMappedState } from "redux-react-hook";
 import { Button } from "../components";
-import { addPosts, addImages, addQuotes } from "../actions";
+import { addPosts, addImages } from "../actions";
 import { PostWrapper } from "./PostWrapper";
 import { VariableSizeList as List } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -30,7 +30,6 @@ export const Feed = () => {
         (a, b) => (a.timestamp - b.timestamp) * -1
       ),
       images: state.images,
-      quotes: state.quotes,
     }),
     []
   );
@@ -41,14 +40,13 @@ export const Feed = () => {
     let didCancel = false;
 
     const fetchPosts = async () => {
-      const collections = ["posts", "quotes", "images"];
-      const [posts, quotes, images] = await Promise.all(
+      const collections = ["posts", "images"];
+      const [posts, images] = await Promise.all(
         collections.map((name) => window.db.collection(name).get())
       );
       if (!didCancel) {
         dispatch(addPosts(firestoreToObject(posts)));
         dispatch(addImages(firestoreToObject(images)));
-        dispatch(addQuotes(firestoreToObject(quotes)));
       }
     };
 

@@ -2,7 +2,6 @@ import React from "react";
 import { MoreVertical } from "react-feather";
 
 import { ImageWrapper } from "../../ImageWrapper";
-import { QuoteWrapper } from "../../QuoteWrapper";
 import { Post, Loading, Menu } from "../../../components";
 import { constants } from "../reducer";
 
@@ -75,7 +74,6 @@ export const Thumbnails = ({
                   {post.type === "image" && (
                     <ImageWrapper thumb id={post.refId} />
                   )}
-                  {post.type === "quote" && <QuoteWrapper id={post.refId} />}
                 </Post>
               </div>
             ))}
