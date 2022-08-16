@@ -3,22 +3,22 @@ import { useMappedState } from "redux-react-hook";
 import { Download } from "react-feather";
 import { ProfileImage } from "../components";
 import { Fade } from "../components/transitions";
-import { Account } from "@/types";
+import { Account, Post as PostType } from "@/types";
 
 type PostProps = {
   children: ReactNode | ReactNode[];
-  timestamp: number;
-  selected: boolean;
-  selectable: boolean;
-  handleClick: () => void;
-  account: Account;
-  id: string;
+  timestamp?: string;
+  selected?: PostType;
+  selectable?: boolean;
+  handleClick?: () => void;
+  account?: Account;
+  id?: string;
 };
 
 export const Post = ({
   children,
-  timestamp = 0,
-  selected = false,
+  timestamp = "0",
+  selected,
   selectable = false,
   handleClick = () => null,
   account,
@@ -27,9 +27,10 @@ export const Post = ({
   const [url, setUrl] = useState("");
   const date = new Date(Number(timestamp));
   const mapState = useCallback(
-    (state) => ({
-      image: state.images[id],
-    }),
+    (state) => {
+      if (!id) return {};
+      return { image: state.images[id] };
+    },
     [id]
   );
 

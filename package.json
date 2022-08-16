@@ -47,6 +47,8 @@
     "@types/react-dom": "^16.9.6",
     "@types/react-router-dom": "^5.1.7",
     "@types/react-transition-group": "^4.4.5",
+    "@types/react-virtualized-auto-sizer": "^1.0.1",
+    "@types/react-window": "^1.8.5",
     "@typescript-eslint/eslint-plugin": "^4.0.0",
     "@typescript-eslint/parser": "^4.0.0",
     "@vitejs/plugin-react": "^2.0.1",

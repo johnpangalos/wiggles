@@ -1,3 +1,4 @@
+import { Post as PostType } from "@/types";
 import React, { useEffect, useCallback } from "react";
 import { useDispatch, useMappedState } from "redux-react-hook";
 
@@ -5,7 +6,7 @@ import { addAccount } from "../actions";
 import { Post } from "../components";
 import { ImageWrapper } from "./ImageWrapper";
 
-export const PostWrapper = ({ post }) => {
+export const PostWrapper = ({ post }: { post: PostType }) => {
   const mapState = useCallback(
     (state) => ({
       account: state.accounts[post.userId],
@@ -35,18 +36,12 @@ export const PostWrapper = ({ post }) => {
     };
   }, [account, dispatch, post.userId]);
 
+  if (!account) return <></>;
   return (
-    !!account && (
-      <div className="h-full px-6 pb-4">
-        <Post
-          size="500"
-          id={post.refId}
-          account={account}
-          timestamp={post.timestamp}
-        >
-          {post.type === "image" && <ImageWrapper id={post.refId} />}
-        </Post>
-      </div>
-    )
+    <div className="h-full px-6 pb-4">
+      <Post id={post.refId} account={account} timestamp={post.timestamp}>
+        {post.type === "image" && <ImageWrapper id={post.refId} />}
+      </Post>
+    </div>
   );
 };

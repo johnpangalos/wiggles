@@ -1,33 +1,44 @@
-import React, { useEffect, useCallback, memo } from "react";
+import React, { useEffect, useCallback, memo, CSSProperties } from "react";
 import { useDispatch, useMappedState } from "redux-react-hook";
 import { Button } from "../components";
 import { addPosts, addImages } from "../actions";
 import { PostWrapper } from "./PostWrapper";
 import { VariableSizeList as List } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
+import { Post } from "@/types";
 
-const firestoreToObject = ({ docs }) => {
-  const obj = {};
-  docs.forEach((doc) => {
-    obj[doc.data().id] = doc.data();
+const firestoreToObject = ({ docs }: any) => {
+  const obj: any = {};
+  docs.forEach((doc: any) => {
+    obj[doc.data().id as string] = doc.data();
   });
   return obj;
 };
 
-const ListItem = memo(({ data, index, style }) => {
-  const post = data[index];
-  return (
-    <div style={style}>
-      <PostWrapper key={post.id} post={post} />
-    </div>
-  );
-});
+const ListItem = memo(
+  ({
+    data,
+    index,
+    style,
+  }: {
+    data: any;
+    index: number;
+    style: CSSProperties;
+  }) => {
+    const post = data[index];
+    return (
+      <div style={style}>
+        <PostWrapper key={post.id} post={post} />
+      </div>
+    );
+  }
+);
 
 export const Feed = () => {
   const mapState = useCallback(
     (state) => ({
-      posts: Object.values(state.posts).sort(
-        (a, b) => (a.timestamp - b.timestamp) * -1
+      posts: Object.values(state.posts as Record<string, Post>).sort(
+        (a, b) => (Number(a.timestamp) - Number(b.timestamp)) * -1
       ),
       images: state.images,
     }),

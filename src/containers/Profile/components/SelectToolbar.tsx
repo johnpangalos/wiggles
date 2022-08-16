@@ -1,10 +1,21 @@
-import React, { useState } from "react";
+import React, { Dispatch, useState } from "react";
 import { Modal, Button, Toolbar } from "../../../components";
-import { constants } from "../reducer";
 import { deleteImages } from "../actions";
 import { Trash, X } from "react-feather";
+import { Post } from "@/types";
+import { Constants } from "@/constants";
 
-export const SelectToolbar = ({ selected, dispatch, selectMode }) => {
+type SelectToolbarProps = {
+  selected: Record<string, Post>;
+  dispatch: Dispatch<{ type: Constants; payload?: any }>;
+  selectMode: boolean;
+};
+
+export const SelectToolbar = ({
+  selected,
+  dispatch,
+  selectMode,
+}: SelectToolbarProps) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const numImages = Object.keys(selected).length;
 
@@ -12,9 +23,9 @@ export const SelectToolbar = ({ selected, dispatch, selectMode }) => {
     try {
       await deleteImages(Object.keys(selected));
       setShowDeleteModal(false);
-      dispatch({ type: constants.RESET_SELECTED });
+      dispatch({ type: Constants.RESET_SELECTED });
       dispatch({
-        type: constants.SET_SELECT_MODE,
+        type: Constants.SET_SELECT_MODE,
         payload: false,
       });
     } catch (err) {
@@ -30,9 +41,9 @@ export const SelectToolbar = ({ selected, dispatch, selectMode }) => {
             <div className="flex justify-center items-center w-8 h-8 rounded-full hover:bg-gray-600 p-1">
               <X
                 onClick={() => {
-                  dispatch({ type: constants.RESET_SELECTED });
+                  dispatch({ type: Constants.RESET_SELECTED });
                   dispatch({
-                    type: constants.SET_SELECT_MODE,
+                    type: Constants.SET_SELECT_MODE,
                     payload: false,
                   });
                 }}

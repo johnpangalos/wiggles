@@ -1,11 +1,11 @@
-import React, { ReactNode } from "react";
+import React, { MouseEventHandler, ReactNode } from "react";
 
 type ButtonVariant = "primary" | "link" | "secondary";
 type ButtonProps = {
   children: ReactNode;
   className?: string;
-  onClick: () => void;
-  variant: ButtonVariant;
+  onClick: MouseEventHandler;
+  variant?: ButtonVariant;
 };
 
 const variantClasses: Record<string, string> = {

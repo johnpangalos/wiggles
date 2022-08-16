@@ -3,8 +3,8 @@ import lozad from "lozad";
 
 type ImageProps = {
   url: string;
-  noFetch: boolean;
-  style: CSSProperties;
+  noFetch?: boolean;
+  style?: CSSProperties;
 };
 export const Image = ({ url, noFetch, style }: ImageProps) => {
   useEffect(() => {
