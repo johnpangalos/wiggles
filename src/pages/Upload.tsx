@@ -4,13 +4,13 @@ import React, {
   useRef,
   useEffect,
   useState,
-  ChangeEvent
-} from 'react';
-import { Button } from '../components/index';
-import { getExtenstion } from '../utils/index';
-import { useMappedState } from 'redux-react-hook';
-import { useHistory } from 'react-router-dom';
-import { Loading } from '../components/index';
+  ChangeEvent,
+} from "react";
+import { Button } from "../components/index";
+import { getExtenstion } from "../utils/index";
+import { useMappedState } from "redux-react-hook";
+import { useHistory } from "react-router-dom";
+import { Loading } from "../components/index";
 
 type Result = string | ArrayBuffer | null;
 
@@ -22,8 +22,8 @@ export const Upload = () => {
   let history = useHistory();
 
   const mapState = useCallback(
-    state => ({
-      user: state.user
+    (state) => ({
+      user: state.user,
     }),
     []
   );
@@ -39,9 +39,9 @@ export const Upload = () => {
     const { files } = event.target;
     if (!files || files.length === 0) return;
 
-    Array.from(files).forEach(file => {
-      setUrls(arr => [...arr, URL.createObjectURL(file)]);
-      setFiles(arr => [...arr, file]);
+    Array.from(files).forEach((file) => {
+      setUrls((arr) => [...arr, URL.createObjectURL(file)]);
+      setFiles((arr) => [...arr, file]);
     });
   };
 
@@ -49,7 +49,7 @@ export const Upload = () => {
   const uploadFile = (file: File, idx: number) => {
     const metadata = {
       customMetadata: { userId: user.claims.sub },
-      cacheControl: 'public,max-age=31536000'
+      cacheControl: "public,max-age=31536000",
     };
 
     // This fixes a bug when two images have the same timestamp
@@ -63,7 +63,7 @@ export const Upload = () => {
     setLoading(true);
     Promise.all(files.map((file, idx) => uploadFile(file, idx))).then(() => {
       setLoading(false);
-      history.push('/');
+      history.push("/");
     });
 
     return null;
@@ -84,9 +84,9 @@ export const Upload = () => {
           </div>
           <div className="flex-none p-3 bg-purple-200 flex items-center">
             <div className="flex-grow">
-              Upload {urls.length} Picture{urls.length > 1 && 's'}
+              Upload {urls.length} Picture{urls.length > 1 && "s"}
             </div>
-            <Button onClick={onSubmit} primary>
+            <Button onClick={onSubmit} variant="primary">
               Upload
             </Button>
           </div>

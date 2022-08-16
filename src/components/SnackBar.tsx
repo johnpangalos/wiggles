@@ -1,18 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import { CSSTransition } from 'react-transition-group';
-import { Button } from '../components';
+import React, { useEffect, useState } from "react";
+import { CSSTransition } from "react-transition-group";
+import { Button } from "../components";
 
 const classNames = {
-  appear: 'visible',
-  appearActive: 'zoomIn an-250ms',
-  enterActive: 'zoomIn an-250ms',
-  enter: 'visible',
-  exit: 'visible',
-  exitActive: 'fadeOut an-250s',
-  exitDone: 'invisible'
+  appear: "visible",
+  appearActive: "zoomIn an-250ms",
+  enterActive: "zoomIn an-250ms",
+  enter: "visible",
+  exit: "visible",
+  exitActive: "fadeOut an-250s",
+  exitDone: "invisible",
 };
 
-export const SnackBar = ({ show, text, action, actionText }) => {
+type SnackBarProps = {
+  show: boolean;
+  text: string;
+  action: () => void;
+  actionText: string;
+};
+
+export function SnackBar({
+  show,
+  text,
+  action,
+  actionText,
+}: SnackBarProps): JSX.Element {
   const [timedout, setTimedout] = useState(false);
   useEffect(() => {
     if (!show) return;
@@ -37,8 +49,8 @@ export const SnackBar = ({ show, text, action, actionText }) => {
             <div className="flex-grow pl-4">{text}</div>
             {actionText && (
               <div className="pr-4">
-                <Button onClick={() => action()} dark hoverColor="gray-800">
-                  <span className="text-purple-600">{actionText}</span>
+                <Button onClick={() => action()} variant="link">
+                  actionText
                 </Button>
               </div>
             )}
@@ -47,4 +59,4 @@ export const SnackBar = ({ show, text, action, actionText }) => {
       </CSSTransition>
     </div>
   );
-};
+}

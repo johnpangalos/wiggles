@@ -1,10 +1,15 @@
-/*global lozad*/
-import React, { useEffect } from 'react';
+import React, { useEffect, CSSProperties } from "react";
+import lozad from "lozad";
 
-export const Image = ({ url, noFetch, style }) => {
+type ImageProps = {
+  url: string;
+  noFetch: boolean;
+  style: CSSProperties;
+};
+export const Image = ({ url, noFetch, style }: ImageProps) => {
   useEffect(() => {
-    const load = async el => {
-      const url = el.getAttribute('data-url');
+    const load = async (el: HTMLElement) => {
+      const url = el.getAttribute("data-url");
       if (noFetch) {
         el.style.backgroundImage = `url('${url}')`;
         return;
@@ -12,12 +17,12 @@ export const Image = ({ url, noFetch, style }) => {
       var storage = window.firebase.storage();
       const image = await storage.ref(url).getDownloadURL();
 
-      el.classList.add('fadeIn', 'an-2s');
+      el.classList.add("fadeIn", "an-2s");
       el.style.backgroundImage = `url('${image}')`;
     };
 
-    const observer = lozad('.lozad', {
-      load
+    const observer = lozad(".lozad", {
+      load,
     });
     observer.observe();
   }, [noFetch, url]);

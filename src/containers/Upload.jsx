@@ -1,28 +1,28 @@
-import React, { useEffect, useCallback } from 'react';
-import { setMediaTab } from '../actions';
-import { useDispatch, useMappedState } from 'redux-react-hook';
-import { ImageUpload, Quotes } from '../containers';
-import { Tabs, TabContent } from '../components';
+import React, { useEffect, useCallback } from "react";
+import { setMediaTab } from "../actions";
+import { useDispatch, useMappedState } from "redux-react-hook";
+import { ImageUpload, Quotes } from "../containers";
+import { Tabs } from "../components";
 
-const getTabs = user => ({
+const getTabs = (user) => ({
   images: {
-    name: 'images',
-    component: ImageUpload
+    name: "images",
+    component: ImageUpload,
   },
   quotes: {
-    name: 'quotes',
-    component: () => <Quotes user={user} />
+    name: "quotes",
+    component: () => <Quotes user={user} />,
   },
   videos: {
-    name: 'videos',
-    component: () => <div>Not implemented yet</div>
-  }
+    name: "videos",
+    component: () => <div>Not implemented yet</div>,
+  },
 });
 
 export const Upload = ({ user, match }) => {
   const mapState = useCallback(
-    state => ({
-      currentTab: state.mediaTabs.currentTab
+    (state) => ({
+      currentTab: state.mediaTabs.currentTab,
     }),
     []
   );
@@ -32,7 +32,7 @@ export const Upload = ({ user, match }) => {
   const dispatch = useDispatch();
   useEffect(() => {
     if (!match.params.currentTab) {
-      dispatch(setMediaTab('images'));
+      dispatch(setMediaTab("images"));
       return;
     }
     dispatch(setMediaTab(match.params.currentTab));
@@ -43,7 +43,7 @@ export const Upload = ({ user, match }) => {
   return (
     <div className="flex flex-col h-full">
       <Tabs tabs={tabs} currentTab={currentTab} />
-      <TabContent component={tabs[currentTab].component} />
+      {tabs[currentTab].component}
     </div>
   );
 };

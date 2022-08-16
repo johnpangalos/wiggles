@@ -1,8 +1,8 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@sentry/browser': ^5.11.1
   '@types/jest': ^25.2.1
+  '@types/lozad': ^1.16.1
   '@types/node': ^13.11.1
   '@types/react': ^16.9.34
   '@types/react-dom': ^16.9.6
@@ -24,6 +24,7 @@ specifiers:
   exif-js: ^2.3.0
   husky: ^3.0.0
   lint-staged: ^9.2.0
+  lozad: ^1.16.0
   postcss: ^8.2.2
   postcss-cli: ^8.3.1
   prettier: ^1.18.2
@@ -45,10 +46,10 @@ specifiers:
   vite: ^3.0.7
 
 dependencies:
-  '@sentry/browser': 5.30.0
   exif-js: 2.3.0
   husky: 3.1.0
   lint-staged: 9.5.0
+  lozad: 1.16.0
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
   react-feather: 2.0.10_react@17.0.2
@@ -66,6 +67,7 @@ dependencies:
 
 devDependencies:
   '@types/jest': 25.2.3
+  '@types/lozad': 1.16.1
   '@types/node': 13.13.52
   '@types/react': 16.14.30
   '@types/react-dom': 16.9.16
@@ -500,58 +502,6 @@ packages:
       - zenObservable
     dev: false
 
-  /@sentry/browser/5.30.0:
-    resolution: {integrity: sha512-rOb58ZNVJWh1VuMuBG1mL9r54nZqKeaIlwSlvzJfc89vyfd7n6tQ1UXMN383QBz/MS5H5z44Hy5eE+7pCrYAfw==}
-    engines: {node: '>=6'}
-    dependencies:
-      '@sentry/core': 5.30.0
-      '@sentry/types': 5.30.0
-      '@sentry/utils': 5.30.0
-      tslib: 1.14.1
-    dev: false
-
-  /@sentry/core/5.30.0:
-    resolution: {integrity: sha512-TmfrII8w1PQZSZgPpUESqjB+jC6MvZJZdLtE/0hZ+SrnKhW3x5WlYLvTXZpcWePYBku7rl2wn1RZu6uT0qCTeg==}
-    engines: {node: '>=6'}
-    dependencies:
-      '@sentry/hub': 5.30.0
-      '@sentry/minimal': 5.30.0
-      '@sentry/types': 5.30.0
-      '@sentry/utils': 5.30.0
-      tslib: 1.14.1
-    dev: false
-
-  /@sentry/hub/5.30.0:
-    resolution: {integrity: sha512-2tYrGnzb1gKz2EkMDQcfLrDTvmGcQPuWxLnJKXJvYTQDGLlEvi2tWz1VIHjunmOvJrB5aIQLhm+dcMRwFZDCqQ==}
-    engines: {node: '>=6'}
-    dependencies:
-      '@sentry/types': 5.30.0
-      '@sentry/utils': 5.30.0
-      tslib: 1.14.1
-    dev: false
-
-  /@sentry/minimal/5.30.0:
-    resolution: {integrity: sha512-BwWb/owZKtkDX+Sc4zCSTNcvZUq7YcH3uAVlmh/gtR9rmUvbzAA3ewLuB3myi4wWRAMEtny6+J/FN/x+2wn9Xw==}
-    engines: {node: '>=6'}
-    dependencies:
-      '@sentry/hub': 5.30.0
-      '@sentry/types': 5.30.0
-      tslib: 1.14.1
-    dev: false
-
-  /@sentry/types/5.30.0:
-    resolution: {integrity: sha512-R8xOqlSTZ+htqrfteCWU5Nk0CDN5ApUTvrlvBuiH1DyP6czDZ4ktbZB0hAgBlVcK0U+qpD3ag3Tqqpa5Q67rPw==}
-    engines: {node: '>=6'}
-    dev: false
-
-  /@sentry/utils/5.30.0:
-    resolution: {integrity: sha512-zaYmoH0NWWtvnJjC9/CBseXMtKHm/tm40sz3YfJRxeQjyzRqNQPgivpd9R/oDJCYj999mzdW382p/qi2ypjLww==}
-    engines: {node: '>=6'}
-    dependencies:
-      '@sentry/types': 5.30.0
-      tslib: 1.14.1
-    dev: false
-
   /@types/glob/7.2.0:
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
     dependencies:
@@ -593,6 +543,10 @@ packages:
 
   /@types/json5/0.0.29:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
+    dev: true
+
+  /@types/lozad/1.16.1:
+    resolution: {integrity: sha512-wmGW368y1zu9ark/7fMNHdZ/c3wGV7fxoEqtK+V3Dsv2QGQQp34D9elDowuW12zZwxjO9NkNUorqg+D9j1VRGQ==}
     dev: true
 
   /@types/minimatch/3.0.5:
@@ -3043,6 +2997,10 @@ packages:
     hasBin: true
     dependencies:
       js-tokens: 4.0.0
+
+  /lozad/1.16.0:
+    resolution: {integrity: sha512-JBr9WjvEFeKoyim3svo/gsQPTkgG/mOHJmDctZ/+U9H3ymUuvEkqpn8bdQMFsvTMcyRJrdJkLv0bXqGm0sP72w==}
+    dev: false
 
   /lru-cache/6.0.0:
     resolution: {integrity: sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==}
