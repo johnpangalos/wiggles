@@ -1,15 +1,14 @@
-import React, { useEffect, useCallback } from 'react';
-import { useDispatch, useMappedState } from 'redux-react-hook';
+import React, { useEffect, useCallback } from "react";
+import { useDispatch, useMappedState } from "redux-react-hook";
 
-import { addAccount } from '../actions';
-import { Post } from '../components';
-import { QuoteWrapper } from './QuoteWrapper';
-import { ImageWrapper } from './ImageWrapper';
+import { addAccount } from "../actions";
+import { Post } from "../components";
+import { ImageWrapper } from "./ImageWrapper";
 
 export const PostWrapper = ({ post }) => {
   const mapState = useCallback(
-    state => ({
-      account: state.accounts[post.userId]
+    (state) => ({
+      account: state.accounts[post.userId],
     }),
     [post]
   );
@@ -24,7 +23,7 @@ export const PostWrapper = ({ post }) => {
 
     const fetchAccount = async () => {
       const account = await window.db
-        .collection('accounts')
+        .collection("accounts")
         .doc(post.userId)
         .get();
       if (!didCancel && account.data()) dispatch(addAccount(account.data()));
@@ -45,8 +44,7 @@ export const PostWrapper = ({ post }) => {
           account={account}
           timestamp={post.timestamp}
         >
-          {post.type === 'image' && <ImageWrapper id={post.refId} />}
-          {post.type === 'quote' && <QuoteWrapper id={post.refId} />}
+          {post.type === "image" && <ImageWrapper id={post.refId} />}
         </Post>
       </div>
     )

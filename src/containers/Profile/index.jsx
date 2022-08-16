@@ -1,26 +1,24 @@
-import React, { useEffect, useReducer } from 'react';
-import { Header, Thumbnails, SelectToolbar } from './components';
-import { initialState, reducer, constants } from './reducer';
-import { accountData, imageByUserSub } from './actions';
-import { addPosts, addImages, addQuotes } from '../../actions';
-import { useDispatch } from 'redux-react-hook';
+import React, { useEffect, useReducer } from "react";
+import { Header, Thumbnails, SelectToolbar } from "./components";
+import { initialState, reducer, constants } from "./reducer";
+import { accountData, imageByUserSub } from "./actions";
+import { addPosts, addImages } from "../../actions";
+import { useDispatch } from "redux-react-hook";
 
 const firestoreToObject = ({ docs }) => {
   const obj = {};
-  docs.forEach(doc => {
+  docs.forEach((doc) => {
     obj[doc.data().id] = doc.data();
   });
   return obj;
 };
 
 export const Profile = ({ signOut, user }) => {
-  const [
-    { account, loading, posts, selected, selectMode },
-    dispatch
-  ] = useReducer(reducer, initialState);
+  const [{ account, loading, posts, selected, selectMode }, dispatch] =
+    useReducer(reducer, initialState);
   const dispatch2 = useDispatch();
 
-  const handleClick = id => {
+  const handleClick = (id) => {
     if (!selectMode) return;
     if (!selected[id])
       return dispatch({ type: constants.ADD_SELECTED, payload: id });
@@ -47,14 +45,13 @@ export const Profile = ({ signOut, user }) => {
     let didCancel = false;
 
     const fetchPosts = async () => {
-      const collections = ['posts', 'quotes', 'images'];
-      const [posts, quotes, images] = await Promise.all(
-        collections.map(name => window.db.collection(name).get())
+      const collections = ["posts", "images"];
+      const [posts, images] = await Promise.all(
+        collections.map((name) => window.db.collection(name).get())
       );
       if (!didCancel) {
         dispatch2(addPosts(firestoreToObject(posts)));
         dispatch2(addImages(firestoreToObject(images)));
-        dispatch2(addQuotes(firestoreToObject(quotes)));
       }
     };
 
@@ -66,7 +63,7 @@ export const Profile = ({ signOut, user }) => {
 
   useEffect(() => {
     if (!account.id) return;
-    imageByUserSub(account.id, images => {
+    imageByUserSub(account.id, (images) => {
       if (!images) return;
       dispatch({ type: constants.ADD_POSTS, payload: images });
       dispatch({ type: constants.NOT_LOADING });
