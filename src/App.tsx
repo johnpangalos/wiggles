@@ -35,7 +35,6 @@ const App = () => {
             const idToken = await window.firebase
               .auth()
               .currentUser.getIdTokenResult();
-            console.log(idToken);
             setUser(idToken);
             distpatch({ type: Constants.UPDATE_USER, payload: idToken });
             setLoading(false);
