@@ -8,7 +8,7 @@ import {
 import { matchPath } from "react-router-dom";
 import { useDispatch } from "redux-react-hook";
 
-import { constants } from "./constants";
+import { Constants } from "./constants";
 import { Loading, BottomNavigation } from "./components";
 import { Fade } from "./components/transitions";
 import { Login, Feed, Profile } from "./containers";
@@ -20,28 +20,30 @@ const App = () => {
   const distpatch = useDispatch();
 
   useEffect(() => {
-    let callback = null;
-    let metadataRef = null;
-    let metadataUnsub = null;
-    const unsubscribe = window.firebase.auth().onAuthStateChanged((res) => {
-      if (callback && metadataUnsub) metadataUnsub();
+    let callback: any = null;
+    let metadataRef: any = null;
+    let metadataUnsub: any = null;
+    const unsubscribe = window.firebase
+      .auth()
+      .onAuthStateChanged((res: any) => {
+        if (callback && metadataUnsub) metadataUnsub();
 
-      if (res) {
-        metadataRef = window.db.collection("metadata");
-        callback = async (snapshot) => {
-          res.getIdToken(true);
-          const idToken = await window.firebase
-            .auth()
-            .currentUser.getIdTokenResult();
-          setUser(idToken);
-          distpatch({ type: constants.UPDATE_USER, payload: idToken });
+        if (res) {
+          metadataRef = window.db.collection("metadata");
+          callback = async (snapshot: any) => {
+            res.getIdToken(true);
+            const idToken = await window.firebase
+              .auth()
+              .currentUser.getIdTokenResult();
+            setUser(idToken);
+            distpatch({ type: Constants.UPDATE_USER, payload: idToken });
+            setLoading(false);
+          };
+          metadataUnsub = metadataRef.onSnapshot(callback);
+        } else {
           setLoading(false);
-        };
-        metadataUnsub = metadataRef.onSnapshot(callback);
-      } else {
-        setLoading(false);
-      }
-    });
+        }
+      });
     return () => unsubscribe();
   }, [distpatch]);
 
@@ -56,7 +58,7 @@ const App = () => {
         <div className="flex flex-col w-full h-full">
           <div className="flex-1 w-full overflow-y-auto overflow-x-hidden">
             {loading ? (
-              <Fade appear in={loading}>
+              <Fade appear in={loading} addEndListener={() => null}>
                 <Loading />
               </Fade>
             ) : (
@@ -66,7 +68,7 @@ const App = () => {
                   user={user}
                   exact
                   path={["/upload", "/upload/:currentTab"]}
-                  component={(args) => <Upload user={user} {...args} />}
+                  component={(args: any) => <Upload user={user} {...args} />}
                 />
                 <PrivateRoute
                   exact
@@ -90,7 +92,7 @@ const App = () => {
           </div>
 
           {user && (
-            <Fade appear in={!loading}>
+            <Fade appear in={!loading} addEndListener={() => null}>
               <BottomNavigation />
             </Fade>
           )}
@@ -100,9 +102,10 @@ const App = () => {
   );
 };
 
-const PublicRoute = withRouter(
-  ({ location, component: Component, user, ...rest }) => (
+const PublicRoute = withRouter<any, any>(
+  ({ location, component: Component, user, ...rest }: any) => (
     <Fade
+      addEndListener={() => null}
       mountOnEnter
       unmountOnExit
       appear
@@ -113,19 +116,20 @@ const PublicRoute = withRouter(
   )
 );
 
-const locationEqualToPath = (name, path) => {
+const locationEqualToPath = (name: string, path: string | string[]) => {
   if (typeof path === "string") return name === path;
   return path.some((item) => matchPath(name, item));
 };
 
-const PrivateRoute = withRouter(
-  ({ location, component: Component, user, signOut, ...rest }) => {
+const PrivateRoute = withRouter<any, any>(
+  ({ location, component: Component, user, signOut, ...rest }: any) => {
     return (
       <Route
         {...rest}
         render={(props) =>
           user ? (
             <Fade
+              addEndListener={() => null}
               mountOnEnter
               unmountOnExit
               appear

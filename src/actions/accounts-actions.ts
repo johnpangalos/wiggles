@@ -1,12 +1,12 @@
 import { Account } from "@/types";
-import { constants } from "@/constants";
+import { Constants } from "@/constants";
 
 export const addAccount = (account: Account) => ({
-  type: constants.ADD_ACCOUNTS,
+  type: Constants.ADD_ACCOUNTS,
   payload: { [account.id]: account },
 });
 
 export const removeAccount = (id: string) => ({
-  type: constants.REMOVE_ACCOUNT,
+  type: Constants.REMOVE_ACCOUNT,
   payload: id,
 });

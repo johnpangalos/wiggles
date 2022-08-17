@@ -8,6 +8,8 @@ specifiers:
   '@types/react-dom': ^16.9.6
   '@types/react-router-dom': ^5.1.7
   '@types/react-transition-group': ^4.4.5
+  '@types/react-virtualized-auto-sizer': ^1.0.1
+  '@types/react-window': ^1.8.5
   '@typescript-eslint/eslint-plugin': ^4.0.0
   '@typescript-eslint/parser': ^4.0.0
   '@vitejs/plugin-react': ^2.0.1
@@ -73,6 +75,8 @@ devDependencies:
   '@types/react-dom': 16.9.16
   '@types/react-router-dom': 5.3.3
   '@types/react-transition-group': 4.4.5
+  '@types/react-virtualized-auto-sizer': 1.0.1
+  '@types/react-window': 1.8.5
   '@typescript-eslint/eslint-plugin': 4.33.0_3ekaj7j3owlolnuhj3ykrb7u7i
   '@typescript-eslint/parser': 4.33.0_hxadhbs2xogijvk7vq4t2azzbu
   '@vitejs/plugin-react': 2.0.1_vite@3.0.7
@@ -591,6 +595,18 @@ packages:
 
   /@types/react-transition-group/4.4.5:
     resolution: {integrity: sha512-juKD/eiSM3/xZYzjuzH6ZwpP+/lejltmiS3QEzV/vmb/Q8+HfDmxu+Baga8UEMGBqV88Nbg4l2hY/K2DkyaLLA==}
+    dependencies:
+      '@types/react': 16.14.30
+    dev: true
+
+  /@types/react-virtualized-auto-sizer/1.0.1:
+    resolution: {integrity: sha512-GH8sAnBEM5GV9LTeiz56r4ZhMOUSrP43tAQNSRVxNexDjcNKLCEtnxusAItg1owFUFE6k0NslV26gqVClVvong==}
+    dependencies:
+      '@types/react': 16.14.30
+    dev: true
+
+  /@types/react-window/1.8.5:
+    resolution: {integrity: sha512-V9q3CvhC9Jk9bWBOysPGaWy/Z0lxYcTXLtLipkt2cnRj1JOSFNF7wqGpkScSXMgBwC+fnVRg/7shwgddBG5ICw==}
     dependencies:
       '@types/react': 16.14.30
     dev: true

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Redirect, withRouter } from 'react-router-dom';
+import React, { useState } from "react";
+import { Redirect, withRouter } from "react-router-dom";
 
-import { Loading } from '../components';
+import { Loading } from "../components";
 
 const getFirebaseToken = () => {
   window.firebase.auth().useDeviceLanguage();
@@ -9,8 +9,8 @@ const getFirebaseToken = () => {
   window.firebase.auth().signInWithRedirect(provider);
 };
 
-export const Login = withRouter(({ user, location }) => {
-  const { from } = location.state || { from: { pathname: '/' } };
+export const Login = withRouter<any, any>(({ user, location }: any) => {
+  const { from } = location.state || { from: { pathname: "/" } };
   return user ? <Redirect to={from} /> : <LoginModal />;
 });
 

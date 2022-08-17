@@ -1,4 +1,4 @@
-import { constants } from "@/constants";
+import { Constants } from "@/constants";
 
 type SetFileOptions = {
   orientation: string;
@@ -10,7 +10,7 @@ export const setFile = ({
   imagePreview,
   file,
 }: SetFileOptions) => ({
-  type: constants.SET_FILE,
+  type: Constants.SET_FILE,
   orientation,
   imagePreview,
   file,

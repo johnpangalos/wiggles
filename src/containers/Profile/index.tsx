@@ -1,38 +1,43 @@
 import React, { useEffect, useReducer } from "react";
 import { Header, Thumbnails, SelectToolbar } from "./components";
-import { initialState, reducer, constants } from "./reducer";
+import { initialState, reducer } from "./reducer";
 import { accountData, imageByUserSub } from "./actions";
 import { addPosts, addImages } from "../../actions";
 import { useDispatch } from "redux-react-hook";
+import { Constants } from "@/constants";
 
-const firestoreToObject = ({ docs }) => {
-  const obj = {};
-  docs.forEach((doc) => {
-    obj[doc.data().id] = doc.data();
+const firestoreToObject = ({ docs }: any) => {
+  const obj: any = {};
+  docs.forEach((doc: any) => {
+    obj[doc.data().id as string] = doc.data();
   });
   return obj;
 };
 
-export const Profile = ({ signOut, user }) => {
+export const Profile = ({ signOut, user }: any) => {
   const [{ account, loading, posts, selected, selectMode }, dispatch] =
     useReducer(reducer, initialState);
   const dispatch2 = useDispatch();
 
-  const handleClick = (id) => {
+  const handleClick = (id: string) => {
     if (!selectMode) return;
     if (!selected[id])
-      return dispatch({ type: constants.ADD_SELECTED, payload: id });
-    return dispatch({ type: constants.REMOVE_SELECTED, payload: id });
+      // @ts-ignore
+      return dispatch({ type: Constants.ADD_SELECTED, payload: id });
+    // @ts-ignore
+    return dispatch({ type: Constants.REMOVE_SELECTED, payload: id });
   };
 
   useEffect(() => {
     let didCancel = false;
-    dispatch({ type: constants.LOADING });
+    // @ts-ignore
+    dispatch({ type: Constants.LOADING });
 
     const loadAccount = async () => {
       const account = await accountData(user);
       if (!didCancel)
-        dispatch({ type: constants.ADD_ACCOUNT, payload: account });
+        // @ts-ignore
+        dispatch({ type: Constants.ADD_ACCOUNT, payload: account });
     };
 
     loadAccount();
@@ -65,8 +70,10 @@ export const Profile = ({ signOut, user }) => {
     if (!account.id) return;
     imageByUserSub(account.id, (images) => {
       if (!images) return;
-      dispatch({ type: constants.ADD_POSTS, payload: images });
-      dispatch({ type: constants.NOT_LOADING });
+      // @ts-ignore
+      dispatch({ type: Constants.ADD_POSTS, payload: images });
+      // @ts-ignore
+      dispatch({ type: Constants.NOT_LOADING });
     });
 
     return () => {};
@@ -77,6 +84,7 @@ export const Profile = ({ signOut, user }) => {
       <SelectToolbar
         selectMode={selectMode}
         selected={selected}
+        // @ts-ignore
         dispatch={dispatch}
       />
       <div className="flex flex-grow flex-col h-full w-full p-4">
@@ -87,6 +95,7 @@ export const Profile = ({ signOut, user }) => {
           posts={posts}
           selected={selected}
           handleClick={handleClick}
+          // @ts-ignore
           dispatch={dispatch}
         />
       </div>

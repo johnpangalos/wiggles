@@ -1,9 +1,19 @@
-import React from "react";
+import React, { Dispatch } from "react";
 import { MoreVertical } from "react-feather";
 
 import { ImageWrapper } from "../../ImageWrapper";
 import { Post, Loading, Menu } from "../../../components";
-import { constants } from "../reducer";
+import { Post as PostType } from "@/types";
+import { Constants } from "@/constants";
+
+type ThumbnailsProps = {
+  loading: boolean;
+  posts: PostType[];
+  selected: Record<string, PostType>;
+  handleClick: (id: string) => void;
+  dispatch: Dispatch<{ type: Constants; payload?: any }>;
+  selectMode: boolean;
+};
 
 export const Thumbnails = ({
   loading,
@@ -12,7 +22,7 @@ export const Thumbnails = ({
   handleClick,
   dispatch,
   selectMode,
-}) => {
+}: ThumbnailsProps) => {
   return (
     <div className="flex flex-col h-full py-5">
       <div className="flex items-center h-12">
@@ -30,13 +40,13 @@ export const Thumbnails = ({
                 </div>
               }
               items={[
-                ({ onClose, key }) => (
+                ({ onClose, key }: { onClose: () => void; key: string }) => (
                   <div
                     key={key}
                     className="w-32 px-4 py-2 hover:bg-grey-400 cursor-pointer"
                     onClick={() => {
                       dispatch({
-                        type: constants.SET_SELECT_MODE,
+                        type: Constants.SET_SELECT_MODE,
                         payload: true,
                       });
                       onClose();
@@ -69,7 +79,6 @@ export const Thumbnails = ({
                   handleClick={() => handleClick(post.id)}
                   selectable={selectMode}
                   selected={selected[post.id]}
-                  size="32"
                 >
                   {post.type === "image" && (
                     <ImageWrapper thumb id={post.refId} />

@@ -1,0 +1,29 @@
+import React from "react";
+import { ProfileImage, Button } from "@/components";
+import { Account } from "@/types";
+
+type HeaderProps = {
+  account: Account;
+  signOut: () => void;
+};
+
+export function Header({ account, signOut }: HeaderProps) {
+  return (
+    <div className="flex w-full">
+      <div className="pr-6">
+        <div className="h-12 w-12">
+          <ProfileImage url={account.photoURL} />
+        </div>
+      </div>
+
+      <div className="flex flex-grow flex-col pt-1 overflow-hidden pr-2">
+        <div className="text-xl font-bold truncate">{account.displayName}</div>
+        <div className="text-sm truncate">{account.email}</div>
+      </div>
+
+      <div className="pt-1">
+        <Button onClick={() => signOut()}>Logout</Button>
+      </div>
+    </div>
+  );
+}
