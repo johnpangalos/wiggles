@@ -1,19 +1,32 @@
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  getFirestore,
+  query,
+  where,
+} from "firebase/firestore";
+
 export const accountData = async (user: any) => {
-  const account = await window.db
-    .collection("accounts")
-    .doc(user.claims.sub)
-    .get();
-  return account.data();
+  const db = getFirestore();
+  const docRef = doc(db, "accounts", user.claims.sub);
+  const docSnap = await getDoc(docRef);
+  return docSnap.data();
 };
 
 export const imageByUserSub = async (
   id: string,
   callback: (params: any) => void
 ) => {
-  const imagesRef = window.db.collection("posts");
-  const images = await imagesRef.where("userId", "==", id).get();
+  const db = getFirestore();
+  const postsRef = collection(db, "posts");
+  const q = query(postsRef, where("userId", "==", id));
+
+  const querySnapshot = await getDocs(q);
   callback(
-    images.docs.reduce(
+    querySnapshot.docs.reduce(
       (acc: any, curr: any) => ({ ...acc, [curr.data().id]: curr.data() }),
       {}
     )
@@ -21,7 +34,8 @@ export const imageByUserSub = async (
 };
 
 const deleteImage = (id: string) => {
-  return window.db.collection("posts").doc(id).delete();
+  const db = getFirestore();
+  return deleteDoc(doc(db, "posts", id));
 };
 
 export const deleteImages = (ids: string[]) =>

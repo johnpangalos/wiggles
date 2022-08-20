@@ -5,6 +5,7 @@ import { accountData, imageByUserSub } from "./actions";
 import { addPosts, addImages } from "../../actions";
 import { useDispatch } from "redux-react-hook";
 import { Constants } from "@/constants";
+import { collection, getDocs, getFirestore } from "firebase/firestore";
 
 const firestoreToObject = ({ docs }: any) => {
   const obj: any = {};
@@ -51,8 +52,9 @@ export const Profile = ({ signOut, user }: any) => {
 
     const fetchPosts = async () => {
       const collections = ["posts", "images"];
+      const db = getFirestore();
       const [posts, images] = await Promise.all(
-        collections.map((name) => window.db.collection(name).get())
+        collections.map((name) => getDocs(collection(db, name)))
       );
       if (!didCancel) {
         dispatch2(addPosts(firestoreToObject(posts)));

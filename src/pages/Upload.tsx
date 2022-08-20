@@ -11,6 +11,7 @@ import { getExtenstion } from "../utils/index";
 import { useMappedState } from "redux-react-hook";
 import { useHistory } from "react-router-dom";
 import { Loading } from "../components/index";
+import { getStorage, ref, uploadBytes } from "firebase/storage";
 
 type Result = string | ArrayBuffer | null;
 
@@ -46,6 +47,7 @@ export const Upload = () => {
   };
 
   const timestamp = +new Date();
+
   const uploadFile = (file: File, idx: number) => {
     const metadata = {
       customMetadata: { userId: user.claims.sub },
@@ -54,9 +56,9 @@ export const Upload = () => {
 
     // This fixes a bug when two images have the same timestamp
     const name = `${timestamp + idx}.${getExtenstion(file.name)}`;
-    const storageRef = window.firebase.storage().ref();
-    const ref = storageRef.child(name);
-    return ref.put(file, metadata);
+    const s = getStorage();
+    const storageRef = ref(s, name);
+    return uploadBytes(storageRef, file, metadata);
   };
 
   const onSubmit = () => {

@@ -4,6 +4,7 @@ import { Download } from "react-feather";
 import { ProfileImage } from "../components";
 import { Fade } from "../components/transitions";
 import { Account, Post as PostType } from "@/types";
+import { getDownloadURL, getStorage, ref } from "firebase/storage";
 
 type PostProps = {
   children: ReactNode | ReactNode[];
@@ -37,8 +38,9 @@ export const Post = ({
   const { image } = useMappedState(mapState);
   useEffect(() => {
     const load = async () => {
-      const storage = window.firebase.storage();
-      setUrl(await storage.ref(image.path).getDownloadURL());
+      const storage = getStorage();
+      const storageRef = ref(storage, image.path);
+      setUrl(await getDownloadURL(storageRef));
     };
     if (image) {
       load();

@@ -1,6 +1,7 @@
-import { Post as PostType } from "@/types";
+import { Account, Post as PostType } from "@/types";
 import React, { useEffect, useCallback } from "react";
 import { useDispatch, useMappedState } from "redux-react-hook";
+import { doc, getDoc, getFirestore } from "firebase/firestore";
 
 import { addAccount } from "../actions";
 import { Post } from "../components";
@@ -23,11 +24,13 @@ export const PostWrapper = ({ post }: { post: PostType }) => {
     let didCancel = false;
 
     const fetchAccount = async () => {
-      const account = await window.db
-        .collection("accounts")
-        .doc(post.userId)
-        .get();
-      if (!didCancel && account.data()) dispatch(addAccount(account.data()));
+      const db = getFirestore();
+      const docRef = doc(db, "accounts", post.userId);
+      const docSnap = await getDoc(docRef);
+
+      if (didCancel) return;
+      const account: Account = docSnap.data() as Account;
+      dispatch(addAccount(account));
     };
 
     fetchAccount();
