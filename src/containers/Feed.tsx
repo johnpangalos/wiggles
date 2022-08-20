@@ -6,6 +6,7 @@ import { PostWrapper } from "./PostWrapper";
 import { VariableSizeList as List } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { Post } from "@/types";
+import { collection, getDocs, getFirestore } from "firebase/firestore";
 
 const firestoreToObject = ({ docs }: any) => {
   const obj: any = {};
@@ -52,8 +53,9 @@ export const Feed = () => {
 
     const fetchPosts = async () => {
       const collections = ["posts", "images"];
+      const db = getFirestore();
       const [posts, images] = await Promise.all(
-        collections.map((name) => window.db.collection(name).get())
+        collections.map((name) => getDocs(collection(db, name)))
       );
       if (!didCancel) {
         dispatch(addPosts(firestoreToObject(posts)));

@@ -13,43 +13,56 @@ import { Loading, BottomNavigation } from "./components";
 import { Fade } from "./components/transitions";
 import { Login, Feed, Profile } from "./containers";
 import { Upload } from "./pages/Upload";
+import {
+  getAuth,
+  onAuthStateChanged,
+  getIdTokenResult,
+  IdTokenResult,
+} from "firebase/auth";
+import {
+  collection,
+  CollectionReference,
+  DocumentData,
+  getFirestore,
+  onSnapshot,
+} from "firebase/firestore";
 
 const App = () => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<IdTokenResult>();
   const [loading, setLoading] = useState(true);
   const distpatch = useDispatch();
 
   useEffect(() => {
     let callback: any = null;
-    let metadataRef: any = null;
+    let metadataRef: CollectionReference<DocumentData>;
     let metadataUnsub: any = null;
-    const unsubscribe = window.firebase
-      .auth()
-      .onAuthStateChanged((res: any) => {
-        if (callback && metadataUnsub) metadataUnsub();
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (res: any) => {
+      if (callback && metadataUnsub) metadataUnsub();
 
-        if (res) {
-          metadataRef = window.db.collection("metadata");
-          callback = async (snapshot: any) => {
-            res.getIdToken(true);
-            const idToken = await window.firebase
-              .auth()
-              .currentUser.getIdTokenResult();
-            setUser(idToken);
-            distpatch({ type: Constants.UPDATE_USER, payload: idToken });
-            setLoading(false);
-          };
-          metadataUnsub = metadataRef.onSnapshot(callback);
-        } else {
+      if (res) {
+        const db = getFirestore();
+        metadataRef = collection(db, "metadata");
+        callback = async () => {
+          res.getIdToken(true);
+          const user = auth.currentUser;
+          if (user === null) return;
+          const idToken = await getIdTokenResult(user);
+          setUser(idToken);
+          distpatch({ type: Constants.UPDATE_USER, payload: idToken });
           setLoading(false);
-        }
-      });
+        };
+        metadataUnsub = onSnapshot(metadataRef, callback);
+      } else {
+        setLoading(false);
+      }
+    });
     return () => unsubscribe();
   }, [distpatch]);
 
   const signOut = () => {
-    window.firebase.auth().signOut();
-    setUser(null);
+    signOut();
+    setUser(undefined);
   };
 
   return (
