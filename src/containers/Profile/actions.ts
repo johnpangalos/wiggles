@@ -1,3 +1,4 @@
+import { useAuth } from "@/hooks";
 import {
   collection,
   deleteDoc,
@@ -9,9 +10,11 @@ import {
   where,
 } from "firebase/firestore";
 
-export const accountData = async (user: any) => {
+export const useAccountData = async () => {
+  const { user } = useAuth();
   const db = getFirestore();
-  const docRef = doc(db, "accounts", user.claims.sub);
+  if (user?.uid === undefined) return;
+  const docRef = doc(db, "accounts", user.uid);
   const docSnap = await getDoc(docRef);
   return docSnap.data();
 };
