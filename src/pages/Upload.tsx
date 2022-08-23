@@ -1,36 +1,28 @@
 import React, {
   FC,
-  useCallback,
   useRef,
-  useEffect,
+  useLayoutEffect,
   useState,
   ChangeEvent,
 } from "react";
 import { Button } from "../components/index";
 import { getExtenstion } from "../utils/index";
-import { useMappedState } from "redux-react-hook";
-import { useHistory } from "react-router-dom";
 import { Loading } from "../components/index";
 import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { useAuth } from "@/hooks";
+import { useNavigate } from "react-router-dom";
 
 type Result = string | ArrayBuffer | null;
 
 export const Upload = () => {
+  const { user } = useAuth();
   const uploadImage = useRef<HTMLInputElement>(null);
   const [urls, setUrls] = useState<Array<Result>>([]);
   const [files, setFiles] = useState<Array<File>>([]);
   const [loading, setLoading] = useState<Boolean>(false);
-  let history = useHistory();
+  const navigate = useNavigate();
 
-  const mapState = useCallback(
-    (state) => ({
-      user: state.user,
-    }),
-    []
-  );
-  const { user } = useMappedState(mapState);
-
-  useEffect(() => {
+  useLayoutEffect(() => {
     uploadImage?.current?.click();
   }, [uploadImage]);
 
@@ -50,7 +42,7 @@ export const Upload = () => {
 
   const uploadFile = (file: File, idx: number) => {
     const metadata = {
-      customMetadata: { userId: user.claims.sub },
+      customMetadata: { userId: user?.uid ?? "" },
       cacheControl: "public,max-age=31536000",
     };
 
@@ -65,7 +57,7 @@ export const Upload = () => {
     setLoading(true);
     Promise.all(files.map((file, idx) => uploadFile(file, idx))).then(() => {
       setLoading(false);
-      history.push("/");
+      navigate("/");
     });
 
     return null;
@@ -95,7 +87,7 @@ export const Upload = () => {
         </div>
       )}
       <input
-        className="hidden"
+        hidden={true}
         id="upload-image"
         ref={uploadImage}
         type="file"

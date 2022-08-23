@@ -1,11 +1,12 @@
 import React, { useEffect, useReducer } from "react";
 import { Header, Thumbnails, SelectToolbar } from "./components";
 import { initialState, reducer } from "./reducer";
-import { accountData, imageByUserSub } from "./actions";
+import { imageByUserSub } from "./actions";
 import { addPosts, addImages } from "../../actions";
 import { useDispatch } from "redux-react-hook";
 import { Constants } from "@/constants";
 import { collection, getDocs, getFirestore } from "firebase/firestore";
+import { useAuth } from "@/hooks";
 
 const firestoreToObject = ({ docs }: any) => {
   const obj: any = {};
@@ -15,9 +16,12 @@ const firestoreToObject = ({ docs }: any) => {
   return obj;
 };
 
-export const Profile = ({ signOut, user }: any) => {
-  const [{ account, loading, posts, selected, selectMode }, dispatch] =
-    useReducer(reducer, initialState);
+export const Profile = () => {
+  const { user, signOut } = useAuth();
+  const [{ loading, posts, selected, selectMode }, dispatch] = useReducer(
+    reducer,
+    initialState
+  );
   const dispatch2 = useDispatch();
 
   const handleClick = (id: string) => {
@@ -28,24 +32,6 @@ export const Profile = ({ signOut, user }: any) => {
     // @ts-ignore
     return dispatch({ type: Constants.REMOVE_SELECTED, payload: id });
   };
-
-  useEffect(() => {
-    let didCancel = false;
-    // @ts-ignore
-    dispatch({ type: Constants.LOADING });
-
-    const loadAccount = async () => {
-      const account = await accountData(user);
-      if (!didCancel)
-        // @ts-ignore
-        dispatch({ type: Constants.ADD_ACCOUNT, payload: account });
-    };
-
-    loadAccount();
-    return () => {
-      didCancel = true;
-    };
-  }, [user]);
 
   useEffect(() => {
     let didCancel = false;
@@ -69,8 +55,8 @@ export const Profile = ({ signOut, user }: any) => {
   }, [dispatch2]);
 
   useEffect(() => {
-    if (!account.id) return;
-    imageByUserSub(account.id, (images) => {
+    if (!user?.uid) return;
+    imageByUserSub(user.uid, (images) => {
       if (!images) return;
       // @ts-ignore
       dispatch({ type: Constants.ADD_POSTS, payload: images });
@@ -79,7 +65,7 @@ export const Profile = ({ signOut, user }: any) => {
     });
 
     return () => {};
-  }, [account.id]);
+  }, [user?.uid]);
 
   return (
     <div className="flex flex-col items-center h-full max-w-lg m-auto">
@@ -90,7 +76,7 @@ export const Profile = ({ signOut, user }: any) => {
         dispatch={dispatch}
       />
       <div className="flex flex-grow flex-col h-full w-full p-4">
-        <Header account={account} signOut={signOut} />
+        <Header signOut={signOut} />
         <Thumbnails
           selectMode={selectMode}
           loading={loading}
