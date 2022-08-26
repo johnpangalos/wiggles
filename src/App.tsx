@@ -1,4 +1,3 @@
-import React from "react";
 import {
   BrowserRouter as Router,
   Navigate,
@@ -6,50 +5,51 @@ import {
   Routes,
   useLocation,
 } from "react-router-dom";
-
-import { Login, Feed, Profile } from "./containers";
 import { useAuth } from "@/hooks";
-import { Upload } from "./pages/Upload";
+import { Login, Upload, Feed, Profile } from "@/pages";
 import { MainLayout } from "./layouts/main";
+import { BreakpointProvider } from "@/hooks";
 
 const App = () => {
   return (
-    <div id="App" className="h-full text-gray-800">
-      <Router>
-        <Routes>
-          <Route path="/" element={<MainLayout />}>
-            <Route
-              path="feed"
-              element={
-                <RequireAuth>
-                  <Feed />
-                </RequireAuth>
-              }
-            />
-            <Route path="login" element={<Login />} />
+    <BreakpointProvider>
+      <div id="App" className="h-full text-gray-800">
+        <Router>
+          <Routes>
+            <Route path="/" element={<MainLayout />}>
+              <Route
+                path="feed"
+                element={
+                  <RequireAuth>
+                    <Feed />
+                  </RequireAuth>
+                }
+              />
+              <Route path="login" element={<Login />} />
 
-            <Route
-              path={"upload"}
-              element={
-                <RequireAuth>
-                  <Upload />
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="profile"
-              element={
-                <RequireAuth>
-                  <Profile />
-                </RequireAuth>
-              }
-            />
-            <Route path="/" element={<Navigate to="feed" />} />
-            <Route path="*" element={<Navigate to="feed" />} />
-          </Route>
-        </Routes>
-      </Router>
-    </div>
+              <Route
+                path={"upload"}
+                element={
+                  <RequireAuth>
+                    <Upload />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="profile"
+                element={
+                  <RequireAuth>
+                    <Profile />
+                  </RequireAuth>
+                }
+              />
+              <Route path="/" element={<Navigate to="feed" />} />
+              <Route path="*" element={<Navigate to="feed" />} />
+            </Route>
+          </Routes>
+        </Router>
+      </div>
+    </BreakpointProvider>
   );
 };
 

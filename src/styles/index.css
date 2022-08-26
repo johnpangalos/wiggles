@@ -11,14 +11,6 @@ body {
   min-height: stretch;
 }
 
-.h-500 {
-  height: 500px;
-}
-
-.max-w-500 {
-  max-width: 500px;
-}
-
 .hyphens {
   hyphens: auto;
 }

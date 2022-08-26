@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-
-import { Loading } from "../components";
+import { Loading } from "@/components";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks";
 
@@ -14,7 +13,7 @@ export const Login = () => {
   const from = state?.from?.pathname || "/feed";
 
   useEffect(() => {
-    if (user === null) return;
+    if (user === null || user === undefined) return;
     navigate(from, { replace: true });
   });
 
@@ -24,10 +23,12 @@ export const Login = () => {
     signIn();
   }
 
-  if (loading)
-    <div className="flex flex-col items-center flex-grow h-full w-full">
-      <Loading />
-    </div>;
+  if (loading || user === undefined)
+    return (
+      <div className="flex flex-col items-center flex-grow h-full w-full">
+        <Loading />
+      </div>
+    );
 
   if (user === null)
     return (

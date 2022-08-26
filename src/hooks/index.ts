@@ -1,5 +1,14 @@
 import { useState, useEffect } from "react";
-import { useDispatch } from "redux-react-hook";
+import {
+  getFirestore,
+  collection,
+  where,
+  query,
+  getDocs,
+} from "firebase/firestore";
+import { useQuery } from "@tanstack/react-query";
+
+import { Account } from "@/types";
 
 import {
   getAuth,
@@ -12,10 +21,25 @@ import {
 
 const provider = new GoogleAuthProvider();
 
+async function getAccount(email: string | null | undefined) {
+  const db = getFirestore();
+  const q = query(collection(db, "accounts"), where("email", "==", email));
+  const { docs } = await getDocs(q);
+
+  return docs[0].data() as Account;
+}
+
 export function useAuth() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null | undefined>(undefined);
   const [loading, setLoading] = useState(true);
-  const distpatch = useDispatch();
+
+  const { data: account } = useQuery(
+    ["account", user?.email],
+    () => getAccount(user?.email),
+    {
+      staleTime: 5 * 60 * 1000,
+    }
+  );
 
   useEffect(() => {
     const auth = getAuth();
@@ -24,7 +48,7 @@ export function useAuth() {
       setLoading(false);
     });
     return () => unsubscribe();
-  }, [distpatch]);
+  }, []);
 
   const signOutLocal = () => {
     const auth = getAuth();
@@ -37,5 +61,9 @@ export function useAuth() {
     signInWithRedirect(auth, provider);
   }
 
-  return { user, loading, signOut: signOutLocal, signIn };
+  return { user, loading, signOut: signOutLocal, signIn, account };
 }
+
+export * from "./useInfinitePosts";
+export { useAccount } from "./useAccount";
+export * from "./useBreakpoint";

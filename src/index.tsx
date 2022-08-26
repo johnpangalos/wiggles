@@ -1,12 +1,10 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
+
 import "./styles/index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-import { StoreContext } from "redux-react-hook";
-import { store } from "./store";
-import lozad from "lozad";
-
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { initializeApp } from "firebase/app";
 
 const config = {
@@ -20,20 +18,16 @@ const config = {
 
 initializeApp(config);
 
-declare global {
-  interface Window {
-    observer: any;
-    lozad: any;
-  }
-}
+const queryClient = new QueryClient();
 
-window.observer = lozad();
-
-ReactDOM.render(
-  <StoreContext.Provider value={store}>
+const container = document.getElementById("root");
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+const root = createRoot(container!);
+root.render(
+  <QueryClientProvider client={queryClient}>
     <App />
-  </StoreContext.Provider>,
-  document.getElementById("root")
+    <ReactQueryDevtools initialIsOpen={false} />
+  </QueryClientProvider>
 );
 
 // If you want your app to work offline and load faster, you can change

@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import { SlideInDown } from "../components/transitions";
 
 export const Toolbar = ({

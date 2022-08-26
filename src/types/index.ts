@@ -25,10 +25,12 @@ export type Post = {
     path: string;
     status: string;
     thumbnail: string;
+    thumbnailUrl?: string;
     timestamp: string;
     uploadFinished: boolean;
     userId: string;
     web: string;
+    webUrl?: string;
   };
   refId: string;
   timestamp: string;

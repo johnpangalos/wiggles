@@ -1,4 +1,3 @@
-import React from "react";
 import { Home, Icon, Upload, User } from "react-feather";
 
 import { NavLink } from "react-router-dom";

@@ -1,5 +1,3 @@
-import React from "react";
-
 export function ProfileImage({ url }: { url: string | null }) {
   return (
     <div

@@ -18,12 +18,7 @@ type FadeProps = {
   className?: string;
 } & CSSTransitionProps;
 
-export function Fade({
-  children,
-  show = true,
-  className = "",
-  ...rest
-}: FadeProps) {
+export function Fade({ children, show = true, ...rest }: FadeProps) {
   return (
     <CSSTransition in={show} timeout={950} classNames={classNames} {...rest}>
       {() => <>{children}</>}
