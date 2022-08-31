@@ -13,7 +13,6 @@ export function SlideInDown({
   timeout = 1000,
   children,
   show = true,
-  className = "",
   ...rest
 }: SlideInDown) {
   const classNames = {

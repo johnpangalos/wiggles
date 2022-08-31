@@ -1,28 +1,31 @@
-import React, { useState, useEffect, createRef, ReactNode } from "react";
+import { Component, useState, useEffect, createRef, ReactNode } from "react";
 
 type MenuProps = {
   id: string;
   activator: ReactNode;
-  items: any[];
+  items: typeof Component[];
 };
-export const Menu = ({ activator, id, items }: MenuProps) => {
-  let menu = createRef<HTMLDivElement>();
+export function Menu({ activator, id, items }: MenuProps) {
+  const menu = createRef<HTMLDivElement>();
   const [showing, setShowing] = useState(false);
-  const preventClickaway = (event: any) =>
-    !event.target.dataset && event.target.dataset.preventClickaway !== id;
+  // const preventClickaway = (event: MouseEvent) =>
+  // event?.target?.dataset.preventClickaway !== id;
+  // event?.target?.dataset.preventClickaway !== id;
 
   useEffect(() => {
-    const eventListener = document.addEventListener("mousedown", (event) => {
-      if (preventClickaway(event)) return;
+    function clickHandler(event: MouseEvent) {
+      // if (preventClickaway(event)) return;
 
       const isValidRef = menu && menu.current;
       if (!isValidRef || isValidRef.contains(event.target as Node)) return;
 
       setShowing(false);
-    });
+    }
+
+    document.addEventListener("mousedown", clickHandler);
 
     return () => {
-      document.removeEventListener("mousedown", eventListener as any);
+      document.removeEventListener("mousedown", clickHandler);
     };
   });
 
@@ -41,11 +44,11 @@ export const Menu = ({ activator, id, items }: MenuProps) => {
         }`}
       >
         <div className="rounded overflow-hidden shadow-lg py-2">
-          {items.map((item, index) =>
-            item({ onClose: () => setShowing(false), key: `${id}-${index}` })
-          )}
+          {items.map((Item, index) => (
+            <Item onClose={() => setShowing(false)} key={`${id}-${index}`} />
+          ))}
         </div>
       </div>
     </div>
   );
-};
+}

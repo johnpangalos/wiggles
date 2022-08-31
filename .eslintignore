@@ -1,2 +1,2 @@
-tailwind.config.js
-dist
+serviceWorker.js
+*.cjs

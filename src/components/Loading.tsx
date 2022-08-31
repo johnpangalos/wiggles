@@ -1,7 +1,10 @@
-import React from "react";
 import "./__styles__/loading-spinner.css";
 
-export function Loading({ message = "" }) {
+type LoadingProps = {
+  message?: string;
+};
+
+export function Loading({ message = "" }: LoadingProps) {
   return (
     <div className="flex items-center justify-center h-full w-full">
       <div className="flex flex-col items-center justify-center h-full w-full">

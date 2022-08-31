@@ -1,4 +1,4 @@
-import React, { ReactNode, MouseEvent } from "react";
+import  { ReactNode, MouseEvent } from "react";
 
 type CircleButtonProps = {
   children: ReactNode;

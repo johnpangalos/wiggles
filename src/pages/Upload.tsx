@@ -1,10 +1,4 @@
-import React, {
-  FC,
-  useRef,
-  useLayoutEffect,
-  useState,
-  ChangeEvent,
-} from "react";
+import { FC, useRef, useLayoutEffect, useState, ChangeEvent } from "react";
 import { Button } from "../components/index";
 import { getExtenstion } from "../utils/index";
 import { Loading } from "../components/index";
@@ -19,7 +13,7 @@ export const Upload = () => {
   const uploadImage = useRef<HTMLInputElement>(null);
   const [urls, setUrls] = useState<Array<Result>>([]);
   const [files, setFiles] = useState<Array<File>>([]);
-  const [loading, setLoading] = useState<Boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
   useLayoutEffect(() => {
