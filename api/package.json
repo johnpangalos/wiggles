@@ -1,0 +1,20 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "wrangler dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^3.16.0",
+    "wrangler": "^2.1.4"
+  },
+  "dependencies": {
+    "@ssttevee/multipart-parser": "^0.1.9",
+    "hono": "^2.1.4"
+  }
+}

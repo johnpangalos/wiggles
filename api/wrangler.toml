@@ -1,0 +1,10 @@
+name = "wiggles-api"
+main = "src/index.ts"
+compatibility_date = "2022-09-11"
+[[kv_namespaces]]
+  binding = "WIGGLES"
+  id = "a6c8694133f14020808088b6c53300a8"
+  preview_id = "a6c8694133f14020808088b6c53300a8"
+[vars]
+# The necessary secrets are:
+# - IMAGES_KEY
