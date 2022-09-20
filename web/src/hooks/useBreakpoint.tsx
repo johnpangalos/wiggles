@@ -42,7 +42,12 @@ export function BreakpointProvider({ children }: { children: ReactNode }) {
       if (rect === undefined) return;
       const { width } = rect;
       const breakpoint = breakpoints.find(([_, value], index) => {
-        if (width >= value && width < breakpoints[index + 1][1]) return true;
+        if (
+          width >= value &&
+          (index + 1 === breakpoints?.length ||
+            width < breakpoints[index + 1][1])
+        )
+          return true;
         return false;
       });
       if (breakpoint?.[0] === undefined) return;

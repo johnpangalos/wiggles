@@ -3,9 +3,9 @@ import {
   Navigate,
   Route,
   Routes,
-  useLocation,
+  // useLocation,
 } from "react-router-dom";
-import { useAuth } from "@/hooks";
+// import { useAuth } from "@/hooks";
 import { Login, Upload, Feed, Profile } from "@/pages";
 import { MainLayout } from "./layouts/main";
 import { BreakpointProvider } from "@/hooks";
@@ -54,11 +54,11 @@ const App = () => {
 };
 
 function RequireAuth({ children }: { children: JSX.Element }) {
-  const { user, loading } = useAuth();
-  const location = useLocation();
+  // const { user, loading } = useAuth();
+  // const location = useLocation();
 
-  if (!loading && user === null)
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  // if (!loading && user === null)
+  //   return <Navigate to="/login" state={{ from: location }} replace />;
 
   return children;
 }

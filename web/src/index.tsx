@@ -5,18 +5,18 @@ import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { initializeApp } from "firebase/app";
+// import { initializeApp } from "firebase/app";
 
-const config = {
-  apiKey: "AIzaSyDcx5xDlQS3ixEFF8mESoxUzTk9f56uQhA",
-  authDomain: "wiggles-f0bd9.firebaseapp.com",
-  databaseURL: "https://wiggles-f0bd9.firebaseio.com",
-  projectId: "wiggles-f0bd9",
-  storageBucket: "wiggles-f0bd9.appspot.com",
-  messagingSenderId: "837754270874",
-};
+// const config = {
+//   apiKey: "AIzaSyDcx5xDlQS3ixEFF8mESoxUzTk9f56uQhA",
+//   authDomain: "wiggles-f0bd9.firebaseapp.com",
+//   databaseURL: "https://wiggles-f0bd9.firebaseio.com",
+//   projectId: "wiggles-f0bd9",
+//   storageBucket: "wiggles-f0bd9.appspot.com",
+//   messagingSenderId: "837754270874",
+// };
 
-initializeApp(config);
+// initializeApp(config);
 
 const queryClient = new QueryClient();
 

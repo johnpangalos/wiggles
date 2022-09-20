@@ -44,3 +44,13 @@ export type Quote = {
   timestamp: string;
   userId: string;
 };
+
+export type NewPost = {
+  url: string;
+  account: Account;
+  id: string;
+  contentType: string;
+  timestamp: string;
+  accountId: string;
+  cfImageId: string;
+};

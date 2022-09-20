@@ -1,31 +1,16 @@
 import { Fragment, useEffect, useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 
-import { Post as PostType } from "@/types";
-import { Loading, Post } from "@/components";
+import { Post } from "@/components";
 import { Image } from "@/components";
-import { useInfinitePosts, useAccount } from "@/hooks";
-
-export const PostItem = ({ post }: { post: PostType }) => {
-  const { data, status } = useAccount(post);
-
-  if (status === "loading") return <></>;
-
-  return (
-    <div className="pb-4">
-      <Post id={post.refId} account={data} timestamp={post.timestamp}>
-        {post && <Image post={post} loading="lazy" />}
-      </Post>
-    </div>
-  );
-};
+import { useInfinitePosts } from "@/hooks";
 
 export const Feed = () => {
   const parent = useRef<HTMLDivElement>(null);
 
-  const { status, data, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    useInfinitePosts({ imageSize: "web" });
-  const posts = data ? data.pages.flatMap((posts) => posts) : [];
+  const { data, isFetchingNextPage, fetchNextPage, hasNextPage } =
+    useInfinitePosts({ imageSize: "WRPost" });
+  const posts = data ? data.pages.flatMap(({ posts }) => posts) : [];
 
   const rowVirtualizer = useVirtualizer({
     count: hasNextPage ? posts.length + 1 : posts.length,
@@ -60,7 +45,6 @@ export const Feed = () => {
     ]
   );
 
-  if (status === "loading") return <Loading />;
   return (
     <div ref={parent} className="h-full flex flex-col overflow-auto pt-4 px-6">
       <div
@@ -86,7 +70,15 @@ export const Feed = () => {
                   transform: `translateY(${virtualItem.start}px)`,
                 }}
               >
-                <PostItem post={post} />
+                <div className="pb-4">
+                  <Post
+                    id={post.id}
+                    account={post.account}
+                    timestamp={post.timestamp}
+                  >
+                    <Image post={post} loading="eager" />
+                  </Post>
+                </div>
               </div>
             );
           })}
