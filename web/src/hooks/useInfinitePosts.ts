@@ -22,7 +22,7 @@ async function getPosts({
   myPosts,
 }: GetPostsOptions): Promise<{ posts: NewPost[]; cursor: string }> {
   return await fetch(
-    `https://dev.wiggle-room.xyz/api/posts?size=${imageSize}&limit=${limit}${
+    `${import.meta.env.VITE_API_URL}/posts?size=${imageSize}&limit=${limit}${
       pageParam ? `&cursor=${pageParam}` : ""
     }${myPosts ? `&myPosts=true` : ""}`
   ).then((res) => res.json());

@@ -22,7 +22,7 @@ export const Upload = () => {
 
   const uploadImagesMutation = useMutation(
     async (formData: FormData) => {
-      const res = await fetch("https://dev.wiggle-room.xyz/api/upload", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/upload`, {
         method: "POST",
         body: formData,
       });
