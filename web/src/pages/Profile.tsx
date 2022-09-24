@@ -11,7 +11,7 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const deleteImages = async (orderKeys: string[]) => {
-  const res = await fetch("https://dev.wiggle-room.xyz/api/bulk-delete", {
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/bulk-delete`, {
     method: "POST",
     body: JSON.stringify(orderKeys),
   });
