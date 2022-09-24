@@ -21,9 +21,15 @@ export const generateLoginURL = ({
 };
 
 const url = generateLoginURL({
-  redirectURL: "https://dev.wiggle-room.xyz/feed",
+  redirectURL:
+    import.meta.env.MODE === "production"
+      ? "https://wiggle-room.xyz/feed"
+      : "https://dev.wiggle-room.xyz/feed",
   domain: "https://johnpangalos.cloudflareaccess.com",
-  aud: "d20630ce701d4cae70898078ceb3ff409ed25e4230224bd461e1b91537438e05",
+  aud:
+    import.meta.env.MODE === "production"
+      ? "26b6452e75e854fb6f37cc5deccc0a1897e5160e7f4f3d6e52eabf31cc8b0726"
+      : "d20630ce701d4cae70898078ceb3ff409ed25e4230224bd461e1b91537438e05",
 });
 
 export const Login = () => {
