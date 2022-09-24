@@ -17,4 +17,4 @@ jobs:
         uses: ./.github/actions/install-deps
 
       - name: Typecheck
-        run: pnpm tsc
+        run: cd web && pnpm tsc
