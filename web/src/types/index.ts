@@ -53,4 +53,5 @@ export type NewPost = {
   timestamp: string;
   accountId: string;
   cfImageId: string;
+  orderKey: string;
 };

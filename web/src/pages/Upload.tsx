@@ -1,96 +1,82 @@
-// import { FC, useRef, useLayoutEffect, useState, ChangeEvent } from "react";
-// import { Button } from "../components/index";
-// import { getExtenstion } from "../utils/index";
-// import { Loading } from "../components/index";
-// import { getStorage, ref, uploadBytes } from "firebase/storage";
-// import { useAuth } from "@/hooks";
-// import { useNavigate } from "react-router-dom";
-//
-// type Result = string | ArrayBuffer | null;
+import { FC, useMemo } from "react";
+import { Button } from "@/components";
+import { Loading } from "@/components";
+
+import { Result, useImageUpload } from "@/hooks/useImageUpload";
+import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 
 export const Upload = () => {
-  return <></>;
-  // const { user } = useAuth();
-  // const uploadImage = useRef<HTMLInputElement>(null);
-  // const [urls, setUrls] = useState<Array<Result>>([]);
-  // const [files, setFiles] = useState<Array<File>>([]);
-  // const [loading, setLoading] = useState<boolean>(false);
-  // const navigate = useNavigate();
-  //
-  // useLayoutEffect(() => {
-  //   uploadImage?.current?.click();
-  // }, [uploadImage]);
-  //
-  // const onChange = (event: ChangeEvent<HTMLInputElement>) => {
-  //   event.preventDefault();
-  //
-  //   const { files } = event.target;
-  //   if (!files || files.length === 0) return;
-  //
-  //   Array.from(files).forEach((file) => {
-  //     setUrls((arr) => [...arr, URL.createObjectURL(file)]);
-  //     setFiles((arr) => [...arr, file]);
-  //   });
-  // };
-  //
-  // const timestamp = +new Date();
-  //
-  // const uploadFile = (file: File, idx: number) => {
-  //   const metadata = {
-  //     customMetadata: { userId: user?.uid ?? "" },
-  //     cacheControl: "public,max-age=31536000",
-  //   };
-  //
-  //   // This fixes a bug when two images have the same timestamp
-  //   const name = `${timestamp + idx}.${getExtenstion(file.name)}`;
-  //   const s = getStorage();
-  //   const storageRef = ref(s, name);
-  //   return uploadBytes(storageRef, file, metadata);
-  // };
-  //
-  // const onSubmit = () => {
-  //   setLoading(true);
-  //   Promise.all(files.map((file, idx) => uploadFile(file, idx))).then(() => {
-  //     setLoading(false);
-  //     navigate("/");
-  //   });
-  //
-  //   return null;
-  // };
-  //
-  // if (loading) return <Loading />;
-  //
-  // return (
-  //   <>
-  //     {urls.length > 0 && (
-  //       <div className="flex flex-col h-full">
-  //         <div className="flex-auto overflow-y-scroll">
-  //           <div className="p-4 space-y-4">
-  //             {urls.map((url, idx) => (
-  //               <ImagePreview key={`preview-${idx}`} url={url} idx={idx} />
-  //             ))}
-  //           </div>
-  //         </div>
-  //         <div className="flex-none p-3 bg-purple-200 flex items-center">
-  //           <div className="flex-grow">
-  //             Upload {urls.length} Picture{urls.length > 1 && "s"}
-  //           </div>
-  //           <Button onClick={onSubmit} variant="primary">
-  //             Upload
-  //           </Button>
-  //         </div>
-  //       </div>
-  //     )}
-  //     <input
-  //       hidden={true}
-  //       id="upload-image"
-  //       ref={uploadImage}
-  //       type="file"
-  //       multiple
-  //       onChange={onChange}
-  //     />
-  //   </>
-  // );
+  const urls = useImageUpload((state) => state.urls);
+  const resetImageUpload = useImageUpload((state) => state.reset);
+  const navigate = useNavigate();
+  const files = useImageUpload((state) => state.files);
+
+  const formData = useMemo(() => {
+    const form = new FormData();
+    files.forEach((file) => {
+      form.append("file", file);
+    });
+    return form;
+  }, [files]);
+
+  const uploadImagesMutation = useMutation(
+    async (formData: FormData) => {
+      const res = await fetch("https://dev.wiggle-room.xyz/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      if (res.status > 300) throw new Error("upload failed");
+      return await res.json();
+    },
+    {
+      onSuccess: () => {
+        navigate(-1);
+      },
+    }
+  );
+
+  if (uploadImagesMutation.status === "loading") return <Loading />;
+
+  return (
+    <>
+      {urls.length > 0 && (
+        <div className="flex flex-col h-full">
+          <div className="flex-auto overflow-y-scroll">
+            <div className="p-4 space-y-4">
+              {urls.map((url, idx) => (
+                <ImagePreview key={`preview-${idx}`} url={url} idx={idx} />
+              ))}
+            </div>
+          </div>
+          <div className="flex-none p-3 bg-purple-200 flex items-center">
+            <div className="flex-grow">
+              Upload {urls.length} Picture{urls.length > 1 && "s"}
+            </div>
+
+            <Button
+              className="mr-3"
+              onClick={() => {
+                resetImageUpload();
+                navigate(-1);
+              }}
+              variant="secondary"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                uploadImagesMutation.mutate(formData);
+              }}
+              variant="primary"
+            >
+              Upload
+            </Button>
+          </div>
+        </div>
+      )}
+    </>
+  );
 };
 
 const ImagePreview: FC<{ url: Result; idx: number }> = ({ url, idx }) => (

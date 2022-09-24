@@ -65,5 +65,5 @@
 // }
 
 export * from "./useInfinitePosts";
-export { useAccount } from "./useAccount";
+// export { useAccount } from "./useAccount";
 export * from "./useBreakpoint";

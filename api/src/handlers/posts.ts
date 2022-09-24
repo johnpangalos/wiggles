@@ -1,7 +1,9 @@
-import { readPosts } from "@/db";
-import { WigglesContext } from "@/types";
+import { v4 as uuidv4 } from "uuid";
+import { createPosts, deletePosts, readPosts } from "@/db";
+import { Post, WigglesContext } from "@/types";
 // import { jsonResponse } from "../../utils/jsonResponse";
 import { parseFormDataRequest } from "@/utils";
+import { Identity } from "@/middleware/auth";
 // import { IMAGE_KEY_PREFIX } from "../../utils/constants";
 
 export async function GetPosts(c: WigglesContext) {
@@ -16,78 +18,92 @@ export async function GetPosts(c: WigglesContext) {
   if (limitStr === null) limitStr = "10";
   const limit = Number.parseInt(limitStr);
 
-  return c.json(await readPosts(c, { size, cursor, limit }));
+  const myPosts: boolean = c.req.query("myPosts") === "true";
+
+  return c.json(await readPosts(c, { size, cursor, limit, myPosts }));
 }
 
-export async function PostPosts(c: WigglesContext) {
+type ImageUploadResponse = {
+  result: {
+    id: string;
+  };
+};
+export async function PostUpload(c: WigglesContext) {
   try {
-    // const { apiToken, accountId } = (await c.env.WIGGLES.get(
-    //   "setup",
-    //   "json"
-    // )) as Setup;
-
     // Compatibility dates aren't yet possible to set: https://developers.cloudflare.com/workers/platform/compatibility-dates#formdata-parsing-supports-file
-    const formData = (await parseFormDataRequest(c.req)) as FormData;
-    formData.set("requireSignedURLs", "true");
-    const alt = formData.get("alt") as string;
-    formData.delete("alt");
-    const isPrivate = formData.get("isPrivate") === "on";
-    formData.delete("isPrivate");
+    const formDataList = await parseFormDataRequest(c.req);
+    const promises = formDataList?.map(async (formData) => {
+      formData.set("requireSignedURLs", "true");
 
-    const response = await fetch(
-      `https://api.cloudflare.com/client/v4/accounts/${c.env.ACCOUNT_ID}/images/v1`,
-      {
-        method: "POST",
-        body: formData,
-        headers: {
-          "X-Auth-Email": "john@pangalos.dev",
-          "X-Auth-Key": c.env.API_KEY,
-        },
-      }
-    );
+      const response = await fetch(
+        `https://api.cloudflare.com/client/v4/accounts/${c.env.ACCOUNT_ID}/images/v1`,
+        {
+          method: "POST",
+          body: formData,
+          headers: {
+            "X-Auth-Email": "john@pangalos.dev",
+            "X-Auth-Key": c.env.API_KEY,
+          },
+        }
+      );
 
-    const {
-      result: {
-        id,
-        filename: name,
-        uploaded,
-        variants: [url],
-      },
-    } = await response.json<{
-      result: {
-        id: string;
-        filename: string;
-        uploaded: string;
-        requireSignedURLs: boolean;
-        variants: string[];
-      };
-    }>();
+      if (response.status > 300)
+        throw new Error(
+          `Failed to upload image: ${res.status} ${await res.text()}`
+        );
+      const {
+        result: { id },
+      } = await response.json<ImageUploadResponse>();
 
-    //   const downloadCounterId = env.DOWNLOAD_COUNTER.newUniqueId().toString();
-    //
-    //   const metadata: ImageMetadata = {
-    //     id,
-    //     previewURLBase: url.split("/").slice(0, -1).join("/"),
-    //     name,
-    //     alt,
-    //     uploaded,
-    //     isPrivate,
-    //     downloadCounterId,
-    //   };
-    //
-    //   await env.IMAGES.put(
-    //     `${IMAGE_KEY_PREFIX}uploaded:${uploaded}`,
-    //     "Values stored in metadata.",
-    //     { metadata }
-    //   );
-    //   await env.IMAGES.put(`${IMAGE_KEY_PREFIX}${id}`, JSON.stringify(metadata));
-    //
-    return c.json(true);
-  } catch {
+      return id;
+    });
+
+    if (promises === undefined) return c.json({ message: "No content" }, 204);
+
+    const idList = await Promise.all(promises);
+    const timestamp = Date.now().toString();
+
+    const access = await c.get("cloudflareAccess");
+    const identity: Identity | undefined = await access.JWT.getIdentity();
+    if (identity === undefined) throw new Error("Identity not found");
+
+    const postList: Post[] = idList.map((id, idx) => ({
+      id: uuidv4(),
+      contentType: "image/*",
+      cfImageId: id,
+      timestamp: timestamp + idx,
+      accountId: identity.email,
+    }));
+
+    const res = await createPosts(c, postList);
+
+    if (res.status > 300)
+      throw new Error(
+        `Failed to upload post: ${res.status} ${await res.text()}`
+      );
+    return c.json({ message: "success" });
+  } catch (e) {
+    if (e instanceof Error) console.error(e.message);
     return c.json(
       {
         error:
           "Could not upload image. Have you completed setup? Is it less than 10 MB? Is it a supported file type (PNG, JPEG, GIF, WebP)?",
+      },
+      500
+    );
+  }
+}
+
+export async function DeletePosts(c: WigglesContext) {
+  const orderKeys: string[] = await c.req.json();
+  try {
+    await deletePosts(c, orderKeys);
+    return c.json({ message: "OK" });
+  } catch (e) {
+    if (e instanceof Error) console.error(e.message);
+    return c.json(
+      {
+        error: "Could not delete images...",
       },
       500
     );

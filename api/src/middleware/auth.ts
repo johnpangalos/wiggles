@@ -155,7 +155,7 @@ const generateValidator =
     if (!keys) {
       throw new Error("Could not fetch signing keys.");
     }
-    let jwk = keys.find((key) => key.kid === kid);
+    const jwk = keys.find((key) => key.kid === kid);
     if (!jwk) {
       throw new Error("Could not find matching signing key.");
     }

@@ -10,7 +10,7 @@ type ButtonProps = {
 
 const variantClasses: Record<string, string> = {
   primary: "bg-purple-700 hover:bg-purple-800 text-white",
-  secondary: "bg-transparent border hover:bg-gray-200 text-purple-800",
+  secondary: "bg-white border hover:bg-gray-200 text-purple-800",
   link: "bg-transparent text-gray-600 font-bold hover:text-purple-800",
 };
 const baseClass =
@@ -21,7 +21,6 @@ export function Button({
   className = "",
   onClick = () => null,
   variant = "primary",
-
 }: ButtonProps) {
   return (
     <button

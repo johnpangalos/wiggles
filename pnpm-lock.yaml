@@ -14,13 +14,17 @@ importers:
     specifiers:
       '@cloudflare/workers-types': ^3.16.0
       '@ssttevee/multipart-parser': ^0.1.9
+      '@types/uuid': ^8.3.4
       hono: ^2.1.4
+      uuid: ^8.3.2
       wrangler: ^2.1.4
     dependencies:
       '@ssttevee/multipart-parser': 0.1.9
       hono: 2.1.4
+      uuid: 8.3.2
     devDependencies:
       '@cloudflare/workers-types': 3.16.0
+      '@types/uuid': 8.3.4
       wrangler: 2.1.4
 
   web:
@@ -34,6 +38,7 @@ importers:
       '@types/react-dom': ^18.0.6
       '@types/react-router-dom': ^5.1.7
       '@types/react-transition-group': ^4.4.5
+      '@types/uuid': ^8.3.4
       '@typescript-eslint/eslint-plugin': ^5.37.0
       '@typescript-eslint/parser': ^5.37.0
       '@vitejs/plugin-react': ^2.1.0
@@ -55,6 +60,7 @@ importers:
       typescript: ^4.8.3
       uuid: ^8.3.2
       vite: ^3.1.1
+      zustand: ^4.1.1
     dependencies:
       '@tanstack/react-query': 4.3.4_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-devtools': 4.3.5_hbsvmtv74eglyqgnta4rgheflu
@@ -65,6 +71,7 @@ importers:
       react-router-dom: 6.4.0_biqbaboplfbrettd7655fr4n2y
       react-transition-group: 4.4.5_biqbaboplfbrettd7655fr4n2y
       uuid: 8.3.2
+      zustand: 4.1.1_react@18.2.0
     devDependencies:
       '@cloudflare/workers-types': 3.16.0
       '@types/node': 13.13.52
@@ -72,6 +79,7 @@ importers:
       '@types/react-dom': 18.0.6
       '@types/react-router-dom': 5.3.3
       '@types/react-transition-group': 4.4.5
+      '@types/uuid': 8.3.4
       '@typescript-eslint/eslint-plugin': 5.37.0_22c5fnooleyfkzrkkgdmel5kmi
       '@typescript-eslint/parser': 5.37.0_irgkl5vooow2ydyo6aokmferha
       '@vitejs/plugin-react': 2.1.0_vite@3.1.1
@@ -850,6 +858,10 @@ packages:
 
   /@types/stack-trace/0.0.29:
     resolution: {integrity: sha512-TgfOX+mGY/NyNxJLIbDWrO9DjGoVSW9+aB8H2yy1fy32jsvxijhmyJI9fDFgvz3YP4lvJaq9DzdR/M1bOgVc9g==}
+    dev: true
+
+  /@types/uuid/8.3.4:
+    resolution: {integrity: sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==}
     dev: true
 
   /@typescript-eslint/eslint-plugin/5.37.0_22c5fnooleyfkzrkkgdmel5kmi:
@@ -4277,3 +4289,19 @@ packages:
       mustache: 4.2.0
       stack-trace: 0.0.10
     dev: true
+
+  /zustand/4.1.1_react@18.2.0:
+    resolution: {integrity: sha512-h4F3WMqsZgvvaE0n3lThx4MM81Ls9xebjvrABNzf5+jb3/03YjNTSgZXeyrvXDArMeV9untvWXRw1tY+ntPYbA==}
+    engines: {node: '>=12.7.0'}
+    peerDependencies:
+      immer: '>=9.0'
+      react: '>=16.8'
+    peerDependenciesMeta:
+      immer:
+        optional: true
+      react:
+        optional: true
+    dependencies:
+      react: 18.2.0
+      use-sync-external-store: 1.2.0_react@18.2.0
+    dev: false

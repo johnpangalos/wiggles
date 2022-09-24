@@ -1,5 +1,6 @@
 import { WigglesContext } from "@/types";
 import { parseMultipart } from "@ssttevee/multipart-parser";
+import { v4 as uuidV4 } from "uuid";
 
 export type ImageSize = "WRPost" | "WRThumbnail";
 export const DAY = 60 * 60 * 24;
@@ -64,24 +65,22 @@ const getBoundary = (request: Request): string | undefined => {
 
 export const parseFormDataRequest = async (
   request: Request
-): Promise<FormData | undefined> => {
+): Promise<FormData[] | undefined> => {
   const boundary = getBoundary(request);
   if (!boundary || !request.body) return;
 
   const parts = await parseMultipart(request.body, boundary);
 
-  const formData = new FormData();
-
-  for (const { name, data, filename, contentType } of parts) {
-    if (filename !== undefined) {
-      formData.append(
-        name,
-        new File([data], filename, { type: contentType }) as Blob
-      );
-    } else {
-      formData.append(name, new TextDecoder().decode(data));
-    }
+  const formDataList: FormData[] = [];
+  for (const { name, data, contentType } of parts) {
+    const filename = `${uuidV4()}.${
+      contentType?.includes("png") ? "png" : "jpeg"
+    }`;
+    const formData = new FormData();
+    const file = new File([data], filename, { type: contentType }) as Blob;
+    formData.append(name, file, filename);
+    formDataList.push(formData);
   }
 
-  return formData;
+  return formDataList;
 };

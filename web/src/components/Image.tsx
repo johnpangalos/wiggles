@@ -6,7 +6,11 @@ type ImageProps = {
   post?: NewPost;
 };
 
-export function Image({ post, thumbnail = false, loading }: ImageProps) {
+export function Image({
+  post,
+  thumbnail = false,
+  loading = "lazy",
+}: ImageProps) {
   if (!post) return <></>;
   return (
     <div className={thumbnail ? "h-[115px] md:h-[164px]" : "h-[424px]"}>

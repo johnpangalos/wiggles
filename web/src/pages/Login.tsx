@@ -23,7 +23,7 @@ export const generateLoginURL = ({
 const url = generateLoginURL({
   redirectURL: "https://dev.wiggle-room.xyz/feed",
   domain: "https://johnpangalos.cloudflareaccess.com",
-  aud: "",
+  aud: "d20630ce701d4cae70898078ceb3ff409ed25e4230224bd461e1b91537438e05",
 });
 
 export const Login = () => {
