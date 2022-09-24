@@ -17,7 +17,7 @@
   "scripts": {
     "dev": "vite dev",
     "functions": "wrangler pages dev ./functions --kv Wiggles",
-    "build": "vite build",
+    "build": "vite build --mode production",
     "lint": "eslint ./src --fix"
   },
   "browserslist": [
