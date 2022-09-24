@@ -1,0 +1,16 @@
+name = "wiggles-api"
+main = "src/index.ts"
+compatibility_date = "2022-09-11"
+
+route = { pattern = "wiggle-room.xyz/api/*", zone_name = "wiggle-room.xyz" }
+
+[vars]
+AUDIENCE = "d20630ce701d4cae70898078ceb3ff409ed25e4230224bd461e1b91537438e05"
+DOMAIN = "https://johnpangalos.cloudflareaccess.com"
+ENV = "production"
+
+[[kv_namespaces]]
+  binding = "WIGGLES"
+  id = "a6c8694133f14020808088b6c53300a8"
+  preview_id = "a6c8694133f14020808088b6c53300a8"
+
