@@ -7,13 +7,13 @@ import {
 import { Login, Upload, Feed, Profile } from "@/pages";
 import { MainLayout } from "./layouts/main";
 import { BreakpointProvider } from "@/hooks";
-import { useQuery } from "@tanstack/react-query";
-import { loginUrl } from "@/utils";
+// import { useQuery } from "@tanstack/react-query";
+// import { loginUrl } from "@/utils";
 
 const App = () => {
-  const res = useQuery(["me"], () => {
-    fetch(`${import.meta.env.VITE_API_URL}/me`);
-  });
+  // const res = useQuery(["me"], () => {
+  //   fetch(`${import.meta.env.VITE_API_URL}/me`);
+  // });
   // if (res.status === "error") window.location.replace(loginUrl);
   return (
     <BreakpointProvider>

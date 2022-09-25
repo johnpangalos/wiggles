@@ -61,7 +61,7 @@ export async function PostUpload(c: WigglesContext) {
     if (promises === undefined) return c.json({ message: "No content" }, 204);
 
     const idList = await Promise.all(promises);
-    const timestamp = Date.now().toString();
+    const timestamp = +new Date();
 
     const access = await c.get("cloudflareAccess");
     const identity: Identity | undefined = await access.JWT.getIdentity();
@@ -71,7 +71,7 @@ export async function PostUpload(c: WigglesContext) {
       id: uuidv4(),
       contentType: "image/*",
       cfImageId: id,
-      timestamp: timestamp + idx,
+      timestamp: (timestamp + idx).toString(),
       accountId: identity.email,
     }));
 

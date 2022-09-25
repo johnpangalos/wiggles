@@ -24,7 +24,6 @@ export const generateLoginURL = ({
   return new URL(loginPathname + searchParams.toString(), domain).toString();
 };
 
-console.log(import.meta.env);
 export const loginUrl = generateLoginURL({
   redirectURL: import.meta.env.VITE_REDIRECT_URL,
   domain: "https://johnpangalos.cloudflareaccess.com",

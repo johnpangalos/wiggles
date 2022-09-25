@@ -236,7 +236,7 @@ export function auth(): MiddlewareHandler {
       await next();
       return;
     } catch (e) {
-      console.error(e);
+      if (e instanceof Error) console.error(e.message);
     }
 
     return c.json({ message: "Unauthorized", ok: false }, 401);
