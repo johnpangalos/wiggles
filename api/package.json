@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "wrangler dev"
+    "dev": "wrangler dev --config wrangler-dev.toml"
   },
   "keywords": [],
   "author": "",
