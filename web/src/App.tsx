@@ -8,6 +8,7 @@ import { Login, Upload, Feed, Profile } from "@/pages";
 import { MainLayout } from "./layouts/main";
 import { BreakpointProvider } from "@/hooks";
 import { SW } from "@/sw";
+import { useQuery } from "@tanstack/react-query";
 
 const App = () => {
   return (
@@ -55,11 +56,11 @@ const App = () => {
 };
 
 function RequireAuth({ children }: { children: JSX.Element }) {
-  // const { user, loading } = useAuth();
-  // const location = useLocation();
+  const { error } = useQuery(["me"], () =>
+    fetch(`${import.meta.env.VITE_API_URL}/me`).then((res) => res.json())
+  );
 
-  // if (!loading && user === null)
-  //   return <Navigate to="/login" state={{ from: location }} replace />;
+  if (error) return <Navigate to="/login" state={{ from: location }} replace />;
 
   return children;
 }
