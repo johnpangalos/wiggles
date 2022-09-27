@@ -20,6 +20,7 @@ module.exports = {
   rules: {
     "no-unused-vars": [0],
     "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+    "@typescript-eslint/ban-ts-comment": "off",
   },
   settings: {
     react: {
