@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { X } from "react-feather";
 
-enum ColorMap {
+export enum ColorMap {
   INFO,
   SUCCESS,
   ERROR,
@@ -25,14 +25,13 @@ function colorClasses(type: ColorMap): string {
 
 type AlertProps = {
   children: ReactNode;
-  show: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   type: ColorMap;
 };
 
 export function Alert({ children, type = ColorMap.INFO, onClose }: AlertProps) {
   return (
-    <div className="pt-4 px-3 w-full">
+    <div className="fixed mb-20 bottom-0 pt-4 px-3 w-full">
       <div
         className={`border ${colorClasses(
           type

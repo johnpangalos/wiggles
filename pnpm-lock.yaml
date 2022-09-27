@@ -61,6 +61,7 @@ importers:
       uuid: ^8.3.2
       vite: ^3.1.1
       vite-plugin-pwa: ^0.13.1
+      workbox-window: ^6.5.4
       zustand: ^4.1.1
     dependencies:
       '@tanstack/react-query': 4.3.4_biqbaboplfbrettd7655fr4n2y
@@ -72,6 +73,7 @@ importers:
       react-router-dom: 6.4.0_biqbaboplfbrettd7655fr4n2y
       react-transition-group: 4.4.5_biqbaboplfbrettd7655fr4n2y
       uuid: 8.3.2
+      workbox-window: 6.5.4
       zustand: 4.1.1_react@18.2.0
     devDependencies:
       '@cloudflare/workers-types': 3.16.0
@@ -96,7 +98,7 @@ importers:
       tailwindcss: 3.1.8_postcss@8.4.16
       typescript: 4.8.3
       vite: 3.1.1
-      vite-plugin-pwa: 0.13.1_vite@3.1.1
+      vite-plugin-pwa: 0.13.1_7b6xkajbx43seeh6exkfvozdhy
 
 packages:
 
@@ -1888,7 +1890,6 @@ packages:
 
   /@types/trusted-types/2.0.2:
     resolution: {integrity: sha512-F5DIZ36YVLE+PN+Zwws4kJogq47hNgX3Nx6WyDJ3kcplxyke3XIzB8uK5n/Lpm1HBsbGzd6nmGehL8cPekP+Tg==}
-    dev: true
 
   /@types/uuid/8.3.4:
     resolution: {integrity: sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==}
@@ -5552,10 +5553,11 @@ packages:
       spdx-expression-parse: 3.0.1
     dev: true
 
-  /vite-plugin-pwa/0.13.1_vite@3.1.1:
+  /vite-plugin-pwa/0.13.1_7b6xkajbx43seeh6exkfvozdhy:
     resolution: {integrity: sha512-NR3dIa+o2hzlzo4lF4Gu0cYvoMjSw2DdRc6Epw1yjmCqWaGuN86WK9JqZie4arNlE1ZuWT3CLiMdiX5wcmmUmg==}
     peerDependencies:
       vite: ^3.1.0
+      workbox-window: ^6.5.4
     dependencies:
       debug: 4.3.4
       fast-glob: 3.2.11
@@ -5705,7 +5707,6 @@ packages:
 
   /workbox-core/6.5.4:
     resolution: {integrity: sha512-OXYb+m9wZm8GrORlV2vBbE5EC1FKu71GGp0H4rjmxmF4/HLbMCoTFws87M3dFwgpmg0v00K++PImpNQ6J5NQ6Q==}
-    dev: true
 
   /workbox-expiration/6.5.4:
     resolution: {integrity: sha512-jUP5qPOpH1nXtjGGh1fRBa1wJL2QlIb5mGpct3NzepjGG2uFFBn4iiEBiI9GUmfAFR2ApuRhDydjcRmYXddiEQ==}
@@ -5782,7 +5783,6 @@ packages:
     dependencies:
       '@types/trusted-types': 2.0.2
       workbox-core: 6.5.4
-    dev: true
 
   /wrangler/2.1.4:
     resolution: {integrity: sha512-vHgA3/naF6n7GrIujTxPQDrlEgY+A0VluxJiqnWWWvmBSvfIjmsJGjHg0LAJ/NONx3cp77cT96ehszv790d+tA==}
