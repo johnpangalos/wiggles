@@ -18,7 +18,7 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "noFallthroughCasesInSwitch": true,
-    "types": ["vite-plugin-pwa/client"]
+    "types": ["vite-plugin-pwa", "vite-plugin-pwa/client"]
   },
   "include": ["src", "./vite.config.ts", "manifest.json"]
 }
