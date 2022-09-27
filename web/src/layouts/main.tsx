@@ -84,7 +84,7 @@ function NavButton({ icon: Icon, text, to }: NavButtonProps) {
 
 export function MainLayout() {
   return (
-    <div className="flex flex-col w-full h-full">
+    <div className="flex flex-col w-full h-screen">
       <div className="flex-1 w-full overflow-y-auto overflow-x-hidden">
         <Outlet />
       </div>
