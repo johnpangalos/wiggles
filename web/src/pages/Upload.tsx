@@ -49,7 +49,7 @@ export const Upload = () => {
               ))}
             </div>
           </div>
-          <div className="flex-none p-3 bg-purple-200 flex items-center">
+          <div className="relative bottom-16 flex-none p-3 bg-purple-200 flex items-center">
             <div className="flex-grow">
               Upload {urls.length} Picture{urls.length > 1 && "s"}
             </div>
