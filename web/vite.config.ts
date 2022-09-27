@@ -24,13 +24,4 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-
-  server:
-    process.env.NODE_ENV === "production"
-      ? {}
-      : {
-          proxy: {
-            "/api": "http://localhost:8787",
-          },
-        },
 });
