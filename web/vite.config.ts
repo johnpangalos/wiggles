@@ -13,27 +13,8 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      manifest: false,
       registerType: "autoUpdate",
-      manifest: {
-        name: "Wiggle Room",
-        short_name: "Wiggle Room",
-        icons: [
-          {
-            src: "icon-192x192.png",
-            sizes: "192x192",
-            type: "image/png",
-          },
-          {
-            src: "icon-512x512.png",
-            sizes: "512x512",
-            type: "image/png",
-          },
-        ],
-        theme_color: "#5d3e9d",
-        start_url: "/feed?homescreen=1",
-        background_color: "#ffffff",
-        display: "standalone",
-      },
       includeAssets: ["favicon.ico", "robots.txt", "apple-touch-icon.png"],
       // switch to "true" to enable sw on development
       devOptions: {
@@ -42,6 +23,8 @@ export default defineConfig({
       workbox: {
         globPatterns: ["**/*.{js,css,html}"],
       },
+      filename: "sw.js",
+      strategies: "generateSW",
     }),
     // @ts-ignore
     replace(replaceOptions),
