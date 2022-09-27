@@ -7,12 +7,12 @@ import * as Sentry from "@sentry/browser";
 import { Integrations } from "@sentry/tracing";
 
 console.log(import.meta.env.PROD);
-Sentry.init({
-  dsn: "https://645ca46ead98408a94482c3f2bb4dcac@o343924.ingest.sentry.io/1890426",
-  integrations: [new Integrations.BrowserTracing()],
-  environment: import.meta.env.MODE,
-  enabled: import.meta.env.PROD,
-});
+// Sentry.init({
+//   dsn: "https://645ca46ead98408a94482c3f2bb4dcac@o343924.ingest.sentry.io/1890426",
+//   integrations: [new Integrations.BrowserTracing()],
+//   environment: import.meta.env.MODE,
+//   enabled: import.meta.env.PROD,
+// });
 
 const queryClient = new QueryClient();
 
