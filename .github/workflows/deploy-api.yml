@@ -1,9 +1,10 @@
 name: Deploy API
 on: 
   push:
-    - main
-  paths:
-    - 'api/**'
+    branches:
+      - main
+    paths:
+      - 'api/**'
 
 jobs:
   publish:

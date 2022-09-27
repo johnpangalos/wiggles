@@ -1,9 +1,10 @@
 name: Deploy Web
 on: 
   push:
-    - main
-  paths:
-    - 'web/**'
+    branches:
+      - main
+    paths:
+      - 'web/**'
 
 jobs:
   publish:
