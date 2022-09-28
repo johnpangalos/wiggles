@@ -46,3 +46,4 @@ jobs:
           environment: production
           sourcemaps: ./web/dist
           ignore_missing: true
+          ignore_empty: true
