@@ -17,8 +17,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "noFallthroughCasesInSwitch": true,
-    "types": ["vite-plugin-pwa", "vite-plugin-pwa/client"]
+    "noFallthroughCasesInSwitch": true
   },
   "include": ["src", "./vite.config.ts", "manifest.json"]
 }

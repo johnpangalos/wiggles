@@ -31,7 +31,7 @@ importers:
     specifiers:
       '@cloudflare/workers-types': ^3.16.0
       '@rollup/plugin-replace': ^4.0.0
-      '@sentry/browser': ^7.13.0
+      '@sentry/react': ^7.13.0
       '@sentry/tracing': ^7.13.0
       '@tanstack/react-query': ^4.3.4
       '@tanstack/react-query-devtools': ^4.3.5
@@ -66,7 +66,7 @@ importers:
       vite: ^3.1.1
       zustand: ^4.1.1
     dependencies:
-      '@sentry/browser': 7.13.0
+      '@sentry/react': 7.13.0_react@18.2.0
       '@sentry/tracing': 7.13.0
       '@tanstack/react-query': 4.3.4_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-devtools': 4.3.5_hbsvmtv74eglyqgnta4rgheflu
@@ -767,6 +767,20 @@ packages:
     dependencies:
       '@sentry/types': 7.13.0
       '@sentry/utils': 7.13.0
+      tslib: 1.14.1
+    dev: false
+
+  /@sentry/react/7.13.0_react@18.2.0:
+    resolution: {integrity: sha512-ulvBmMiwt+4RXwnDkP9qNr7rMJIFE4QXuNxho5pIqWEU9q2656CoL5kau9f2TQQEBxNc9dR4QmUdGyzuEaYPIQ==}
+    engines: {node: '>=8'}
+    peerDependencies:
+      react: 15.x || 16.x || 17.x || 18.x
+    dependencies:
+      '@sentry/browser': 7.13.0
+      '@sentry/types': 7.13.0
+      '@sentry/utils': 7.13.0
+      hoist-non-react-statics: 3.3.2
+      react: 18.2.0
       tslib: 1.14.1
     dev: false
 
@@ -2608,6 +2622,12 @@ packages:
     dependencies:
       function-bind: 1.1.1
     dev: true
+
+  /hoist-non-react-statics/3.3.2:
+    resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
+    dependencies:
+      react-is: 16.13.1
+    dev: false
 
   /hono/2.1.4:
     resolution: {integrity: sha512-x4mNdB7YoMBMHe8rDyXgKcAjK4/lerUY4PBaEYu+XCz1AilxtZAKLDtUer4ptaZ4T6RYreo5ksZuA3bQdOUEug==}
