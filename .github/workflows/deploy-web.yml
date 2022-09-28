@@ -24,9 +24,7 @@ jobs:
         uses: ./.github/actions/install-deps
 
       - name: Build
-        run: cd web &&  pnpm build
-        env:
-          VITE_RELEASE: ${{ env.GITHUB_SHA }}
+        run: cd web && VITE_RELEASE=$GITHUB_SHA pnpm build
 
       - name: Publish
         uses: cloudflare/pages-action@1
