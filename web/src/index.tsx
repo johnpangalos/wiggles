@@ -31,6 +31,7 @@ Sentry.init({
   environment: import.meta.env.MODE,
   enabled: import.meta.env.PROD,
   tracesSampleRate: 1.0,
+  release: import.meta.env.VITE_RELEASE,
 });
 
 const queryClient = new QueryClient();
