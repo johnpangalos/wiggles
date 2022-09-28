@@ -23,7 +23,7 @@ jobs:
         uses: ./.github/actions/install-deps
 
       - name: Build
-        run: cd web && pnpm build
+        run: cd web && VITE_RELEASE=${ GITHUB_SHA } pnpm build
 
       - name: Publish
         uses: cloudflare/pages-action@1
