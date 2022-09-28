@@ -7,16 +7,18 @@ import {
 import { Login, Upload, Feed, Profile } from "@/pages";
 import { MainLayout } from "./layouts/main";
 import { BreakpointProvider } from "@/hooks";
-import { SW } from "@/sw";
+import * as Sentry from "@sentry/react";
 import { useQuery } from "@tanstack/react-query";
 import { loginUrl } from "@/utils";
+
+const SentryRoutes = Sentry.withSentryReactRouterV6Routing(Routes);
 
 const App = () => {
   return (
     <BreakpointProvider>
       <div id="App" className="h-full text-gray-800">
         <Router>
-          <Routes>
+          <SentryRoutes>
             <Route path="/" element={<MainLayout />}>
               <Route
                 path="feed"
@@ -47,11 +49,9 @@ const App = () => {
               <Route path="/" element={<Navigate to="feed" />} />
               <Route path="*" element={<Navigate to="feed" />} />
             </Route>
-          </Routes>
+          </SentryRoutes>
         </Router>
       </div>
-
-      {/* <SW /> */}
     </BreakpointProvider>
   );
 };
