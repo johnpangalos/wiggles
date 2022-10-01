@@ -10,10 +10,24 @@ import { BreakpointProvider } from "@/hooks";
 import * as Sentry from "@sentry/react";
 import { useQuery } from "@tanstack/react-query";
 import { loginUrl } from "@/utils";
+import { useEffect } from "react";
+import { checkRegistration, register, unregister } from "./register-sw";
 
 const SentryRoutes = Sentry.withSentryReactRouterV6Routing(Routes);
 
 const App = () => {
+  useEffect(() => {
+    const registerSW = async () => {
+      await unregister();
+      const registration = await checkRegistration();
+      console.log(registration);
+      if (registration === undefined) {
+        console.log("registering");
+        await register();
+      }
+    };
+    registerSW();
+  }, []);
   return (
     <BreakpointProvider>
       <div id="App" className="h-full text-gray-800">
