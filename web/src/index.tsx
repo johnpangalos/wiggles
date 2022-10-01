@@ -13,8 +13,6 @@ import {
   matchRoutes,
 } from "react-router-dom";
 
-console.log(import.meta.env.PROD);
-
 Sentry.init({
   dsn: "https://645ca46ead98408a94482c3f2bb4dcac@o343924.ingest.sentry.io/1890426",
   integrations: [

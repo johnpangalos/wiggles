@@ -17,6 +17,7 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build --mode production",
+    "preview": "rm -rf dist && pnpm build --mode staging && pnpm vite preview --port 5173",
     "lint": "eslint ./src --fix"
   },
   "browserslist": [
