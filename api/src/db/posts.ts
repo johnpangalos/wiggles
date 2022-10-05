@@ -29,13 +29,9 @@ export async function populatePost(
 
   const imageKey = `image-${post.cfImageId}-size-${size}`;
 
-  let url = await c.env.WIGGLES.get(imageKey);
-
-  if (url === null) {
-    const expiration = unixTime(DAY);
-    url = await generateSignedUrl(c, post.cfImageId, expiration, size);
-    c.env.WIGGLES.put(imageKey, url, { expirationTtl: expiration });
-  }
+  const expiration = unixTime(DAY);
+  const url = await generateSignedUrl(c, post.cfImageId, expiration, size);
+  c.env.WIGGLES.put(imageKey, url, { expirationTtl: expiration });
 
   const account = await c.env.WIGGLES.get(`account-${post.accountId}`);
   if (account === null) throw new Error(`Bad post data: ${post.accountId}`);
@@ -52,17 +48,11 @@ type ReadPostsOptions = {
   limit: number;
   size: ImageSize;
   cursor?: string;
-  myPosts?: boolean;
+  email?: string;
 };
 
 export async function readPosts(c: WigglesContext, options: ReadPostsOptions) {
-  const access = await c.get("cloudflareAccess");
-  const identity: Identity | undefined = await access.JWT.getIdentity();
-  if (identity === undefined) throw new Error("Identity not found");
-
-  const prefix = options.myPosts
-    ? `post-account-${identity.email}`
-    : "post-feed";
+  const prefix = options.email ? `post-account-${options.email}` : "post-feed";
   const { keys, cursor } = await c.env.WIGGLES.list<Post>({
     prefix,
     limit: options.limit,
