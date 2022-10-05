@@ -20,11 +20,7 @@ const App = () => {
     const registerSW = async () => {
       await unregister();
       const registration = await checkRegistration();
-      console.log(registration);
-      if (registration === undefined) {
-        console.log("registering");
-        await register();
-      }
+      if (registration === undefined) await register();
     };
     registerSW();
   }, []);

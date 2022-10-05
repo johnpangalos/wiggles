@@ -7,45 +7,47 @@ export type ImageSize = "WRPost" | "WRThumbnail";
 export type UseInfinitePostsOptions = {
   imageSize: ImageSize;
   limit?: number;
-  myPosts?: boolean;
+  email?: string;
+  enabled?: boolean;
 };
 
 type GetPostsOptions = {
   pageParam?: string;
-  myPosts: boolean;
 } & UseInfinitePostsOptions;
 
 async function getPosts({
   imageSize,
   pageParam,
   limit,
-  myPosts,
+  email,
 }: GetPostsOptions): Promise<{ posts: NewPost[]; cursor: string }> {
   return await fetch(
     `${import.meta.env.VITE_API_URL}/posts?size=${imageSize}&limit=${limit}${
       pageParam ? `&cursor=${pageParam}` : ""
-    }${myPosts ? `&myPosts=true` : ""}`
+    }${email ? `&email=${email}` : ""}`
   ).then((res) => res.json());
 }
 
 export function infinitePostsQueryKey({
   imageSize,
   limit = 10,
-  myPosts = false,
+  email,
 }: UseInfinitePostsOptions) {
-  return ["posts", "infinite", limit, imageSize, myPosts];
+  return ["posts", "infinite", limit, imageSize, email];
 }
 export function useInfinitePosts({
   imageSize,
   limit = 10,
-  myPosts = false,
+  email,
+  enabled,
 }: UseInfinitePostsOptions) {
   return useInfiniteQuery(
-    infinitePostsQueryKey({ imageSize, limit, myPosts }),
-    ({ pageParam }) => getPosts({ imageSize, pageParam, limit, myPosts }),
+    infinitePostsQueryKey({ imageSize, limit, email }),
+    ({ pageParam }) => getPosts({ imageSize, pageParam, limit, email }),
     {
       getNextPageParam: (lastPage: { posts: NewPost[]; cursor: string }) =>
         lastPage.cursor,
+      enabled,
     }
   );
 }

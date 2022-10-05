@@ -8,7 +8,7 @@ import {
   useBreakpoint,
   UseInfinitePostsOptions,
 } from "@/hooks";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const deleteImages = async (orderKeys: string[]) => {
   const res = await fetch(`${import.meta.env.VITE_API_URL}/bulk-delete`, {
@@ -19,11 +19,12 @@ const deleteImages = async (orderKeys: string[]) => {
   return await res.json();
 };
 
-const queryKeyConfig: UseInfinitePostsOptions = {
+const queryKeyConfig = (email?: string): UseInfinitePostsOptions => ({
   imageSize: "WRThumbnail",
   limit: 30,
-  myPosts: true,
-};
+  email,
+  enabled: !!email,
+});
 
 export const generateLogoutURL = ({ domain }: { domain: string }) =>
   new URL(`/cdn-cgi/access/logout`, domain).toString();
@@ -33,6 +34,9 @@ const url = generateLogoutURL({
 });
 
 export function Profile() {
+  const { data: profileData } = useQuery(["me"], () =>
+    fetch(`${import.meta.env.VITE_API_URL}/me`).then((res) => res.json())
+  );
   const [selectMode, setSelectMode] = useState(false);
   const [selectedOrderKeys, setSelectedOrderKeys] = useState<
     Record<string, NewPost>
@@ -48,10 +52,10 @@ export function Profile() {
   const parent = React.useRef<HTMLDivElement>(null);
 
   const { status, data, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    useInfinitePosts(queryKeyConfig);
+    useInfinitePosts(queryKeyConfig(profileData?.email));
 
   const queryClient = useQueryClient();
-  const queryKey = infinitePostsQueryKey(queryKeyConfig);
+  const queryKey = infinitePostsQueryKey(queryKeyConfig(profileData?.email));
 
   const { mutate, status: mutateStatus } = useMutation(
     (orderKeys: string[]) => deleteImages(orderKeys),
