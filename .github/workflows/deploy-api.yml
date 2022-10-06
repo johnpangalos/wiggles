@@ -26,8 +26,7 @@ jobs:
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          workingDirectory: api
-          command: publish --var RELEASE:$GITHUB_SHA --outdir dist
+          command: cd api && publish --var RELEASE:$GITHUB_SHA --outdir dist
 
       - name: Create Sentry release
         uses: getsentry/action-release@v1

@@ -29,9 +29,13 @@ export async function populatePost(
 
   const imageKey = `image-${post.cfImageId}-size-${size}`;
 
-  const expiration = unixTime(DAY);
-  const url = await generateSignedUrl(c, post.cfImageId, expiration, size);
-  c.env.WIGGLES.put(imageKey, url, { expirationTtl: expiration });
+  let url = await c.env.WIGGLES.get(imageKey);
+
+  if (url === null) {
+    const expiration = unixTime(DAY);
+    url = await generateSignedUrl(c, post.cfImageId, expiration, size);
+    c.env.WIGGLES.put(imageKey, url, { expirationTtl: expiration });
+  }
 
   const account = await c.env.WIGGLES.get(`account-${post.accountId}`);
   if (account === null) throw new Error(`Bad post data: ${post.accountId}`);

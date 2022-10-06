@@ -1,5 +1,4 @@
 import { Hono } from "hono";
-import { cache } from "hono/cache";
 import { GetMe, GetPosts, PostUpload, DeletePosts } from "@/handlers";
 import { WigglesEnv } from "@/types";
 import { auth, sentry } from "@/middleware";
@@ -13,10 +12,6 @@ app.use(
     dsn: "https://340d03a71aae4b4a99b7d3d36906c21d@o343924.ingest.sentry.io/6779820",
     tracesSampleRate: 1.0,
   })
-);
-app.use(
-  "/api/posts",
-  cache({ cacheName: "wr", cacheControl: `max-age=${60 * 5}` })
 );
 
 app.get("/api/posts", GetPosts);
