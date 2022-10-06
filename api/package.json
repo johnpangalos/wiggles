@@ -17,6 +17,7 @@
   "dependencies": {
     "@ssttevee/multipart-parser": "^0.1.9",
     "hono": "^2.1.4",
+    "toucan-js": "^2.7.0",
     "uuid": "^8.3.2"
   }
 }

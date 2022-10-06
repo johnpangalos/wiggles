@@ -1,5 +1,6 @@
 import { Identity } from "@/middleware/auth";
 import { Context } from "hono";
+import { Bindings, Next, Variables } from "hono/dist/hono";
 
 export type Account = {
   displayName: string;
@@ -25,6 +26,7 @@ export type WigglesEnv = {
     ACCOUNT_ID: string;
     API_KEY: string;
     WIGGLES_KV_ID: string;
+    RELEASE: string | undefined;
     ENV: "development" | "production";
   };
   Variables: {
@@ -35,3 +37,13 @@ export type WigglesEnv = {
   };
 };
 export type WigglesContext = Context<string, WigglesEnv>;
+
+export type Environment = {
+  Bindings: Bindings;
+  Variables: Variables;
+};
+
+export type MiddlewareHandler<T> = (
+  c: WigglesContext,
+  next: Next
+) => Promise<T>;
