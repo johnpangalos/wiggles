@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "wrangler dev --config wrangler-dev.toml"
+    "dev": "wrangler dev --config wrangler-dev.toml",
+    "type-check": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +18,7 @@
   "dependencies": {
     "@ssttevee/multipart-parser": "^0.1.9",
     "hono": "^2.1.4",
+    "toucan-js": "^2.7.0",
     "uuid": "^8.3.2"
   }
 }

@@ -1,4 +1,4 @@
-import { WigglesContext } from "@/types";
+import { MiddlewareHandler, WigglesContext } from "@/types";
 import { Next } from "hono";
 import { Bindings, Variables } from "hono/dist/hono";
 
@@ -72,10 +72,10 @@ export type JWTPayload = {
   exp: number;
   iat: number;
   nbf?: number;
-  iss: string; // https://<domain>.cloudflareaccess.com
-  type?: string; // Always just 'app'?
+  iss: string;
+  type?: string;
   identity_nonce?: string;
-  sub: string; // Empty string for service tokens or user ID otherwise
+  sub: string;
 };
 
 export type PluginArgs = {
@@ -92,10 +92,6 @@ export type PluginData = {
   };
 };
 
-// const extractJWTFromRequest = (request: Request) =>
-//   request.cookie.get("Cf-Access-Jwt-Assertion");
-
-// Adapted slightly from https://github.com/cloudflare/workers-access-external-auth-example
 const base64URLDecode = (s: string) => {
   s = s.replace(/-/g, "+").replace(/_/g, "/").replace(/\s/g, "");
   return new Uint8Array(
@@ -214,12 +210,7 @@ export type Environment = {
   Variables: Variables;
 };
 
-export type MiddlewareHandler = (
-  c: WigglesContext,
-  next: Next
-) => Promise<undefined | Response>;
-
-export function auth(): MiddlewareHandler {
+export function auth(): MiddlewareHandler<Response | undefined> {
   return async (c: WigglesContext, next: Next) => {
     try {
       const validator = generateValidator(c);

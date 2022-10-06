@@ -16,5 +16,6 @@ jobs:
       - name: Install Dependencies
         uses: ./.github/actions/install-deps
 
-      - name: Typecheck
-        run: cd web && pnpm tsc
+      - name: Typecheck web
+        run: pnpm run -r type-check
+
