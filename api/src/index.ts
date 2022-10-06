@@ -14,7 +14,10 @@ app.use(
     tracesSampleRate: 1.0,
   })
 );
-app.use("/api/posts", cache({ cacheName: "wr" }));
+app.use(
+  "/api/posts",
+  cache({ cacheName: "wr", cacheControl: `max-age=${60 * 5}` })
+);
 
 app.get("/api/posts", GetPosts);
 app.get("/api/me", GetMe);
