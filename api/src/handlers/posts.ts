@@ -18,9 +18,9 @@ export async function GetPosts(c: WigglesContext) {
   if (limitStr === null) limitStr = "10";
   const limit = Number.parseInt(limitStr);
 
-  const myPosts: boolean = c.req.query("myPosts") === "true";
+  const email: string = c.req.query("email");
 
-  return c.json(await readPosts(c, { size, cursor, limit, myPosts }));
+  return c.json(await readPosts(c, { size, cursor, limit, email }));
 }
 
 type ImageUploadResponse = {

@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "wrangler dev --config wrangler-dev.toml"
+    "dev": "wrangler dev --config wrangler-dev.toml",
+    "type-check": "tsc"
   },
   "keywords": [],
   "author": "",

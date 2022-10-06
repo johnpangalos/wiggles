@@ -39,11 +39,16 @@ const container = document.getElementById("root");
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const root = createRoot(container!);
 
+const ErrorBoundary = Sentry.ErrorBoundary as unknown as (args: {
+  fallback: JSX.Element;
+  children: React.ReactNode;
+}) => JSX.Element;
+
 root.render(
-  <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
+  <ErrorBoundary fallback={<p>An error has occurred</p>}>
     <QueryClientProvider client={queryClient}>
       <App />
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
-  </Sentry.ErrorBoundary>
+  </ErrorBoundary>
 );
