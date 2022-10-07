@@ -28,10 +28,6 @@ jobs:
           workingDirectory: ./api
           command: publish --var RELEASE:$GITHUB_SHA --outdir dist
 
-      - name: Fix working dir
-        run: ls -la
-        working-directory: ./
-
       - name: Create Sentry release
         uses: getsentry/action-release@v1
         env:
@@ -43,4 +39,8 @@ jobs:
           sourcemaps: ./api/dist
           ignore_missing: true
           ignore_empty: true
+
+
+      - name: removie api dist
+        run: rm -rf ./api/dist
 
