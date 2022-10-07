@@ -1,10 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
 import { createPosts, deletePosts, readPosts } from "@/db";
 import { Post, WigglesContext } from "@/types";
-// import { jsonResponse } from "../../utils/jsonResponse";
 import { parseFormDataRequest } from "@/utils";
 import { Identity } from "@/middleware/auth";
-// import { IMAGE_KEY_PREFIX } from "../../utils/constants";
 
 export async function GetPosts(c: WigglesContext) {
   let size: string | null = c.req.query("size");
@@ -28,6 +26,7 @@ type ImageUploadResponse = {
     id: string;
   };
 };
+
 export async function PostUpload(c: WigglesContext) {
   try {
     // Compatibility dates aren't yet possible to set: https://developers.cloudflare.com/workers/platform/compatibility-dates#formdata-parsing-supports-file

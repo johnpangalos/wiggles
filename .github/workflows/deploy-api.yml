@@ -13,11 +13,6 @@ jobs:
     permissions:
       contents: read
       deployments: write
-
-    defaults:
-      run:
-        working-directory: ./
-
     name: Cloudflare Workers
     steps:
       - name: Checkout
