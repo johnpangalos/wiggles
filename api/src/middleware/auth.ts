@@ -146,7 +146,12 @@ const generateValidator =
 
     const certsURL = new URL("/cdn-cgi/access/certs", c.env.DOMAIN);
 
-    const certsResponse = await fetch(certsURL.toString());
+    const certsResponse = await fetch(certsURL.toString(), {
+      cf: {
+        cacheTtl: 5 * 60,
+        cacheEverything: true,
+      },
+    });
     const { keys } = (await certsResponse.json()) as CertsResponse;
     if (!keys) {
       throw new Error("Could not fetch signing keys.");
