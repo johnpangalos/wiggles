@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { logger } from "hono/logger";
 import { GetMe, GetPosts, PostUpload, DeletePosts } from "@/handlers";
 import { WigglesEnv } from "@/types";
 import { auth, sentry } from "@/middleware";
@@ -6,6 +7,7 @@ import { auth, sentry } from "@/middleware";
 const app = new Hono<WigglesEnv>();
 
 app.use("/api/*", auth());
+app.use("/api/*", logger());
 app.use(
   "/api/*",
   sentry({
