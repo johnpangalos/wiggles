@@ -41,6 +41,6 @@ jobs:
           ignore_empty: true
 
 
-      - name: removie api dist
-        run: rm -rf ./api/dist
+      - name: remove api dist
+        run: sudo rm -rf ./api/dist
 
