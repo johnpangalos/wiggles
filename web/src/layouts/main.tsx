@@ -36,7 +36,7 @@ export function BottomNavigation() {
 
   return (
     <>
-      <div className="z-10 bg-gray-100 flex items-center justify-center w-full py-3 border-t-2 border-purple-600 bottom-0 fixed px-12">
+      <div className="z-10 bg-gray-100 flex pwa:pb-8 items-center justify-center w-full py-3 border-t-2 border-purple-600 bottom-0 fixed px-12">
         <div className="flex items-center justify-around flex-shrink w-full max-w-lg">
           <NavButton to="/feed" icon={Home} text={"Feed"} />
           <button
