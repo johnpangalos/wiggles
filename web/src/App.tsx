@@ -26,7 +26,7 @@ const App = () => {
   }, []);
   return (
     <BreakpointProvider>
-      <div id="App" className="h-full text-gray-800">
+      <div id="App" className="h-[100svh] overflow-hidden text-gray-800">
         <Router>
           <SentryRoutes>
             <Route path="/" element={<MainLayout />}>
