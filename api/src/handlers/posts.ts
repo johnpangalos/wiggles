@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import { createPosts, deletePosts, readPosts } from "@/db";
 import { Post, WigglesContext } from "@/types";
 import { parseFormDataRequest } from "@/utils";
-import { Identity } from "@/middleware/auth";
+import { Identity, PluginData } from "@/middleware/auth";
 
 export async function GetPosts(c: WigglesContext) {
   let size: string | null = c.req.query("size");
@@ -62,7 +62,7 @@ export async function PostUpload(c: WigglesContext) {
     const idList = await Promise.all(promises);
     const timestamp = +new Date();
 
-    const access = await c.get("cloudflareAccess");
+    const access = c.get<PluginData["cloudflareAccess"]>("cloudflareAccess");
     const identity: Identity | undefined = await access.JWT.getIdentity();
     if (identity === undefined) throw new Error("Identity not found");
 
