@@ -11,13 +11,13 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@cloudflare/workers-types": "^3.16.0",
+    "@cloudflare/workers-types": "^3.19.0",
     "@types/uuid": "^8.3.4",
-    "wrangler": "^2.1.4"
+    "wrangler": "^2.19.0"
   },
   "dependencies": {
     "@ssttevee/multipart-parser": "^0.1.9",
-    "hono": "^2.1.4",
+    "hono": "^2.7.8",
     "toucan-js": "^2.7.0",
     "uuid": "^8.3.2"
   }
