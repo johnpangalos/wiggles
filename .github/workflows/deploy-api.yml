@@ -26,7 +26,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           workingDirectory: ./api
-          command: publish --var RELEASE:$GITHUB_SHA --outdir dist
+          command: deploy --var RELEASE:$GITHUB_SHA --outdir dist
 
       - name: Create Sentry release
         uses: getsentry/action-release@v1
