@@ -2,21 +2,21 @@ import { v4 as uuidv4 } from "uuid";
 import { createPosts, deletePosts, readPosts } from "@/db";
 import { Post, WigglesContext } from "@/types";
 import { parseFormDataRequest } from "@/utils";
-import { Identity, PluginData } from "@/middleware/auth";
+import { Identity } from "@/middleware/auth";
 
 export async function GetPosts(c: WigglesContext) {
-  let size: string | null = c.req.query("size");
+  let size: string | undefined = c.req.query("size");
   if (size === null) size = "WRPost";
   if ("WRPost" !== size && "WRThumbnail" !== size)
     throw new Error("Invalid query param.");
 
-  const cursor: string | null = c.req.query("cursor");
+  const cursor: string | undefined = c.req.query("cursor");
 
-  let limitStr: string | null = c.req.query("limit");
-  if (limitStr === null) limitStr = "10";
+  let limitStr: string | undefined = c.req.query("limit");
+  if (limitStr === undefined) limitStr = "10";
   const limit = Number.parseInt(limitStr);
 
-  const email: string = c.req.query("email");
+  const email: string | undefined = c.req.query("email");
 
   return c.json(await readPosts(c, { size, cursor, limit, email }));
 }
@@ -62,8 +62,8 @@ export async function PostUpload(c: WigglesContext) {
     const idList = await Promise.all(promises);
     const timestamp = +new Date();
 
-    const access = c.get<PluginData["cloudflareAccess"]>("cloudflareAccess");
-    const identity: Identity | undefined = await access.JWT.getIdentity();
+    const access = c.get("JWT");
+    const identity: Identity | undefined = await access.getIdentity();
     if (identity === undefined) throw new Error("Identity not found");
 
     const postList: Post[] = idList.map((id, idx) => ({

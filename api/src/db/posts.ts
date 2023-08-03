@@ -1,4 +1,4 @@
-import { Identity, PluginData } from "@/middleware/auth";
+import { Identity } from "@/middleware/auth";
 import { Account, Post, WigglesContext } from "@/types";
 import { DAY, generateSignedUrl, ImageSize, unixTime } from "@/utils";
 
@@ -92,8 +92,9 @@ export async function createPosts(c: WigglesContext, postList: Post[]) {
         metadata: post,
       },
       {
-        key: `post-account-${post.accountId}-${MAX -
-          Number.parseInt(post.timestamp)}`,
+        key: `post-account-${post.accountId}-${
+          MAX - Number.parseInt(post.timestamp)
+        }`,
         value: "",
         metadata: post,
       },
@@ -120,8 +121,8 @@ export async function deletePosts(c: WigglesContext, orderKeys: string[]) {
   for (const key of orderKeys) {
     const feedKey = `post-feed-${key}`;
 
-    const access = c.get<PluginData["cloudflareAccess"]>("cloudflareAccess");
-    const identity: Identity | undefined = await access.JWT.getIdentity();
+    const access = c.get("JWT");
+    const identity: Identity | undefined = await access.getIdentity();
     if (identity === undefined) throw new Error("Identity not found");
     const accountKey = `post-account-${identity.email}-${key}`;
 
