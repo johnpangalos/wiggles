@@ -1,5 +1,5 @@
 import { MiddlewareHandler } from "@/types";
-import Toucan, { Options as ToucanOptions } from "toucan-js";
+import { Toucan, Options as ToucanOptions } from "toucan-js";
 
 declare module "hono" {
   interface ContextVariableMap {
@@ -12,8 +12,9 @@ export function sentry(
 ): MiddlewareHandler<void> {
   return async (c, next) => {
     if (c.env.ENV !== "production") return await next();
+
     const sentry = new Toucan({
-      request: c.req,
+      request: c.req.raw,
       context: c.executionCtx,
       release: c.env.RELEASE,
       environment: c.env.ENV,

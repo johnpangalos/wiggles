@@ -35,7 +35,7 @@ export type WigglesEnv = {
     };
   };
 };
-export type WigglesContext = Context<string, WigglesEnv>;
+export type WigglesContext = Context<WigglesEnv>;
 
 export type MiddlewareHandler<T> = (
   c: WigglesContext,

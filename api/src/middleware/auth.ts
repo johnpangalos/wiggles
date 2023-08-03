@@ -1,5 +1,6 @@
 import { MiddlewareHandler, WigglesContext } from "@/types";
-import { Next } from "hono";
+import { HonoRequest, Next } from "hono";
+import { getCookie } from "hono/cookie";
 
 export const getIdentity = async ({
   jwt,
@@ -82,24 +83,12 @@ export type PluginArgs = {
   domain: string;
 };
 
-export type PluginData = {
-  cloudflareAccess: {
-    JWT: {
-      payload: JWTPayload;
-      getIdentity: () => Promise<undefined | Identity>;
-    };
-  };
-};
-
 const base64URLDecode = (s: string) => {
-  s = s
-    .replace(/-/g, "+")
-    .replace(/_/g, "/")
-    .replace(/\s/g, "");
+  s = s.replace(/-/g, "+").replace(/_/g, "/").replace(/\s/g, "");
   return new Uint8Array(
-    (Array.prototype.map.call(atob(s), (c: string) =>
+    Array.prototype.map.call(atob(s), (c: string) =>
       c.charCodeAt(0)
-    ) as unknown) as ArrayBufferLike
+    ) as unknown as ArrayBufferLike
   );
 };
 
@@ -121,105 +110,105 @@ type CertsResponse = {
   public_certs: { kid: string; cert: string }[];
 };
 
-const generateValidator = (c: WigglesContext) => async (
-  request: Request
-): Promise<{
-  jwt: string;
-  payload: object;
-}> => {
-  const jwt = request.cookie("CF_Authorization");
+const generateValidator =
+  (c: WigglesContext) =>
+  async (): Promise<{
+    jwt: string;
+    payload: object;
+  }> => {
+    const jwt = getCookie(c, "CF_Authorization");
 
-  if (jwt === undefined) throw new Error("JWT not on request");
-  const parts = jwt.split(".");
-  if (parts.length !== 3) {
-    throw new Error("JWT does not have three parts.");
-  }
-  const [header, payload, signature] = parts;
+    if (jwt === undefined) throw new Error("JWT not on request");
+    const parts = jwt.split(".");
+    if (parts.length !== 3) {
+      throw new Error("JWT does not have three parts.");
+    }
+    const [header, payload, signature] = parts;
 
-  const textDecoder = new TextDecoder("utf-8");
-  const { kid, alg } = JSON.parse(textDecoder.decode(base64URLDecode(header)));
-  if (alg !== "RS256") {
-    throw new Error("Unknown JWT type or algorithm.");
-  }
+    const textDecoder = new TextDecoder("utf-8");
+    const { kid, alg } = JSON.parse(
+      textDecoder.decode(base64URLDecode(header))
+    );
+    if (alg !== "RS256") {
+      throw new Error("Unknown JWT type or algorithm.");
+    }
 
-  const certsURL = new URL("/cdn-cgi/access/certs", c.env.DOMAIN);
+    const certsURL = new URL("/cdn-cgi/access/certs", c.env.DOMAIN);
 
-  const certsResponse = await fetch(certsURL.toString(), {
-    cf: {
-      cacheTtl: 5 * 60,
-      cacheEverything: true,
-    },
-  });
-  const { keys } = (await certsResponse.json()) as CertsResponse;
-  if (!keys) {
-    throw new Error("Could not fetch signing keys.");
-  }
-  const jwk = keys.find((key) => key.kid === kid);
-  if (!jwk) {
-    throw new Error("Could not find matching signing key.");
-  }
-  if (jwk.kty !== "RSA" || jwk.alg !== "RS256") {
-    throw new Error("Unknown key type of algorithm.");
-  }
-  // c.env.WIGGLES.put(jwkKey, JSON.stringify(jwk));
-  // }
+    const certsResponse = await fetch(certsURL.toString(), {
+      cf: {
+        cacheTtl: 5 * 60,
+        cacheEverything: true,
+      },
+    });
+    const { keys } = (await certsResponse.json()) as CertsResponse;
+    if (!keys) {
+      throw new Error("Could not fetch signing keys.");
+    }
+    const jwk = keys.find((key) => key.kid === kid);
+    if (!jwk) {
+      throw new Error("Could not find matching signing key.");
+    }
+    if (jwk.kty !== "RSA" || jwk.alg !== "RS256") {
+      throw new Error("Unknown key type of algorithm.");
+    }
+    // c.env.WIGGLES.put(jwkKey, JSON.stringify(jwk));
+    // }
 
-  const key = await crypto.subtle.importKey(
-    "jwk",
-    jwk,
-    { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
-    false,
-    ["verify"]
-  );
+    const key = await crypto.subtle.importKey(
+      "jwk",
+      jwk,
+      { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
+      false,
+      ["verify"]
+    );
 
-  const unroundedSecondsSinceEpoch = Date.now() / 1000;
+    const unroundedSecondsSinceEpoch = Date.now() / 1000;
 
-  const payloadObj = JSON.parse(textDecoder.decode(base64URLDecode(payload)));
+    const payloadObj = JSON.parse(textDecoder.decode(base64URLDecode(payload)));
 
-  if (payloadObj.iss && payloadObj.iss !== certsURL.origin) {
-    throw new Error("JWT issuer is incorrect.");
-  }
-  if (payloadObj.aud && payloadObj.aud[0] !== c.env.AUDIENCE) {
-    throw new Error("JWT audience is incorrect.");
-  }
-  if (
-    payloadObj.exp &&
-    Math.floor(unroundedSecondsSinceEpoch) >= payloadObj.exp
-  ) {
-    throw new Error("JWT has expired.");
-  }
-  if (
-    payloadObj.nbf &&
-    Math.ceil(unroundedSecondsSinceEpoch) < payloadObj.nbf
-  ) {
-    throw new Error("JWT is not yet valid.");
-  }
+    if (payloadObj.iss && payloadObj.iss !== certsURL.origin) {
+      throw new Error("JWT issuer is incorrect.");
+    }
+    if (payloadObj.aud && payloadObj.aud[0] !== c.env.AUDIENCE) {
+      throw new Error("JWT audience is incorrect.");
+    }
+    if (
+      payloadObj.exp &&
+      Math.floor(unroundedSecondsSinceEpoch) >= payloadObj.exp
+    ) {
+      throw new Error("JWT has expired.");
+    }
+    if (
+      payloadObj.nbf &&
+      Math.ceil(unroundedSecondsSinceEpoch) < payloadObj.nbf
+    ) {
+      throw new Error("JWT is not yet valid.");
+    }
 
-  const verified = await crypto.subtle.verify(
-    "RSASSA-PKCS1-v1_5",
-    key,
-    base64URLDecode(signature),
-    asciiToUint8Array(`${header}.${payload}`)
-  );
-  if (!verified) {
-    throw new Error("Could not verify JWT.");
-  }
+    const verified = await crypto.subtle.verify(
+      "RSASSA-PKCS1-v1_5",
+      key,
+      base64URLDecode(signature),
+      asciiToUint8Array(`${header}.${payload}`)
+    );
+    if (!verified) {
+      throw new Error("Could not verify JWT.");
+    }
 
-  return { jwt, payload: payloadObj };
-};
+    return { jwt, payload: payloadObj };
+  };
 
 export function auth(): MiddlewareHandler<Response | undefined> {
   return async (c: WigglesContext, next: Next) => {
     try {
       const validator = generateValidator(c);
 
-      const { jwt, payload } = await validator(c.req);
+      const { jwt, payload } = await validator();
 
-      c.set("cloudflareAccess", {
-        JWT: {
-          payload,
-          getIdentity: () => getIdentity({ jwt, domain: c.env.DOMAIN }),
-        },
+      c.set("JWT", {
+        payload,
+        getIdentity: () => getIdentity({ jwt, domain: c.env.DOMAIN }),
       });
 
       await next();

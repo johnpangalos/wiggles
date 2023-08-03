@@ -3,16 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@sentry/react": "^7.51.0",
-    "@sentry/tracing": "^7.51.0",
-    "@tanstack/react-query": "^4.29.5",
-    "@tanstack/react-query-devtools": "^4.29.6",
+    "@sentry/react": "^7.61.0",
+    "@sentry/tracing": "^7.61.0",
+    "@tanstack/react-query": "^4.32.1",
+    "@tanstack/react-query-devtools": "^4.32.1",
     "@tanstack/react-virtual": "3.0.0-beta.54",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-feather": "^2.0.9",
-    "react-router-dom": "^6.11.1",
-    "zustand": "^4.3.8"
+    "react-router-dom": "^6.14.2",
+    "zustand": "^4.4.0"
   },
   "scripts": {
     "dev": "vite dev",
@@ -28,15 +28,15 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "@types/node": "^14.18.45",
-    "@types/react": "^18.2.6",
-    "@types/react-dom": "^18.2.4",
+    "@types/node": "^20.4.6",
+    "@types/react": "^18.2.18",
+    "@types/react-dom": "^18.2.7",
     "@types/react-router-dom": "^5.1.7",
-    "@vitejs/plugin-react": "^2.2.0",
+    "@vitejs/plugin-react": "^4.0.4",
     "autoprefixer": "^10.4.14",
-    "cross-env": "^5.2.0",
-    "postcss": "^8.4.23",
-    "tailwindcss": "^3.3.2",
-    "vite": "^3.2.6"
+    "cross-env": "^7.0.3",
+    "postcss": "^8.4.27",
+    "tailwindcss": "^3.3.3",
+    "vite": "^4.4.8"
   }
 }

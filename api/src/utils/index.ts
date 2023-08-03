@@ -1,5 +1,6 @@
 import { WigglesContext } from "@/types";
 import { parseMultipart } from "@ssttevee/multipart-parser";
+import { HonoRequest } from "hono";
 import { v4 as uuidV4 } from "uuid";
 
 export type ImageSize = "WRPost" | "WRThumbnail";
@@ -53,7 +54,7 @@ export async function generateSignedUrl(
 const RE_MULTIPART =
   /^multipart\/form-data(?:;\s*boundary=(?:"((?:[^"]|\\")+)"|([^\s;]+)))$/;
 
-const getBoundary = (request: Request): string | undefined => {
+const getBoundary = (request: HonoRequest): string | undefined => {
   const contentType = request.headers.get("Content-Type");
   if (!contentType) return;
 
@@ -64,7 +65,7 @@ const getBoundary = (request: Request): string | undefined => {
 };
 
 export const parseFormDataRequest = async (
-  request: Request
+  request: HonoRequest
 ): Promise<FormData[] | undefined> => {
   const boundary = getBoundary(request);
   if (!boundary || !request.body) return;
