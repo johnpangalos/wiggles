@@ -1,93 +1,62 @@
-import { ReactNode } from "react";
-import { Download } from "react-feather";
-import { ProfileImage } from "../components";
-import { Account } from "@/types";
-
-const forceDownload = (blob: string, filename: string) => {
-  const a = document.createElement("a");
-  a.download = filename;
-  a.href = blob;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-};
+import { ProfileImage } from "@/components";
+import { NewPost } from "@/types";
+import { usePostsLoadedState } from "@/stores";
 
 type PostProps = {
   thumbnail?: boolean;
-  children: ReactNode | ReactNode[];
-  timestamp?: string;
   selected?: boolean;
   selectable?: boolean;
   handleClick?: () => void;
-  account?: Account;
-  id?: string;
-  url?: undefined;
+  post: NewPost;
 };
 
 export const Post = ({
-  children,
-  timestamp = "0",
+  thumbnail,
+  post,
+  selectable,
   selected,
-  selectable = false,
-  handleClick = () => null,
-  account,
-  thumbnail = false,
-  url,
+  handleClick,
 }: PostProps): JSX.Element => {
-  const date = new Date(Number(timestamp));
-
-  const downloadResource = (url: string, filename?: string) => {
-    let name = filename;
-    if (!name) name = url.split("\\").pop()?.split("/").pop();
-    fetch(url, {
-      headers: new Headers({
-        Origin: window.location.origin,
-      }),
-      mode: "cors",
-    })
-      .then((response) => response.blob())
-      .then((blob) => {
-        const blobUrl = window.URL.createObjectURL(blob);
-        forceDownload(blobUrl, name as string);
-      })
-      .catch((e) => console.error(e));
-  };
+  const date = new Date(Number(post.timestamp));
+  const { updatePost } = usePostsLoadedState();
 
   return (
     <div
       className={`
-          flex flex-col bg-white shadow-md 
-          rounded px-2 pt-3 pb-4 w-full xs:max-h-sm 
-          max-h-xs m-auto  max-w-xl
+          w-full m-auto  max-w-xl
+          ${thumbnail ? "bg-gray-100 border border-gray-200 p-1 rounded" : ""}
           ${selectable ? " cursor-pointer" : ""}
-          ${selected ? " border-purple-600 border-2" : ""}
-          ${thumbnail ? "h-[145px] md:h-[195px]" : "h-[520px]"}`}
+          ${selected ? " border-purple-600 border-2" : ""}`}
+      onClick={() => {
+        if (!selectable) return;
+        handleClick?.();
+      }}
     >
       <div
-        className="flex flex-grow bg-gray-300 p-1 rounded justify-center items-center h-full"
-        onClick={() => {
-          if (!selectable) return;
-          handleClick();
-        }}
+        className={
+          thumbnail
+            ? "h-[115px] md:h-[164px]"
+            : "h-full flex flex-grow justify-center items-center"
+        }
       >
-        {children}
+        <img
+          className="w-full h-full bg-no-repeat object-contain object-center"
+          src={post.url}
+          alt={post.url}
+          onLoad={() => {
+            updatePost(post.id, true);
+          }}
+        />
       </div>
-      {account && (
+      {!thumbnail && (
         <div className="flex pt-3 items-start">
           <div className="h-10 w-10">
-            <ProfileImage url={account.photoURL} />
+            <ProfileImage url={post.account.photoURL} />
           </div>
           <div className="flex-grow pl-3">
-            <div className="text-xl font-bold">{account.displayName}</div>
+            <div className="text-xl font-bold">{post.account.displayName}</div>
             <div className="text-sm">Uploaded: {date.toLocaleString()}</div>
           </div>
-          {url && (
-            <Download
-              className="pb-1 self-center text-purple-600"
-              role="button"
-              onClick={() => downloadResource(url)}
-            />
-          )}
         </div>
       )}
     </div>

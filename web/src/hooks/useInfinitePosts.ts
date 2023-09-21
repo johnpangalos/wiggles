@@ -15,7 +15,31 @@ type GetPostsOptions = {
   pageParam?: string;
 } & UseInfinitePostsOptions;
 
-async function getPosts({
+export function getPostsUrl({
+  imageSize,
+  pageParam,
+  limit,
+  email,
+}: GetPostsOptions): string {
+  return `${
+    import.meta.env.VITE_API_URL
+  }/posts?size=${imageSize}&limit=${limit}${
+    pageParam ? `&cursor=${pageParam}` : ""
+  }${email ? `&email=${email}` : ""}`;
+}
+export async function getPosts({
+  imageSize,
+  pageParam,
+  limit,
+  email,
+}: GetPostsOptions): Promise<Response> {
+  return await fetch(
+    `${import.meta.env.VITE_API_URL}/posts?size=${imageSize}&limit=${limit}${
+      pageParam ? `&cursor=${pageParam}` : ""
+    }${email ? `&email=${email}` : ""}`
+  );
+}
+async function getPostsQueryRes({
   imageSize,
   pageParam,
   limit,
@@ -43,7 +67,7 @@ export function useInfinitePosts({
 }: UseInfinitePostsOptions) {
   return useInfiniteQuery(
     infinitePostsQueryKey({ imageSize, limit, email }),
-    ({ pageParam }) => getPosts({ imageSize, pageParam, limit, email }),
+    ({ pageParam }) => getPostsQueryRes({ imageSize, pageParam, limit, email }),
     {
       getNextPageParam: (lastPage: { posts: NewPost[]; cursor: string }) =>
         lastPage.cursor,

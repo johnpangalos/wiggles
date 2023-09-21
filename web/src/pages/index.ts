@@ -1,4 +1,4 @@
-export { Feed } from "./Feed";
+export { Feed, loader } from "./Feed";
 export { Upload } from "./Upload";
-export { Profile } from "./Profile";
+export { Profile, profileLoader } from "./Profile";
 export { Login } from "./Login";

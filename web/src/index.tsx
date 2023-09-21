@@ -1,11 +1,14 @@
-import { useEffect } from "react";
+import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "@/styles/index.css";
 import App from "@/App";
-import * as Sentry from "@sentry/react";
-import { BrowserTracing } from "@sentry/tracing";
+import {
+  BrowserTracing,
+  init,
+  reactRouterV6Instrumentation,
+} from "@sentry/react";
 import {
   useLocation,
   useNavigationType,
@@ -13,11 +16,11 @@ import {
   matchRoutes,
 } from "react-router-dom";
 
-Sentry.init({
+init({
   dsn: "https://645ca46ead98408a94482c3f2bb4dcac@o343924.ingest.sentry.io/1890426",
   integrations: [
     new BrowserTracing({
-      routingInstrumentation: Sentry.reactRouterV6Instrumentation(
+      routingInstrumentation: reactRouterV6Instrumentation(
         useEffect,
         useLocation,
         useNavigationType,
@@ -39,16 +42,10 @@ const container = document.getElementById("root");
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const root = createRoot(container!);
 
-const ErrorBoundary = Sentry.ErrorBoundary as unknown as (args: {
-  fallback: JSX.Element;
-  children: React.ReactNode;
-}) => JSX.Element;
-
 root.render(
-  <ErrorBoundary fallback={<p>An error has occurred</p>}>
+  <StrictMode>
     <QueryClientProvider client={queryClient}>
       <App />
-      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
-  </ErrorBoundary>
+  </StrictMode>
 );

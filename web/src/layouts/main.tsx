@@ -80,12 +80,10 @@ function NavButton({ icon: Icon, text, to }: NavButtonProps) {
   );
 }
 
-// activeClassName="text-purple-600"
-
 export function MainLayout() {
   return (
-    <div className="flex flex-col w-full h-screen">
-      <div className="flex-1 w-full overflow-y-auto overflow-x-hidden">
+    <div id="App" className="flex flex-col text-gray-800">
+      <div className="flex-1 pb-14">
         <Outlet />
       </div>
 
