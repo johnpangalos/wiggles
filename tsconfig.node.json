@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["react-router.config.ts", "vite.config.ts"],
+  "include": ["tailwind.config.ts", "vite.config.ts"],
   "compilerOptions": {
     "composite": true,
     "strict": true,

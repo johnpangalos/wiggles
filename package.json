@@ -1,38 +1,35 @@
 {
-  "name": "integration-vite-plugin-cloudflare-template",
-  "version": "0.0.0",
+  "name": "my-react-router-app",
   "private": true,
-  "sideEffects": false,
   "type": "module",
   "scripts": {
-    "dev": "react-router dev",
     "build": "react-router build",
-    "typecheck": "react-router typegen && tsc"
+    "cf-typegen": "wrangler types",
+    "deploy": "pnpm run build && wrangler deploy",
+    "dev": "react-router dev",
+    "preview": "pnpm run build && vite preview",
+    "typecheck": "pnpm run cf-typegen && react-router typegen && tsc -b"
   },
   "dependencies": {
-    "express": "^4.19.2",
-    "isbot": "^5.1.11",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router": "^7.4.1",
-    "serialize-javascript": "^6.0.1"
+    "@react-router/fs-routes": "^7.5.0",
+    "isbot": "^5.1.17",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router": "^7.5.0"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "^0.1.9",
-    "@cloudflare/workers-types": "^4.20250214.0",
-    "@react-router/dev": "^7.4.1",
-    "@react-router/fs-routes": "^7.4.1",
-    "@types/node": "^20.0.0",
-    "@types/react": "^18.2.20",
-    "@types/react-dom": "^18.2.7",
-    "eslint": "^8.38.0",
-    "typescript": "^5.1.6",
-    "vite": "^6.1.0",
-    "vite-tsconfig-paths": "^4.2.1",
-    "wrangler": "^3.109.2"
-  },
-  "engines": {
-    "node": ">=20.0.0"
+    "@cloudflare/vite-plugin": "^1.0.0",
+    "@cloudflare/workers-types": "^4.20250415.0",
+    "@react-router/dev": "^7.5.0",
+    "@tailwindcss/vite": "^4.0.0",
+    "@types/node": "^20",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.1",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.2.1",
+    "vite-tsconfig-paths": "^5.1.4",
+    "wrangler": "^4.11.0"
   },
   "packageManager": "pnpm@10.7.0+sha512.6b865ad4b62a1d9842b61d674a393903b871d9244954f652b8842c2b553c72176b278f64c463e52d40fff8aba385c235c8c9ecf5cc7de4fd78b8bb6d49633ab6"
 }
