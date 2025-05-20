@@ -5,25 +5,24 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "@/styles/index.css";
 import App from "@/App";
 import * as Sentry from "@sentry/react";
-import { BrowserTracing } from "@sentry/tracing";
+// BrowserTracing from "@sentry/tracing" is removed as it's not used with reactRouterV7BrowserTracingIntegration
 import {
   useLocation,
   useNavigationType,
   createRoutesFromChildren,
   matchRoutes,
 } from "react-router-dom";
+// useEffect is imported at the top of the file
 
 Sentry.init({
   dsn: "https://645ca46ead98408a94482c3f2bb4dcac@o343924.ingest.sentry.io/1890426",
   integrations: [
-    new BrowserTracing({
-      routingInstrumentation: Sentry.reactRouterV6Instrumentation(
-        useEffect,
-        useLocation,
-        useNavigationType,
-        createRoutesFromChildren,
-        matchRoutes
-      ),
+    Sentry.reactRouterV7BrowserTracingIntegration({ // Corrected Sentry v7 integration
+      useEffect,
+      useLocation,
+      useNavigationType,
+      createRoutesFromChildren,
+      matchRoutes,
     }),
   ],
   environment: import.meta.env.MODE,
