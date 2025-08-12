@@ -41,13 +41,12 @@ export function useInfinitePosts({
   email,
   enabled,
 }: UseInfinitePostsOptions) {
-  return useInfiniteQuery(
-    infinitePostsQueryKey({ imageSize, limit, email }),
-    ({ pageParam }) => getPosts({ imageSize, pageParam, limit, email }),
-    {
-      getNextPageParam: (lastPage: { posts: NewPost[]; cursor: string }) =>
-        lastPage.cursor,
-      enabled,
-    }
-  );
+  return useInfiniteQuery({
+    queryKey: infinitePostsQueryKey({ imageSize, limit, email }),
+    queryFn: ({ pageParam }) => getPosts({ imageSize, pageParam, limit, email }),
+    initialPageParam: undefined,
+    getNextPageParam: (lastPage: { posts: NewPost[]; cursor: string }) =>
+      lastPage.cursor,
+    enabled,
+  });
 }

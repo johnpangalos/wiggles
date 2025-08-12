@@ -34,9 +34,10 @@ const url = generateLogoutURL({
 });
 
 export function Profile() {
-  const { data: profileData } = useQuery(["me"], () =>
-    fetch(`${import.meta.env.VITE_API_URL}/me`).then((res) => res.json())
-  );
+  const { data: profileData } = useQuery({
+    queryKey: ["me"],
+    queryFn: () => fetch(`${import.meta.env.VITE_API_URL}/me`).then((res) => res.json())
+  });
   const [selectMode, setSelectMode] = useState(false);
   const [selectedOrderKeys, setSelectedOrderKeys] = useState<
     Record<string, NewPost>
@@ -57,16 +58,14 @@ export function Profile() {
   const queryClient = useQueryClient();
   const queryKey = infinitePostsQueryKey(queryKeyConfig(profileData?.email));
 
-  const { mutate, status: mutateStatus } = useMutation(
-    (orderKeys: string[]) => deleteImages(orderKeys),
-    {
-      onSettled: () => {
-        setSelectedOrderKeys({});
-        setSelectMode(false);
-        queryClient.invalidateQueries(queryKey);
-      },
-    }
-  );
+  const { mutate, status: mutateStatus } = useMutation({
+    mutationFn: (orderKeys: string[]) => deleteImages(orderKeys),
+    onSettled: () => {
+      setSelectedOrderKeys({});
+      setSelectMode(false);
+      queryClient.invalidateQueries({ queryKey });
+    },
+  });
 
   const postRows = data
     ? data.pages
@@ -127,14 +126,14 @@ export function Profile() {
     ]
   );
 
-  if (status === "loading") return <Loading />;
+  if (status === "pending") return <Loading />;
   return (
     <div className="h-full px-6 flex flex-col">
       <div>
         <div className="m-auto md:max-w-xl py-4 h-16">
           {selectMode ? (
             <>
-              {mutateStatus === "loading" ? (
+              {mutateStatus === "pending" ? (
                 "Loading..."
               ) : (
                 <div className="flex items-center">

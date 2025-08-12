@@ -1,3 +1,7 @@
 packages:
-  - 'web'
-  - 'api'
+  - web
+  - api
+
+onlyBuiltDependencies:
+  - esbuild
+  - workerd

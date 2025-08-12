@@ -67,9 +67,10 @@ const App = () => {
 };
 
 function RequireAuth({ children }: { children: JSX.Element }): JSX.Element {
-  const { error } = useQuery(["me"], () =>
-    fetch(`${import.meta.env.VITE_API_URL}/me`).then((res) => res.json())
-  );
+  const { error } = useQuery({
+    queryKey: ["me"],
+    queryFn: () => fetch(`${import.meta.env.VITE_API_URL}/me`).then((res) => res.json())
+  });
 
   if (error) {
     window.location.replace(loginUrl);

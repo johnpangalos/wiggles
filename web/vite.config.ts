@@ -6,6 +6,9 @@ export default defineConfig({
   build: {
     sourcemap: true,
   },
+  server: {
+    "allowedHosts": ["dev.wiggle-room.xyz"]
+  },
   plugins: [react()],
   resolve: {
     alias: {

@@ -11,14 +11,14 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@cloudflare/workers-types": "^3.19.0",
-    "@types/uuid": "^9.0.2",
-    "wrangler": "^3.4.0"
+    "@cloudflare/workers-types": "^4.20250810.0",
+    "@types/uuid": "^10.0.0",
+    "wrangler": "^4.28.1"
   },
   "dependencies": {
     "@ssttevee/multipart-parser": "^0.1.9",
-    "hono": "^3.3.4",
-    "toucan-js": "^3.2.1",
-    "uuid": "^9.0.0"
+    "hono": "^4.9.0",
+    "toucan-js": "^4.1.1",
+    "uuid": "^11.1.0"
   }
 }
