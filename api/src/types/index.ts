@@ -19,6 +19,7 @@ export type Post = {
 export type WigglesEnv = {
   Bindings: {
     WIGGLES: KVNamespace;
+    ASSETS: Fetcher;
     IMAGES_KEY: string;
     DOMAIN: string;
     AUDIENCE: string;

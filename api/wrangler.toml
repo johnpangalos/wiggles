@@ -5,6 +5,15 @@ account_id = "e5933c765c57d2f3a58d86973c88362c"
 
 route = { pattern = "wiggle-room.xyz/api/*", zone_name = "wiggle-room.xyz" }
 
+[assets]
+directory = "../web/dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+
+[assets.routes]
+include = ["/*"]
+exclude = ["/api/*"]
+
 [vars]
 AUDIENCE = "26b6452e75e854fb6f37cc5deccc0a1897e5160e7f4f3d6e52eabf31cc8b0726"
 DOMAIN = "https://johnpangalos.cloudflareaccess.com"

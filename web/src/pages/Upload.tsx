@@ -1,8 +1,8 @@
-import { FC, useMemo } from "react";
-import { Button } from "@/components";
-import { Loading } from "@/components";
+import { type FC, useMemo } from "react";
+import { Button } from "../components";
+import { Loading } from "../components";
 
-import { Result, useImageUpload } from "@/hooks";
+import { type Result, useImageUpload } from "../hooks";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 

@@ -1,7 +1,7 @@
-import { ReactNode } from "react";
+import { type ReactNode } from "react";
 import { Download } from "react-feather";
 import { ProfileImage } from "../components";
-import { Account } from "@/types";
+import { type Account } from "../types";
 
 const forceDownload = (blob: string, filename: string) => {
   const a = document.createElement("a");
@@ -33,7 +33,7 @@ export const Post = ({
   account,
   thumbnail = false,
   url,
-}: PostProps): JSX.Element => {
+}: PostProps): React.ReactNode => {
   const date = new Date(Number(timestamp));
 
   const downloadResource = (url: string, filename?: string) => {
@@ -56,8 +56,8 @@ export const Post = ({
   return (
     <div
       className={`
-          flex flex-col bg-white shadow-md 
-          rounded px-2 pt-3 pb-4 w-full xs:max-h-sm 
+          flex flex-col bg-white shadow-md
+          rounded px-2 pt-3 pb-4 w-full xs:max-h-sm
           max-h-xs m-auto  max-w-xl
           ${selectable ? " cursor-pointer" : ""}
           ${selected ? " border-purple-600 border-2" : ""}

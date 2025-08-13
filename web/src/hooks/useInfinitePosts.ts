@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 
-import { NewPost } from "@/types";
+import { type NewPost } from "../types";
 
 export type ImageSize = "WRPost" | "WRThumbnail";
 
@@ -22,8 +22,7 @@ async function getPosts({
   email,
 }: GetPostsOptions): Promise<{ posts: NewPost[]; cursor: string }> {
   return await fetch(
-    `${import.meta.env.VITE_API_URL}/posts?size=${imageSize}&limit=${limit}${
-      pageParam ? `&cursor=${pageParam}` : ""
+    `${import.meta.env.VITE_API_URL}/posts?size=${imageSize}&limit=${limit}${pageParam ? `&cursor=${pageParam}` : ""
     }${email ? `&email=${email}` : ""}`
   ).then((res) => res.json());
 }

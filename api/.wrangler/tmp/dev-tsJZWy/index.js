@@ -1,7 +1,7 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
-// .wrangler/tmp/bundle-NQZgsS/checked-fetch.js
+// .wrangler/tmp/bundle-Mf7pMf/checked-fetch.js
 var urls = /* @__PURE__ */ new Set();
 function checkURL(request, init) {
   const url = request instanceof URL ? request : new URL(
@@ -2310,7 +2310,7 @@ __name(deletePosts, "deletePosts");
 // src/handlers/posts.ts
 async function GetPosts(c) {
   let size = c.req.query("size");
-  if (size === null) size = "WRPost";
+  if (size === null || size === void 0) size = "WRPost";
   if ("WRPost" !== size && "WRThumbnail" !== size)
     throw new Error("Invalid query param.");
   const cursor = c.req.query("cursor");
@@ -2555,6 +2555,41 @@ var generateValidator = /* @__PURE__ */ __name((c) => async () => {
 }, "generateValidator");
 function auth() {
   return async (c, next) => {
+    if (c.env.ENV === "development" && c.req.header("x-debug-bypass") === "true") {
+      console.log("\u{1F6A7} DEBUG MODE: Bypassing auth for development testing");
+      c.set("JWT", {
+        payload: {
+          email: "debug@example.com",
+          sub: "debug-user",
+          aud: c.env.AUDIENCE,
+          exp: Math.floor(Date.now() / 1e3) + 3600
+          // 1 hour from now
+        },
+        getIdentity: /* @__PURE__ */ __name(async () => ({
+          id: "debug-id",
+          name: "Debug User",
+          email: "debug@example.com",
+          groups: [],
+          amr: [],
+          idp: { id: "debug", type: "debug" },
+          geo: { country: "US" },
+          user_uuid: "debug-uuid",
+          account_id: "debug-account",
+          ip: "127.0.0.1",
+          auth_status: "ALLOW",
+          common_name: "debug",
+          service_token_id: "",
+          service_token_status: false,
+          is_warp: false,
+          is_gateway: false,
+          version: 1,
+          device_sessions: {},
+          iat: Math.floor(Date.now() / 1e3)
+        }), "getIdentity")
+      });
+      await next();
+      return;
+    }
     try {
       const validator = generateValidator(c);
       const { jwt, payload } = await validator();
@@ -7213,6 +7248,9 @@ app.get("/api/posts", GetPosts);
 app.get("/api/me", GetMe);
 app.post("/api/upload", PostUpload);
 app.post("/api/bulk-delete", DeletePosts);
+app.get("*", async (c) => {
+  return c.env.ASSETS.fetch(c.req.raw);
+});
 var src_default = app;
 
 // ../node_modules/.pnpm/wrangler@4.28.1_@cloudflare+workers-types@4.20250810.0/node_modules/wrangler/templates/middleware/middleware-ensure-req-body-drained.ts
@@ -7233,7 +7271,7 @@ var drainBody = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "drainBody");
 var middleware_ensure_req_body_drained_default = drainBody;
 
-// .wrangler/tmp/bundle-NQZgsS/middleware-insertion-facade.js
+// .wrangler/tmp/bundle-Mf7pMf/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default
 ];
@@ -7264,7 +7302,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// .wrangler/tmp/bundle-NQZgsS/middleware-loader.entry.ts
+// .wrangler/tmp/bundle-Mf7pMf/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;

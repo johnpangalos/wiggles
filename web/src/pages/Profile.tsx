@@ -1,13 +1,13 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { NewPost } from "@/types";
-import { Button, Image, Loading, Post } from "@/components";
+import { type NewPost } from "../types";
+import { Button, Image, Loading, Post } from "../components";
 import {
   useInfinitePosts,
   infinitePostsQueryKey,
   useBreakpoint,
-  UseInfinitePostsOptions,
-} from "@/hooks";
+  type UseInfinitePostsOptions,
+} from "../hooks";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const deleteImages = async (orderKeys: string[]) => {
@@ -69,15 +69,15 @@ export function Profile() {
 
   const postRows = data
     ? data.pages
-        .flatMap((posts) => posts.posts)
-        .reduce<NewPost[][]>((acc, curr, index) => {
-          if (index % 3 === 0) {
-            acc.push([curr]);
-            return acc;
-          }
-          acc[acc.length - 1].push(curr);
+      .flatMap((posts) => posts.posts)
+      .reduce<NewPost[][]>((acc, curr, index) => {
+        if (index % 3 === 0) {
+          acc.push([curr]);
           return acc;
-        }, [])
+        }
+        acc[acc.length - 1].push(curr);
+        return acc;
+      }, [])
     : [];
 
   const breakpoint = useBreakpoint();

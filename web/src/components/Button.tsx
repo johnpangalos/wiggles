@@ -1,4 +1,4 @@
-import { MouseEventHandler, ReactNode } from "react";
+import { type MouseEventHandler, type ReactNode } from "react";
 
 type ButtonVariant = "primary" | "link" | "secondary";
 type ButtonProps = {

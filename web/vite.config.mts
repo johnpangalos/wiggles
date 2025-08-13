@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import path from "path";
+import { resolve } from "path";
 
 export default defineConfig({
   build: {
@@ -9,10 +9,10 @@ export default defineConfig({
   server: {
     "allowedHosts": ["dev.wiggle-room.xyz"]
   },
-  plugins: [react()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": resolve(__dirname, "./src"),
     },
   },
+  plugins: [react()],
 });

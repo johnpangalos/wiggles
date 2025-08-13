@@ -1,4 +1,4 @@
-import { NewPost } from "@/types";
+import { type NewPost } from "../types";
 
 type ImageProps = {
   thumbnail?: boolean;

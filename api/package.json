@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "wrangler dev --config wrangler-dev.toml --remote",
-    "type-check": "tsc"
+    "build": "wrangler deploy --dry-run",
+    "type-check": "tsc",
+    "deploy": "wrangler deploy"
   },
   "keywords": [],
   "author": "",

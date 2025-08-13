@@ -1,19 +1,22 @@
-import { ReactNode } from "react";
+import { type ReactNode } from "react";
 import { X } from "react-feather";
 
-export enum ColorMap {
-  INFO,
-  SUCCESS,
-  ERROR,
-  WARNING,
-}
+export const ColorMap = {
+  INFO: 1,
+  SUCCESS: 2,
+  ERROR: 3,
+  WARNING: 4,
+} as const
 
-function colorClasses(type: ColorMap): string {
+type ColorMapKeys = keyof typeof ColorMap
+type ColorMapValues = typeof ColorMap[ColorMapKeys]
+
+function colorClasses(type: ColorMapValues): string {
   switch (type) {
     case ColorMap.INFO:
       return `bg-blue-100 border-blue-400 text-blue-600`;
     case ColorMap.SUCCESS:
-      return `bg-green-100 border-gren-400 text-gren-600`;
+      return `bg-green-100 border-gren-400 text-green-600`;
     case ColorMap.ERROR:
       return `bg-red-100 border-red-400 text-red-600`;
     case ColorMap.WARNING:
@@ -23,10 +26,26 @@ function colorClasses(type: ColorMap): string {
   }
 }
 
+function AlertXColor(type: ColorMapValues): string {
+  switch (type) {
+    case ColorMap.INFO:
+      return `text-blue-600`;
+    case ColorMap.SUCCESS:
+      return `text-green-600`;
+    case ColorMap.ERROR:
+      return `text-red-600`;
+    case ColorMap.WARNING:
+      return `text-yellow-600`;
+    default:
+      return "";
+  }
+}
+
+
 type AlertProps = {
   children: ReactNode;
   onClose?: () => void;
-  type: ColorMap;
+  type: ColorMapValues
 };
 
 export function Alert({ children, type = ColorMap.INFO, onClose }: AlertProps) {
@@ -45,7 +64,7 @@ export function Alert({ children, type = ColorMap.INFO, onClose }: AlertProps) {
             <X
               onClick={onClose}
               role="button"
-              className={`text-2xl fill-current text${ColorMap[type]}-600`}
+              className={`text-2xl fill-current ${AlertXColor(type)}`}
             />
           )}
         </div>

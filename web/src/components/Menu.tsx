@@ -1,4 +1,4 @@
-import { Component, useState, useEffect, createRef, ReactNode } from "react";
+import { Component, useState, useEffect, createRef, type ReactNode } from "react";
 
 type MenuProps = {
   id: string;
@@ -39,9 +39,8 @@ export function Menu({ activator, id, items }: MenuProps) {
         {activator}
       </div>
       <div
-        className={`items-center absolute bg-white pin-t pin-r ${
-          showing ? "visible" : "invisible"
-        }`}
+        className={`items-center absolute bg-white pin-t pin-r ${showing ? "visible" : "invisible"
+          }`}
       >
         <div className="rounded overflow-hidden shadow-lg py-2">
           {items.map((Item, index) => (

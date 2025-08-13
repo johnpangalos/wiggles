@@ -4,12 +4,12 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
-import { Login, Upload, Feed, Profile } from "@/pages";
+import { Login, Upload, Feed, Profile } from "./pages";
 import { MainLayout } from "./layouts/main";
-import { BreakpointProvider } from "@/hooks";
+import { BreakpointProvider } from "./hooks";
 import * as Sentry from "@sentry/react";
 import { useQuery } from "@tanstack/react-query";
-import { loginUrl } from "@/utils";
+import { loginUrl } from "./utils";
 import { useEffect } from "react";
 import { checkRegistration, register, unregister } from "./register-sw";
 
@@ -66,7 +66,7 @@ const App = () => {
   );
 };
 
-function RequireAuth({ children }: { children: JSX.Element }): JSX.Element {
+function RequireAuth({ children }: { children: React.ReactNode }): React.ReactNode {
   const { error } = useQuery({
     queryKey: ["me"],
     queryFn: () => fetch(`${import.meta.env.VITE_API_URL}/me`).then((res) => res.json())

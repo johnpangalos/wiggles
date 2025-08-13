@@ -1,9 +1,9 @@
 import { Fragment, useEffect, useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 
-import { Post } from "@/components";
-import { Image } from "@/components";
-import { useInfinitePosts } from "@/hooks";
+import { Post } from "../components";
+import { Image } from "../components";
+import { useInfinitePosts } from "../hooks";
 
 export const Feed = () => {
   const parent = useRef<HTMLDivElement>(null);

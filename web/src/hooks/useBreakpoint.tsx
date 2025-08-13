@@ -1,9 +1,9 @@
 import {
   useState,
   useEffect,
-  ReactNode,
+  type ReactNode,
   useContext,
-  Context,
+  type Context,
   createContext,
 } from "react";
 

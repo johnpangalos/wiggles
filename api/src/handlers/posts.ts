@@ -6,7 +6,7 @@ import { Identity } from "@/middleware/auth";
 
 export async function GetPosts(c: WigglesContext) {
   let size: string | undefined = c.req.query("size");
-  if (size === null) size = "WRPost";
+  if (size === null || size === undefined) size = "WRPost";
   if ("WRPost" !== size && "WRThumbnail" !== size)
     throw new Error("Invalid query param.");
 

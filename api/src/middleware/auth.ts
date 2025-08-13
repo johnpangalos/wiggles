@@ -201,6 +201,42 @@ const generateValidator =
 
 export function auth(): MiddlewareHandler<Response | undefined> {
   return async (c: WigglesContext, next: Next) => {
+    // Debug bypass for development testing
+    if (c.env.ENV === 'development' && c.req.header('x-debug-bypass') === 'true') {
+      console.log('🚧 DEBUG MODE: Bypassing auth for development testing');
+      c.set("JWT", {
+        payload: { 
+          email: 'debug@example.com',
+          sub: 'debug-user',
+          aud: c.env.AUDIENCE,
+          exp: Math.floor(Date.now() / 1000) + 3600 // 1 hour from now
+        },
+        getIdentity: async () => ({
+          id: 'debug-id',
+          name: 'Debug User',
+          email: 'debug@example.com',
+          groups: [],
+          amr: [],
+          idp: { id: 'debug', type: 'debug' },
+          geo: { country: 'US' },
+          user_uuid: 'debug-uuid',
+          account_id: 'debug-account',
+          ip: '127.0.0.1',
+          auth_status: 'ALLOW',
+          common_name: 'debug',
+          service_token_id: '',
+          service_token_status: false,
+          is_warp: false,
+          is_gateway: false,
+          version: 1,
+          device_sessions: {},
+          iat: Math.floor(Date.now() / 1000)
+        })
+      });
+      await next();
+      return;
+    }
+
     try {
       const validator = generateValidator(c);
 

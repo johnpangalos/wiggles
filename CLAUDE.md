@@ -11,15 +11,15 @@ This is a pnpm workspace with two packages: `web` (React frontend) and `api` (Cl
 - `pnpm lint` - Run linting across all packages
 
 ### Web package (React frontend):
-- `cd web && pnpm dev` - Start Vite dev server
-- `cd web && pnpm build` - Build for production
-- `cd web && pnpm preview` - Preview staging build
-- `cd web && pnpm lint` - ESLint with auto-fix
-- `cd web && pnpm type-check` - TypeScript type checking
+- `pnpm --filter web dev` - Start Vite dev server
+- `pnpm --filter web build` - Build for production
+- `pnpm --filter web preview` - Preview staging build
+- `pnpm --filter web lint` - ESLint with auto-fix
+- `pnpm --filter web type-check` - TypeScript type checking
 
 ### API package (Cloudflare Worker):
-- `cd api && pnpm dev` - Start Wrangler dev server with remote mode
-- `cd api && pnpm type-check` - TypeScript type checking
+- `pnpm --filter api dev` - Start Wrangler dev server with remote mode
+- `pnpm --filter api type-check` - TypeScript type checking
 
 ## Architecture
 

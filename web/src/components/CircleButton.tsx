@@ -1,4 +1,4 @@
-import  { ReactNode, MouseEvent } from "react";
+import { type ReactNode, type MouseEvent } from "react";
 
 type CircleButtonProps = {
   children: ReactNode;
@@ -15,7 +15,7 @@ export function CircleButton({
   children,
   className = "",
   onClick,
-}: CircleButtonProps): JSX.Element {
+}: CircleButtonProps): React.ReactNode {
   return (
     <button
       onClick={(event) => onClick(event)}

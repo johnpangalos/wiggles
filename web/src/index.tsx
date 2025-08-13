@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import "@/styles/index.css";
-import App from "@/App";
+import "./styles/index.css";
+import App from "./App";
 import * as Sentry from "@sentry/react";
 import { BrowserTracing } from "@sentry/tracing";
 import {
@@ -40,9 +40,9 @@ const container = document.getElementById("root");
 const root = createRoot(container!);
 
 const ErrorBoundary = Sentry.ErrorBoundary as unknown as (args: {
-  fallback: JSX.Element;
+  fallback: React.ReactNode;
   children: React.ReactNode;
-}) => JSX.Element;
+}) => React.ReactNode;
 
 root.render(
   <ErrorBoundary fallback={<p>An error has occurred</p>}>

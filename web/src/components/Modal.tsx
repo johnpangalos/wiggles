@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { type ReactNode } from "react";
 
 export function Modal({ children }: { children: ReactNode | ReactNode[] }) {
   return (

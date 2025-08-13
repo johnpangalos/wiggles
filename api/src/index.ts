@@ -22,4 +22,9 @@ app.get("/api/me", GetMe);
 app.post("/api/upload", PostUpload);
 app.post("/api/bulk-delete", DeletePosts);
 
+// Fallback route for static assets - serves React SPA
+app.get("*", async (c) => {
+  return c.env.ASSETS.fetch(c.req.raw);
+});
+
 export default app;

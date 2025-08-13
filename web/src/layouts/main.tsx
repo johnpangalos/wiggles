@@ -1,6 +1,6 @@
-import { useImageUpload } from "@/hooks/useImageUpload";
-import { ChangeEvent, useRef } from "react";
-import { Home, Icon, Upload, User } from "react-feather";
+import { useImageUpload } from "../hooks/useImageUpload";
+import { type ChangeEvent, useRef } from "react";
+import { Home, type Icon, Upload, User } from "react-feather";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 
 type Result = string | ArrayBuffer | null;
