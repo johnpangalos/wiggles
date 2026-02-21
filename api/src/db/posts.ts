@@ -1,3 +1,4 @@
+import { getEmailFromPayload } from "@/middleware/auth";
 import { Account, Post, WigglesContext } from "@/types";
 import { DAY, generateSignedUrl, ImageSize, unixTime } from "@/utils";
 
@@ -121,7 +122,7 @@ export async function deletePosts(c: WigglesContext, orderKeys: string[]) {
     const feedKey = `post-feed-${key}`;
 
     const { payload } = c.get("JWT");
-    const accountKey = `post-account-${payload.email}-${key}`;
+    const accountKey = `post-account-${getEmailFromPayload(payload)}-${key}`;
 
     const res = await c.env.WIGGLES.getWithMetadata<Post>(feedKey);
     if (res.metadata === null)

@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { createPosts, deletePosts, readPosts } from "@/db";
+import { getEmailFromPayload } from "@/middleware/auth";
 import { Post, WigglesContext } from "@/types";
 import { parseFormDataRequest } from "@/utils";
 
@@ -62,7 +63,7 @@ export async function PostUpload(c: WigglesContext) {
     const timestamp = +new Date();
 
     const { payload } = c.get("JWT");
-    const email = payload.email;
+    const email = getEmailFromPayload(payload);
 
     const postList: Post[] = idList.map((id, idx) => ({
       id: uuidv4(),

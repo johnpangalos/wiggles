@@ -148,7 +148,7 @@ describe("Feed", () => {
     await expect.element(page.getByText("Test User")).toBeVisible();
     await expect.element(page.getByText("Another User")).toBeVisible();
     await expect.element(root).toMatchScreenshot("feed-multiple-pages", {
-      comparatorOptions: { maxDiffPixelRatio: 0.02 },
+      comparatorOptions: { allowedMismatchedPixelRatio: 0.02 },
     });
   });
 

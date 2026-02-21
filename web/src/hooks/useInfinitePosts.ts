@@ -22,11 +22,12 @@ async function getPosts({
   limit,
   email,
 }: GetPostsOptions): Promise<{ posts: NewPost[]; cursor: string }> {
+  const headers = await getAuthHeaders();
   return await fetch(
     `${import.meta.env.VITE_API_URL}/posts?size=${imageSize}&limit=${limit}${
       pageParam ? `&cursor=${pageParam}` : ""
     }${email ? `&email=${email}` : ""}`,
-    { headers: { ...getAuthHeaders() } }
+    { headers }
   ).then((res) => res.json());
 }
 

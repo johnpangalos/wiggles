@@ -4,7 +4,8 @@ compatibility_date = "2022-09-11"
 account_id = "e5933c765c57d2f3a58d86973c88362c"
 
 [vars]
-GOOGLE_CLIENT_ID = "153513713709-ci5ajsramjotbt7apiuvambqan36n6m2.apps.googleusercontent.com"
+AUTH0_DOMAIN = "dev-zeu8o0dkwj1gdp7c.eu.auth0.com"
+AUTH0_AUDIENCE = "https://wiggle-room.xyz"
 ENV = "development"
 
 [[kv_namespaces]]

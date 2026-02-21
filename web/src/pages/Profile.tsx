@@ -9,13 +9,14 @@ import {
   UseInfinitePostsOptions,
 } from "@/hooks";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getAuthHeaders, clearIdToken } from "@/utils";
+import { getAuthHeaders } from "@/utils";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const deleteImages = async (orderKeys: string[]) => {
   const res = await fetch(`${import.meta.env.VITE_API_URL}/bulk-delete`, {
     method: "POST",
     body: JSON.stringify(orderKeys),
-    headers: { ...getAuthHeaders() },
+    headers: { ...(await getAuthHeaders()) },
   });
   if (res.status > 300) throw new Error("delete failed");
   return await res.json();
@@ -29,19 +30,19 @@ const queryKeyConfig = (email?: string): UseInfinitePostsOptions => ({
 });
 
 export function Profile() {
-  const { data: profileData } = useQuery(["me"], () =>
-    fetch(`${import.meta.env.VITE_API_URL}/me`, {
-      headers: { ...getAuthHeaders() },
-    }).then((res) => res.json())
-  );
+  const { logout } = useAuth0();
+  const { data: profileData } = useQuery(["me"], async () => {
+    const headers = await getAuthHeaders();
+    return fetch(`${import.meta.env.VITE_API_URL}/me`, {
+      headers,
+    }).then((res) => res.json());
+  });
   const [selectMode, setSelectMode] = useState(false);
   const [selectedOrderKeys, setSelectedOrderKeys] = useState<
     Record<string, NewPost>
   >({});
   const signOut = () => {
-    clearIdToken();
-    google.accounts.id.disableAutoSelect();
-    window.location.replace("/login");
+    logout({ logoutParams: { returnTo: window.location.origin + "/login" } });
   };
   const parent = React.useRef<HTMLDivElement>(null);
 

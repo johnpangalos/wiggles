@@ -1,30 +1,40 @@
 import { MiddlewareHandler, WigglesContext } from "@/types";
 import { Next } from "hono";
 
-export type GoogleJWTPayload = {
+export type Auth0JWTPayload = {
   iss: string;
   sub: string;
-  aud: string;
+  aud: string | string[];
   exp: number;
   iat: number;
-  email: string;
-  email_verified: boolean;
-  name: string;
-  picture: string;
-  given_name?: string;
-  family_name?: string;
-  hd?: string;
+  azp?: string;
+  scope?: string;
+  "https://wiggle-room.xyz/email": string;
+  "https://wiggle-room.xyz/name": string;
+  "https://wiggle-room.xyz/picture": string;
 };
 
-type GoogleJWK = {
+type JWK = {
   kid: string;
   kty: string;
   alg: string;
 } & JsonWebKey;
 
-type GoogleJWKSResponse = {
-  keys: GoogleJWK[];
+type JWKSResponse = {
+  keys: JWK[];
 };
+
+export function getEmailFromPayload(payload: Auth0JWTPayload): string {
+  return payload["https://wiggle-room.xyz/email"];
+}
+
+export function getNameFromPayload(payload: Auth0JWTPayload): string {
+  return payload["https://wiggle-room.xyz/name"];
+}
+
+export function getPictureFromPayload(payload: Auth0JWTPayload): string {
+  return payload["https://wiggle-room.xyz/picture"];
+}
 
 const base64URLDecode = (s: string) => {
   s = s.replace(/-/g, "+").replace(/_/g, "/").replace(/\s/g, "");
@@ -43,10 +53,11 @@ const asciiToUint8Array = (s: string) => {
   return new Uint8Array(chars);
 };
 
-async function validateGoogleToken(
+async function validateAuth0Token(
   token: string,
-  clientId: string
-): Promise<GoogleJWTPayload> {
+  auth0Domain: string,
+  audience: string
+): Promise<Auth0JWTPayload> {
   const parts = token.split(".");
   if (parts.length !== 3) {
     throw new Error("JWT does not have three parts.");
@@ -62,7 +73,7 @@ async function validateGoogleToken(
   }
 
   const certsResponse = await fetch(
-    "https://www.googleapis.com/oauth2/v3/certs",
+    `https://${auth0Domain}/.well-known/jwks.json`,
     {
       cf: {
         cacheTtl: 5 * 60,
@@ -70,9 +81,9 @@ async function validateGoogleToken(
       },
     }
   );
-  const { keys } = (await certsResponse.json()) as GoogleJWKSResponse;
+  const { keys } = (await certsResponse.json()) as JWKSResponse;
   if (!keys) {
-    throw new Error("Could not fetch Google signing keys.");
+    throw new Error("Could not fetch Auth0 signing keys.");
   }
   const jwk = keys.find((key) => key.kid === kid);
   if (!jwk) {
@@ -102,17 +113,18 @@ async function validateGoogleToken(
 
   const payloadObj = JSON.parse(
     textDecoder.decode(base64URLDecode(payload))
-  ) as GoogleJWTPayload;
+  ) as Auth0JWTPayload;
 
-  if (
-    payloadObj.iss !== "https://accounts.google.com" &&
-    payloadObj.iss !== "accounts.google.com"
-  ) {
+  const expectedIssuer = `https://${auth0Domain}/`;
+  if (payloadObj.iss !== expectedIssuer) {
     throw new Error("JWT issuer is incorrect.");
   }
-  if (payloadObj.aud !== clientId) {
+
+  const aud = Array.isArray(payloadObj.aud) ? payloadObj.aud : [payloadObj.aud];
+  if (!aud.includes(audience)) {
     throw new Error("JWT audience is incorrect.");
   }
+
   const now = Math.floor(Date.now() / 1000);
   if (payloadObj.exp && now >= payloadObj.exp) {
     throw new Error("JWT has expired.");
@@ -130,7 +142,11 @@ export function auth(): MiddlewareHandler<Response | undefined> {
       }
       const token = authHeader.slice(7);
 
-      const payload = await validateGoogleToken(token, c.env.GOOGLE_CLIENT_ID);
+      const payload = await validateAuth0Token(
+        token,
+        c.env.AUTH0_DOMAIN,
+        c.env.AUTH0_AUDIENCE
+      );
 
       c.set("JWT", { payload });
 

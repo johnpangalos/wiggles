@@ -2,22 +2,25 @@ export function getExtenstion(filename: string) {
   return filename.split(".").pop();
 }
 
-const TOKEN_KEY = "google_id_token";
+// Token accessor: set by Auth0Provider wrapper, used by API call utilities
+let _getAccessToken: (() => Promise<string>) | null = null;
 
-export function getIdToken(): string | null {
-  return localStorage.getItem(TOKEN_KEY);
+export function setTokenAccessor(fn: () => Promise<string>): void {
+  _getAccessToken = fn;
 }
 
-export function setIdToken(token: string): void {
-  localStorage.setItem(TOKEN_KEY, token);
+export async function getAccessToken(): Promise<string> {
+  if (!_getAccessToken) throw new Error("Auth not initialized");
+  return _getAccessToken();
 }
 
-export function clearIdToken(): void {
-  localStorage.removeItem(TOKEN_KEY);
-}
-
-export function getAuthHeaders(): { Authorization: string } | Record<string, never> {
-  const token = getIdToken();
-  if (!token) return {};
-  return { Authorization: `Bearer ${token}` };
+export async function getAuthHeaders(): Promise<
+  { Authorization: string } | Record<string, never>
+> {
+  try {
+    const token = await getAccessToken();
+    return { Authorization: `Bearer ${token}` };
+  } catch {
+    return {};
+  }
 }

@@ -26,7 +26,7 @@ export const Upload = () => {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/upload`, {
         method: "POST",
         body: formData,
-        headers: { ...getAuthHeaders() },
+        headers: { ...(await getAuthHeaders()) },
       });
       if (res.status > 300) throw new Error("upload failed");
       return await res.json();
