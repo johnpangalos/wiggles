@@ -103,17 +103,33 @@ const App = () => {
 };
 
 function RequireAuth({ children }: { children: JSX.Element }): JSX.Element {
-  const { isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
+  const { isAuthenticated, isLoading, loginWithRedirect, error } = useAuth0();
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    if (!isLoading && !isAuthenticated && !error) {
       loginWithRedirect({
         appState: { returnTo: window.location.pathname },
       });
     }
-  }, [isLoading, isAuthenticated, loginWithRedirect]);
+  }, [isLoading, isAuthenticated, loginWithRedirect, error]);
 
-  if (isLoading || !isAuthenticated) return <></>;
+  if (isLoading) return <></>;
+
+  if (error) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center gap-4 p-8 text-center">
+        <p className="text-red-600">Authentication error: {error.message}</p>
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          onClick={() => loginWithRedirect()}
+        >
+          Try again
+        </button>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) return <></>;
 
   return children;
 }
