@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'web/**'
+      - 'api/**'
       - '.github/workflows/preview-web.yml'
 
 jobs:
@@ -20,6 +21,13 @@ jobs:
 
       - name: Install Dependencies
         uses: ./.github/actions/install-deps
+
+      - name: Deploy Staging API
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: ./api
+          command: deploy --env staging
 
       - name: Build
         run: cd web && VITE_RELEASE=$GITHUB_SHA pnpm build --mode staging
