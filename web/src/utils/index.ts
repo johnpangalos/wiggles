@@ -2,30 +2,22 @@ export function getExtenstion(filename: string) {
   return filename.split(".").pop();
 }
 
-export const generateLoginURL = ({
-  redirectURL: redirectURLInit,
-  domain,
-  aud,
-}: {
-  redirectURL: string | URL;
-  domain: string;
-  aud: string;
-}): string => {
-  const redirectURL =
-    typeof redirectURLInit === "string"
-      ? new URL(redirectURLInit)
-      : redirectURLInit;
-  const { host } = redirectURL;
-  const loginPathname = `/cdn-cgi/access/login/${host}?`;
-  const searchParams = new URLSearchParams({
-    kid: aud,
-    redirect_url: redirectURL.pathname + redirectURL.search,
-  });
-  return new URL(loginPathname + searchParams.toString(), domain).toString();
-};
+const TOKEN_KEY = "google_id_token";
 
-export const loginUrl = generateLoginURL({
-  redirectURL: import.meta.env.VITE_REDIRECT_URL,
-  domain: "https://johnpangalos.cloudflareaccess.com",
-  aud: import.meta.env.VITE_AUDIENCE,
-});
+export function getIdToken(): string | null {
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+export function setIdToken(token: string): void {
+  localStorage.setItem(TOKEN_KEY, token);
+}
+
+export function clearIdToken(): void {
+  localStorage.removeItem(TOKEN_KEY);
+}
+
+export function getAuthHeaders(): { Authorization: string } | Record<string, never> {
+  const token = getIdToken();
+  if (!token) return {};
+  return { Authorization: `Bearer ${token}` };
+}

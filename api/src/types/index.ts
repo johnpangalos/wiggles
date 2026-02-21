@@ -1,4 +1,4 @@
-import { Identity } from "@/middleware/auth";
+import { GoogleJWTPayload } from "@/middleware/auth";
 import { Context } from "hono";
 
 export type Account = {
@@ -20,8 +20,7 @@ export type WigglesEnv = {
   Bindings: {
     WIGGLES: KVNamespace;
     IMAGES_KEY: string;
-    DOMAIN: string;
-    AUDIENCE: string;
+    GOOGLE_CLIENT_ID: string;
     ACCOUNT_ID: string;
     API_KEY: string;
     WIGGLES_KV_ID: string;
@@ -30,8 +29,7 @@ export type WigglesEnv = {
   };
   Variables: {
     JWT: {
-      payload: object;
-      getIdentity: () => Promise<Identity | undefined>;
+      payload: GoogleJWTPayload;
     };
   };
 };

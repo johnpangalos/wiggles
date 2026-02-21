@@ -9,7 +9,7 @@ import { MainLayout } from "./layouts/main";
 import { BreakpointProvider } from "@/hooks";
 import * as Sentry from "@sentry/react";
 import { useQuery } from "@tanstack/react-query";
-import { loginUrl } from "@/utils";
+import { getIdToken, getAuthHeaders, clearIdToken } from "@/utils";
 import { useEffect } from "react";
 import { checkRegistration, register, unregister } from "./register-sw";
 
@@ -67,12 +67,23 @@ const App = () => {
 };
 
 function RequireAuth({ children }: { children: JSX.Element }): JSX.Element {
-  const { error } = useQuery(["me"], () =>
-    fetch(`${import.meta.env.VITE_API_URL}/me`).then((res) => res.json())
+  const token = getIdToken();
+
+  const { error } = useQuery(
+    ["me"],
+    () =>
+      fetch(`${import.meta.env.VITE_API_URL}/me`, {
+        headers: { ...getAuthHeaders() },
+      }).then((res) => {
+        if (res.status === 401) throw new Error("Unauthorized");
+        return res.json();
+      }),
+    { enabled: !!token }
   );
 
-  if (error) {
-    window.location.replace(loginUrl);
+  if (!token || error) {
+    clearIdToken();
+    window.location.replace("/login");
     return <></>;
   }
 

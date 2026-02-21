@@ -9,11 +9,13 @@ import {
   UseInfinitePostsOptions,
 } from "@/hooks";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getAuthHeaders, clearIdToken } from "@/utils";
 
 const deleteImages = async (orderKeys: string[]) => {
   const res = await fetch(`${import.meta.env.VITE_API_URL}/bulk-delete`, {
     method: "POST",
     body: JSON.stringify(orderKeys),
+    headers: { ...getAuthHeaders() },
   });
   if (res.status > 300) throw new Error("delete failed");
   return await res.json();
@@ -26,28 +28,20 @@ const queryKeyConfig = (email?: string): UseInfinitePostsOptions => ({
   enabled: !!email,
 });
 
-export const generateLogoutURL = ({ domain }: { domain: string }) =>
-  new URL(`/cdn-cgi/access/logout`, domain).toString();
-
-const url = generateLogoutURL({
-  domain: "https://johnpangalos.cloudflareaccess.com",
-});
-
 export function Profile() {
   const { data: profileData } = useQuery(["me"], () =>
-    fetch(`${import.meta.env.VITE_API_URL}/me`).then((res) => res.json())
+    fetch(`${import.meta.env.VITE_API_URL}/me`, {
+      headers: { ...getAuthHeaders() },
+    }).then((res) => res.json())
   );
   const [selectMode, setSelectMode] = useState(false);
   const [selectedOrderKeys, setSelectedOrderKeys] = useState<
     Record<string, NewPost>
   >({});
   const signOut = () => {
-    document.cookie.split(";").forEach(function (c) {
-      document.cookie = c
-        .replace(/^ +/, "")
-        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-    });
-    window.location.replace(url);
+    clearIdToken();
+    google.accounts.id.disableAutoSelect();
+    window.location.replace("/login");
   };
   const parent = React.useRef<HTMLDivElement>(null);
 

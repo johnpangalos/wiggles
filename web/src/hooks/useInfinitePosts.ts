@@ -1,6 +1,7 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 import { NewPost } from "@/types";
+import { getAuthHeaders } from "@/utils";
 
 export type ImageSize = "WRPost" | "WRThumbnail";
 
@@ -24,7 +25,8 @@ async function getPosts({
   return await fetch(
     `${import.meta.env.VITE_API_URL}/posts?size=${imageSize}&limit=${limit}${
       pageParam ? `&cursor=${pageParam}` : ""
-    }${email ? `&email=${email}` : ""}`
+    }${email ? `&email=${email}` : ""}`,
+    { headers: { ...getAuthHeaders() } }
   ).then((res) => res.json());
 }
 
