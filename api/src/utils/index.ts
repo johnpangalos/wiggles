@@ -55,7 +55,7 @@ const RE_MULTIPART =
   /^multipart\/form-data(?:;\s*boundary=(?:"((?:[^"]|\\")+)"|([^\s;]+)))$/;
 
 const getBoundary = (request: HonoRequest): string | undefined => {
-  const contentType = request.headers.get("Content-Type");
+  const contentType = request.raw.headers.get("Content-Type");
   if (!contentType) return;
 
   const matches = RE_MULTIPART.exec(contentType);
@@ -68,9 +68,9 @@ export const parseFormDataRequest = async (
   request: HonoRequest
 ): Promise<FormData[] | undefined> => {
   const boundary = getBoundary(request);
-  if (!boundary || !request.body) return;
+  if (!boundary || !request.raw.body) return;
 
-  const parts = await parseMultipart(request.body, boundary);
+  const parts = await parseMultipart(request.raw.body, boundary);
 
   const formDataList: FormData[] = [];
   for (const { name, data, contentType } of parts) {

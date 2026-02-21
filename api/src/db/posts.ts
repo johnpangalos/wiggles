@@ -64,19 +64,20 @@ type ReadPostsOptions = {
 
 export async function readPosts(c: WigglesContext, options: ReadPostsOptions) {
   const prefix = options.email ? `post-account-${options.email}` : "post-feed";
-  const { keys, cursor } = await c.env.WIGGLES.list<Post>({
+  const result = await c.env.WIGGLES.list<Post>({
     prefix,
     limit: options.limit,
     cursor: options.cursor,
   });
   const promises = [];
-  for (const key of keys) {
+  for (const key of result.keys) {
     const post = key.metadata;
     if (post === undefined) throw new Error("Bad data");
 
     promises.push(populatePost(c, post, options));
   }
   const posts = await Promise.all(promises);
+  const cursor = result.list_complete ? undefined : result.cursor;
   return { posts, cursor };
 }
 

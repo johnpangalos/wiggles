@@ -8,13 +8,10 @@ import {
 import { Login, Upload, Feed, Profile } from "@/pages";
 import { MainLayout } from "./layouts/main";
 import { BreakpointProvider } from "@/hooks";
-import * as Sentry from "@sentry/react";
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import { useEffect } from "react";
 import { checkRegistration, register, unregister } from "./register-sw";
 import { setTokenAccessor } from "@/utils";
-
-const SentryRoutes = Sentry.withSentryReactRouterV6Routing(Routes);
 
 function Auth0ProviderWithNavigate({
   children,
@@ -63,7 +60,7 @@ const App = () => {
       <div id="App" className="h-[100svh] overflow-hidden text-gray-800">
         <Router>
           <Auth0ProviderWithNavigate>
-            <SentryRoutes>
+            <Routes>
               <Route path="/" element={<MainLayout />}>
                 <Route
                   path="feed"
@@ -94,7 +91,7 @@ const App = () => {
                 <Route path="/" element={<Navigate to="feed" />} />
                 <Route path="*" element={<Navigate to="feed" />} />
               </Route>
-            </SentryRoutes>
+            </Routes>
           </Auth0ProviderWithNavigate>
         </Router>
       </div>

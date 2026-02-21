@@ -30,7 +30,7 @@ jobs:
           command: deploy --env staging
 
       - name: Build
-        run: cd web && VITE_RELEASE=$GITHUB_SHA pnpm build --mode staging
+        run: cd web && pnpm build --mode staging
 
       - name: Deploy Preview
         uses: cloudflare/pages-action@1

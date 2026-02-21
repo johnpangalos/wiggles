@@ -21,8 +21,8 @@ export const Upload = () => {
     return form;
   }, [files]);
 
-  const uploadImagesMutation = useMutation(
-    async (formData: FormData) => {
+  const uploadImagesMutation = useMutation({
+    mutationFn: async (formData: FormData) => {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/upload`, {
         method: "POST",
         body: formData,
@@ -31,14 +31,12 @@ export const Upload = () => {
       if (res.status > 300) throw new Error("upload failed");
       return await res.json();
     },
-    {
-      onSuccess: () => {
-        navigate(-1);
-      },
-    }
-  );
+    onSuccess: () => {
+      navigate(-1);
+    },
+  });
 
-  if (uploadImagesMutation.status === "loading") return <Loading />;
+  if (uploadImagesMutation.status === "pending") return <Loading />;
 
   return (
     <>
