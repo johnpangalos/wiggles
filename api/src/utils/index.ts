@@ -28,7 +28,7 @@ export async function generateSignedUrl(
   const secretKeyData = encoder.encode(c.env.IMAGES_KEY);
   const key = await crypto.subtle.importKey(
     "raw",
-    secretKeyData,
+    secretKeyData.buffer as ArrayBuffer,
     { name: "HMAC", hash: "SHA-256" },
     false,
     ["sign"]
@@ -78,7 +78,7 @@ export const parseFormDataRequest = async (
       contentType?.includes("png") ? "png" : "jpeg"
     }`;
     const formData = new FormData();
-    const file = new File([data], filename, { type: contentType }) as Blob;
+    const file = new File([data.buffer as ArrayBuffer], filename, { type: contentType }) as Blob;
     formData.append(name, file, filename);
     formDataList.push(formData);
   }
