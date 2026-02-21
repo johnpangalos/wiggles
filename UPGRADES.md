@@ -48,82 +48,77 @@ pnpm --filter web build         # production build succeeds
 
 ---
 
-## Phase 2: Contained major-version bumps
+## Phase 2: Contained major-version bumps ✅
 
 ### Tooling
-- [ ] **`husky`:** `^8` → `^9` (simplified hook file format, no app code changes)
-- [ ] **`lint-staged`:** `^13` → `^15` (drops Node 16 support, config format unchanged)
+- [x] **Removed `husky` and `lint-staged`** — removed from root `package.json` along with their config blocks. No `.husky` directory existed.
+- [x] **Added `onlyBuiltDependencies`** to `pnpm-workspace.yaml` for `browser-tabs-lock`, `esbuild`, `sharp`, `workerd`.
 
 ### API-side
-- [ ] **`hono`:** `^3.3.4` → `^4` — 6 files import from Hono; API is largely compatible. Check custom `MiddlewareHandler` type in `api/src/types/index.ts` against Hono v4's built-in type.
-- [ ] **`@cloudflare/workers-types`:** `^3.19.0` → `^4` — types-only, no runtime impact. Verify `WigglesEnv` type and `cf` fetch options.
-- [ ] **`wrangler`:** `^3.4.0` → latest v3 first, then evaluate v4. Review [v4 migration guide](https://developers.cloudflare.com/workers/wrangler/migration/update-v3-to-v4/).
-- [ ] **`toucan-js`:** `^3.2.1` → `^4` — only used in `api/src/middleware/sentry.ts`. Aligns with Sentry v8 SDK.
+- [x] **`hono`:** `^3.3.4` → `^4.6.0` — Updated `api/src/utils/index.ts`: `request.headers` → `request.raw.headers`, `request.body` → `request.raw.body` (deprecated convenience properties removed in v4). Custom `MiddlewareHandler` type, `Context`, `cors`, `logger` all compatible without changes.
+- [x] **`@cloudflare/workers-types`:** `^3.19.0` → `^4.20241230.0` — `KVNamespaceListResult` changed to discriminated union (`list_complete: true | false`). Updated `api/src/db/posts.ts` to narrow on `list_complete` before accessing `cursor`.
+- [x] **`wrangler`:** `^3.4.0` → `^3.99.0`
+- [x] **`toucan-js`:** `^3.2.1` → `^4.0.0` — No code changes needed; constructor options and `captureException` API unchanged.
 
 ### Web-side
-- [ ] **`zustand`:** `^4.4.0` → `^5` — after Phase 1 import fix, the `create<T>()(fn)` pattern works as-is. 1 file affected.
-- [ ] **`@tanstack/react-virtual`:** `3.0.0-beta.54` → `^3.11` (stable) — API matches current usage, no code changes expected. Used in `Feed.tsx` and `Profile.tsx`.
+- [x] **`zustand`:** `^4.4.0` → `^5.0.0` — Fixed default import to named import (`import { create } from "zustand"`) in `web/src/hooks/useImageUpload.ts`. The `create<T>()(fn)` pattern works as-is.
+- [x] **`@tanstack/react-virtual`:** `3.0.0-beta.54` → `^3.11.0` (stable) — No code changes needed. `useVirtualizer` API identical.
 
-**Verify:**
-```bash
-pnpm run -r type-check          # no type errors
-pnpm run -r lint                # no lint errors
-pnpm --filter web test          # screenshot tests catch visual regressions from react-virtual stable
-pnpm --filter web build         # production build succeeds
-pnpm --filter api dev           # manual API smoke test
-```
+### Additional fixes
+- [x] **`api/src/handlers/posts.ts`:** Changed `c.json({ message: "No content" }, 204)` → `c.body(null, 204)` — Hono v4 correctly types 204 as non-contentful status.
 
-> **Note:** `@tanstack/react-virtual` stable may cause minor layout shifts in Feed/Profile — if screenshot tests fail, inspect diffs before updating baselines.
+**Verified:**
+- `pnpm run -r type-check` — passes
+- `pnpm --filter web test` — all 9 tests pass, screenshot baselines unchanged
+- `pnpm --filter web build` — production build succeeds
 
 ---
 
-## Phase 3: High-impact framework upgrades
+## Phase 3: High-impact framework upgrades ✅
 
-### 3A: Sentry v7 → v8
-- [ ] **`@sentry/react`:** `^7` → `^8`, **remove `@sentry/tracing`** (deprecated)
-- Files: `web/src/index.tsx`, `web/src/App.tsx`
-- Replace `new BrowserTracing(...)` with `Sentry.browserTracingIntegration()`
-- Replace `Sentry.reactRouterV6Instrumentation()` with `Sentry.reactRouterV6BrowserTracingIntegration()`
-- Visual impact: None expected (infrastructure-only)
+### 3A: Remove Sentry ✅
+- [x] **Removed `@sentry/react` and `@sentry/tracing`** from `web/package.json`
+- [x] **Removed `toucan-js`** from `api/package.json`
+- [x] **Deleted `api/src/middleware/sentry.ts`**, removed sentry export from `api/src/middleware/index.ts`
+- [x] **Cleaned `api/src/index.ts`** — removed sentry middleware usage
+- [x] **Cleaned `web/src/index.tsx`** — removed `Sentry.init()`, `BrowserTracing`, `ErrorBoundary`
+- [x] **Cleaned `web/src/App.tsx`** — removed `Sentry.withSentryReactRouterV6Routing`, using plain `Routes`
+- [x] **Cleaned `api/src/types/index.ts`** — removed `RELEASE` and `ENV` bindings (only used by sentry)
+- [x] **Cleaned CI workflows** — removed Sentry release steps from `deploy-api.yml`, `deploy-web.yml`, `preview-web.yml`; removed `VITE_RELEASE` env var
+- [x] **Cleaned `web/src/env.d.ts`** — removed `VITE_RELEASE` type
 
-### 3B: TanStack Query v4 → v5
-- [ ] **`@tanstack/react-query` + devtools:** `^4` → `^5`
-- Files: `web/src/hooks/useInfinitePosts.ts`, `web/src/pages/Profile.tsx`, `web/src/pages/Upload.tsx`, `web/src/index.tsx`, test files
-- Convert 3-argument `useInfiniteQuery(key, fn, opts)` → single-object `useInfiniteQuery({ queryKey, queryFn, ... })`
-- Convert `useQuery(key, fn)` → `useQuery({ queryKey, queryFn })`
-- Convert `useMutation(fn, opts)` → `useMutation({ mutationFn, ... })`
-- Rename `status === "loading"` → `status === "pending"` (source + tests)
-- Add required `initialPageParam` to infinite queries
-- Visual impact: None (UI identical), but test assertions need updating for status rename
+### 3B: TanStack Query v4 → v5 ✅
+- [x] **`@tanstack/react-query` + devtools:** `^4` → `^5`
+- [x] `useInfinitePosts.ts` — converted to single-object API, added `initialPageParam`
+- [x] `Profile.tsx` — converted `useQuery` and `useMutation` to object syntax, `invalidateQueries` now takes `{ queryKey }`
+- [x] `Upload.tsx` — converted `useMutation` to object syntax
+- [x] Renamed `status === "loading"` → `status === "pending"` in `Profile.tsx`, `Upload.tsx`, and `Profile.test.tsx`
 
-### 3C: ESLint 8 → 9 + typescript-eslint v6 → v8
-- [ ] Migrate `.eslintrc.cjs` → `eslint.config.js` (flat config)
-- [ ] Update `eslint-plugin-react-hooks` to v5 (flat config support)
-- [ ] Replace `@typescript-eslint/eslint-plugin` + `parser` with unified `typescript-eslint` package
-- Visual impact: None (tooling-only)
+### 3C: ESLint 8 → 9 + flat config ✅
+- [x] **Deleted `.eslintrc.cjs`**, created `eslint.config.mjs` (flat config)
+- [x] **Replaced** `@typescript-eslint/eslint-plugin` + `@typescript-eslint/parser` + `eslint-plugin-react` with unified `typescript-eslint` v8
+- [x] **Updated `eslint-plugin-react-hooks`** to v5
+- [x] **Updated `eslint`** to v9
+- [x] Added test file override to allow `@typescript-eslint/no-explicit-any` in test files
 
-### 3D: Tailwind CSS v3 → v4
-- [ ] Run `@tailwindcss/upgrade` codemod
-- [ ] Migrate `tailwind.config.cjs` → CSS-based `@theme` directives
-- [ ] Migrate custom PWA variant plugin to `@custom-variant` syntax
-- [ ] Replace PostCSS plugin with `@tailwindcss/vite` Vite plugin
-- [ ] Remove `autoprefixer` (built into Tailwind v4)
-- Visual impact: **Highest risk.** CSS output may differ. Run screenshot tests after migration and carefully review diffs. Update baselines only after confirming changes are acceptable.
+### 3D: Tailwind CSS v3 → v4 ✅
+- [x] **Deleted `tailwind.config.cjs`** and **`postcss.config.cjs`**
+- [x] **Migrated to CSS-based config** in `web/src/styles/index.css` — `@import "tailwindcss"`, `@theme` for breakpoints, `@custom-variant pwa`
+- [x] **Added `@tailwindcss/vite`** plugin to `vite.config.ts`
+- [x] **Removed `autoprefixer` and `postcss`** from devDependencies (built into Tailwind v4)
 
-**Verify after each sub-phase (3A, 3B, 3C, 3D):**
-```bash
-pnpm run -r type-check
-pnpm run -r lint
-pnpm --filter web test          # screenshot tests critical for 3B and 3D
-pnpm --filter web build
-```
+**Verified after each sub-phase:**
+- `pnpm run -r type-check` — passes
+- `pnpm lint` — passes
+- `pnpm test` — all 9 tests pass
+- `pnpm build` — production build succeeds
 
 ---
 
 ## Phase 4: Future / evaluate carefully
 
 - [ ] **React 18 → 19** — wait for ecosystem readiness (`react-feather` is unmaintained, Auth0 SDK needs testing). Replace `react-feather` with `lucide-react` first (same icons, maintained fork, 3 files / 5 icons).
-- [ ] **`react-router-dom` v6 → v7** — update to latest v6 first (safe). v7 "library mode" is compatible but adds complexity. Depends on Sentry v8 router integration.
+- [ ] **`react-router-dom` v6 → v7** — update to latest v6 first (safe). v7 "library mode" is compatible but adds complexity.
 - [ ] **Replace `@ssttevee/multipart-parser`** with native `Request.formData()` — available after `compatibility_date` > `2023-11-14`
 - [ ] **Replace `uuid` with `crypto.randomUUID()`** — available in Node 20+ and CF Workers. Eliminates `uuid` + `@types/uuid`.
 - [ ] **TypeScript `^5.1.6` → `^5.7`** — non-breaking, best done after other upgrades settle
@@ -134,13 +129,8 @@ pnpm --filter web build
 ## Dependency ordering constraints
 
 ```
-.nvmrc fix ──────────────► lint-staged v15, wrangler v4
-Zustand import fix ──────► Zustand v5
-Sentry v8 (web) ─── pair with ─── toucan-js v4 (api)
 react-feather → lucide-react ──► React 19
-All Phase 2+3 ───────────► React 19
 compatibility_date ──────► native FormData, crypto.randomUUID()
-workers-types v4 ── pair with ── wrangler v4
 ```
 
 ---
@@ -149,17 +139,20 @@ workers-types v4 ── pair with ── wrangler v4
 
 | File | Affected by |
 |------|-------------|
-| `web/src/index.tsx` | Sentry v8, TanStack Query v5 |
+| `web/src/index.tsx` | Sentry removal, TanStack Query v5 |
 | `web/src/hooks/useInfinitePosts.ts` | TanStack Query v5 |
 | `web/src/hooks/useImageUpload.ts` | Zustand import fix + v5 |
 | `web/src/pages/Profile.tsx` | TanStack Query v5 |
 | `web/src/pages/Upload.tsx` | TanStack Query v5 |
-| `web/src/App.tsx` | Sentry v8 |
-| `web/src/pages/__tests__/Feed.test.tsx` | TanStack Query v5 (status rename) |
+| `web/src/App.tsx` | Sentry removal |
 | `web/src/pages/__tests__/Profile.test.tsx` | TanStack Query v5 (status rename) |
-| `api/src/types/index.ts` | Hono v4, workers-types v4 |
-| `api/src/middleware/sentry.ts` | toucan-js v4 |
-| `.eslintrc.cjs` | ESLint 9 (delete + replace) |
-| `web/tailwind.config.cjs` | Tailwind v4 (delete + replace) |
+| `web/src/styles/index.css` | Tailwind v4 (CSS-based config) |
+| `web/vite.config.ts` | Tailwind v4 (@tailwindcss/vite) |
+| `api/src/types/index.ts` | Hono v4, workers-types v4, Sentry removal |
+| `api/src/index.ts` | Sentry removal |
+| `api/src/utils/index.ts` | Hono v4 (request.raw.*) |
+| `api/src/db/posts.ts` | workers-types v4 (KVNamespaceListResult) |
+| `api/src/handlers/posts.ts` | Hono v4 (c.body for 204) |
+| `eslint.config.mjs` | ESLint 9 (new, replaces .eslintrc.cjs) |
 | `.nvmrc` | Node version fix |
-| `wrangler.toml` / `wrangler-dev.toml` | compatibility_date, wrangler v4 |
+| `wrangler.toml` / `wrangler-dev.toml` | compatibility_date |

@@ -25,8 +25,6 @@ export type WigglesEnv = {
     ACCOUNT_ID: string;
     API_KEY: string;
     WIGGLES_KV_ID: string;
-    RELEASE: string | undefined;
-    ENV: "development" | "production";
   };
   Variables: {
     JWT: {

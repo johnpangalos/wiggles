@@ -57,7 +57,7 @@ export async function PostUpload(c: WigglesContext) {
       return id;
     });
 
-    if (promises === undefined) return c.json({ message: "No content" }, 204);
+    if (promises === undefined) return c.body(null, 204);
 
     const idList = await Promise.all(promises);
     const timestamp = +new Date();

@@ -151,7 +151,7 @@ describe("Profile", () => {
 
   test("renders loading state", async () => {
     mockedUseInfinitePosts.mockReturnValue({
-      status: "loading",
+      status: "pending",
       data: undefined,
       isFetchingNextPage: false,
       fetchNextPage: vi.fn(),
