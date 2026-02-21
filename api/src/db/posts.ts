@@ -1,4 +1,3 @@
-import { Identity } from "@/middleware/auth";
 import { Account, Post, WigglesContext } from "@/types";
 import { DAY, generateSignedUrl, ImageSize, unixTime } from "@/utils";
 
@@ -121,10 +120,8 @@ export async function deletePosts(c: WigglesContext, orderKeys: string[]) {
   for (const key of orderKeys) {
     const feedKey = `post-feed-${key}`;
 
-    const access = c.get("JWT");
-    const identity: Identity | undefined = await access.getIdentity();
-    if (identity === undefined) throw new Error("Identity not found");
-    const accountKey = `post-account-${identity.email}-${key}`;
+    const { payload } = c.get("JWT");
+    const accountKey = `post-account-${payload.email}-${key}`;
 
     const res = await c.env.WIGGLES.getWithMetadata<Post>(feedKey);
     if (res.metadata === null)

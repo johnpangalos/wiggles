@@ -5,6 +5,7 @@ import { Loading } from "@/components";
 import { Result, useImageUpload } from "@/hooks";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
+import { getAuthHeaders } from "@/utils";
 
 export const Upload = () => {
   const urls = useImageUpload((state) => state.urls);
@@ -25,6 +26,7 @@ export const Upload = () => {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/upload`, {
         method: "POST",
         body: formData,
+        headers: { ...getAuthHeaders() },
       });
       if (res.status > 300) throw new Error("upload failed");
       return await res.json();

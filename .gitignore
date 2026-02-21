@@ -79,3 +79,8 @@ dev-dist
 .dev.vars
 
 scripts
+
+.agents
+.claude
+skills-lock.json
+api/.wrangler

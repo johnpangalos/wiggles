@@ -1,86 +1,29 @@
 import { MiddlewareHandler, WigglesContext } from "@/types";
-import { HonoRequest, Next } from "hono";
-import { getCookie } from "hono/cookie";
+import { Next } from "hono";
 
-export const getIdentity = async ({
-  jwt,
-  domain,
-}: {
-  jwt: string;
-  domain: string;
-}): Promise<undefined | Identity> => {
-  const identityURL = new URL("/cdn-cgi/access/get-identity", domain);
-  const response = await fetch(identityURL.toString(), {
-    headers: { Cookie: `CF_Authorization=${jwt}` },
-  });
-  if (response.ok) return await response.json();
-};
-
-export const generateLoginURL = ({
-  redirectURL: redirectURLInit,
-  domain,
-  aud,
-}: {
-  redirectURL: string | URL;
-  domain: string;
+export type GoogleJWTPayload = {
+  iss: string;
+  sub: string;
   aud: string;
-}): string => {
-  const redirectURL =
-    typeof redirectURLInit === "string"
-      ? new URL(redirectURLInit)
-      : redirectURLInit;
-  const { host } = redirectURL;
-  const loginPathname = `/cdn-cgi/access/login/${host}?`;
-  const searchParams = new URLSearchParams({
-    kid: aud,
-    redirect_url: redirectURL.pathname + redirectURL.search,
-  });
-  return new URL(loginPathname + searchParams.toString(), domain).toString();
-};
-
-export const generateLogoutURL = ({ domain }: { domain: string }) =>
-  new URL(`/cdn-cgi/access/logout`, domain).toString();
-
-export type Identity = {
-  id: string;
-  name: string;
-  email: string;
-  groups: string[];
-  amr: string[];
-  idp: { id: string; type: string };
-  geo: { country: string };
-  user_uuid: string;
-  account_id: string;
-  ip: string;
-  auth_status: string;
-  common_name: string;
-  service_token_id: string;
-  service_token_status: boolean;
-  is_warp: boolean;
-  is_gateway: boolean;
-  version: number;
-  device_sessions: Record<string, { last_authenticated: number }>;
-  iat: number;
-};
-
-export type JWTPayload = {
-  aud: string | string[];
-  common_name?: string; // Service token client ID
-  country?: string;
-  custom?: unknown;
-  email?: string;
   exp: number;
   iat: number;
-  nbf?: number;
-  iss: string;
-  type?: string;
-  identity_nonce?: string;
-  sub: string;
+  email: string;
+  email_verified: boolean;
+  name: string;
+  picture: string;
+  given_name?: string;
+  family_name?: string;
+  hd?: string;
 };
 
-export type PluginArgs = {
-  aud: string;
-  domain: string;
+type GoogleJWK = {
+  kid: string;
+  kty: string;
+  alg: string;
+} & JsonWebKey;
+
+type GoogleJWKSResponse = {
+  keys: GoogleJWK[];
 };
 
 const base64URLDecode = (s: string) => {
@@ -100,116 +43,96 @@ const asciiToUint8Array = (s: string) => {
   return new Uint8Array(chars);
 };
 
-type Key = {
-  kid: string;
-} & JsonWebKey;
+async function validateGoogleToken(
+  token: string,
+  clientId: string
+): Promise<GoogleJWTPayload> {
+  const parts = token.split(".");
+  if (parts.length !== 3) {
+    throw new Error("JWT does not have three parts.");
+  }
+  const [header, payload, signature] = parts;
 
-type CertsResponse = {
-  keys: Key[];
-  public_cert: { kid: string; cert: string };
-  public_certs: { kid: string; cert: string }[];
-};
+  const textDecoder = new TextDecoder("utf-8");
+  const { kid, alg } = JSON.parse(
+    textDecoder.decode(base64URLDecode(header))
+  );
+  if (alg !== "RS256") {
+    throw new Error("Unknown JWT type or algorithm.");
+  }
 
-const generateValidator =
-  (c: WigglesContext) =>
-  async (): Promise<{
-    jwt: string;
-    payload: object;
-  }> => {
-    const jwt = getCookie(c, "CF_Authorization");
-
-    if (jwt === undefined) throw new Error("JWT not on request");
-    const parts = jwt.split(".");
-    if (parts.length !== 3) {
-      throw new Error("JWT does not have three parts.");
-    }
-    const [header, payload, signature] = parts;
-
-    const textDecoder = new TextDecoder("utf-8");
-    const { kid, alg } = JSON.parse(
-      textDecoder.decode(base64URLDecode(header))
-    );
-    if (alg !== "RS256") {
-      throw new Error("Unknown JWT type or algorithm.");
-    }
-
-    const certsURL = new URL("/cdn-cgi/access/certs", c.env.DOMAIN);
-
-    const certsResponse = await fetch(certsURL.toString(), {
+  const certsResponse = await fetch(
+    "https://www.googleapis.com/oauth2/v3/certs",
+    {
       cf: {
         cacheTtl: 5 * 60,
         cacheEverything: true,
       },
-    });
-    const { keys } = (await certsResponse.json()) as CertsResponse;
-    if (!keys) {
-      throw new Error("Could not fetch signing keys.");
     }
-    const jwk = keys.find((key) => key.kid === kid);
-    if (!jwk) {
-      throw new Error("Could not find matching signing key.");
-    }
-    if (jwk.kty !== "RSA" || jwk.alg !== "RS256") {
-      throw new Error("Unknown key type of algorithm.");
-    }
-    // c.env.WIGGLES.put(jwkKey, JSON.stringify(jwk));
-    // }
+  );
+  const { keys } = (await certsResponse.json()) as GoogleJWKSResponse;
+  if (!keys) {
+    throw new Error("Could not fetch Google signing keys.");
+  }
+  const jwk = keys.find((key) => key.kid === kid);
+  if (!jwk) {
+    throw new Error("Could not find matching signing key.");
+  }
+  if (jwk.kty !== "RSA" || jwk.alg !== "RS256") {
+    throw new Error("Unknown key type or algorithm.");
+  }
 
-    const key = await crypto.subtle.importKey(
-      "jwk",
-      jwk,
-      { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
-      false,
-      ["verify"]
-    );
+  const key = await crypto.subtle.importKey(
+    "jwk",
+    jwk,
+    { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
+    false,
+    ["verify"]
+  );
 
-    const unroundedSecondsSinceEpoch = Date.now() / 1000;
+  const verified = await crypto.subtle.verify(
+    "RSASSA-PKCS1-v1_5",
+    key,
+    base64URLDecode(signature),
+    asciiToUint8Array(`${header}.${payload}`)
+  );
+  if (!verified) {
+    throw new Error("Could not verify JWT.");
+  }
 
-    const payloadObj = JSON.parse(textDecoder.decode(base64URLDecode(payload)));
+  const payloadObj = JSON.parse(
+    textDecoder.decode(base64URLDecode(payload))
+  ) as GoogleJWTPayload;
 
-    if (payloadObj.iss && payloadObj.iss !== certsURL.origin) {
-      throw new Error("JWT issuer is incorrect.");
-    }
-    if (payloadObj.aud && payloadObj.aud[0] !== c.env.AUDIENCE) {
-      throw new Error("JWT audience is incorrect.");
-    }
-    if (
-      payloadObj.exp &&
-      Math.floor(unroundedSecondsSinceEpoch) >= payloadObj.exp
-    ) {
-      throw new Error("JWT has expired.");
-    }
-    if (
-      payloadObj.nbf &&
-      Math.ceil(unroundedSecondsSinceEpoch) < payloadObj.nbf
-    ) {
-      throw new Error("JWT is not yet valid.");
-    }
+  if (
+    payloadObj.iss !== "https://accounts.google.com" &&
+    payloadObj.iss !== "accounts.google.com"
+  ) {
+    throw new Error("JWT issuer is incorrect.");
+  }
+  if (payloadObj.aud !== clientId) {
+    throw new Error("JWT audience is incorrect.");
+  }
+  const now = Math.floor(Date.now() / 1000);
+  if (payloadObj.exp && now >= payloadObj.exp) {
+    throw new Error("JWT has expired.");
+  }
 
-    const verified = await crypto.subtle.verify(
-      "RSASSA-PKCS1-v1_5",
-      key,
-      base64URLDecode(signature),
-      asciiToUint8Array(`${header}.${payload}`)
-    );
-    if (!verified) {
-      throw new Error("Could not verify JWT.");
-    }
-
-    return { jwt, payload: payloadObj };
-  };
+  return payloadObj;
+}
 
 export function auth(): MiddlewareHandler<Response | undefined> {
   return async (c: WigglesContext, next: Next) => {
     try {
-      const validator = generateValidator(c);
+      const authHeader = c.req.header("Authorization");
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        throw new Error("Missing or invalid Authorization header");
+      }
+      const token = authHeader.slice(7);
 
-      const { jwt, payload } = await validator();
+      const payload = await validateGoogleToken(token, c.env.GOOGLE_CLIENT_ID);
 
-      c.set("JWT", {
-        payload,
-        getIdentity: () => getIdentity({ jwt, domain: c.env.DOMAIN }),
-      });
+      c.set("JWT", { payload });
 
       await next();
       return;
