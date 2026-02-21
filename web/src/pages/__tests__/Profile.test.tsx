@@ -98,6 +98,7 @@ describe("Profile", () => {
       isFetchingNextPage: false,
       fetchNextPage: vi.fn(),
       hasNextPage: false,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- partial mock of useInfiniteQuery return type
     } as any);
 
     renderProfile();
@@ -118,6 +119,7 @@ describe("Profile", () => {
       isFetchingNextPage: false,
       fetchNextPage: vi.fn(),
       hasNextPage: false,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- partial mock of useInfiniteQuery return type
     } as any);
 
     renderProfile();
@@ -140,6 +142,7 @@ describe("Profile", () => {
       isFetchingNextPage: false,
       fetchNextPage: vi.fn(),
       hasNextPage: false,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- partial mock of useInfiniteQuery return type
     } as any);
 
     renderProfile();
@@ -156,6 +159,7 @@ describe("Profile", () => {
       isFetchingNextPage: false,
       fetchNextPage: vi.fn(),
       hasNextPage: false,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- partial mock of useInfiniteQuery return type
     } as any);
 
     renderProfile();
