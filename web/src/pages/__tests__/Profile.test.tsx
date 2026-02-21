@@ -44,8 +44,16 @@ vi.mock("@tanstack/react-virtual", () => ({
 }));
 
 vi.mock("@/utils", () => ({
-  getAuthHeaders: vi.fn(() => ({ Authorization: "Bearer fake-token" })),
-  clearIdToken: vi.fn(),
+  getAuthHeaders: vi.fn(() => Promise.resolve({ Authorization: "Bearer fake-token" })),
+}));
+
+vi.mock("@auth0/auth0-react", () => ({
+  useAuth0: vi.fn(() => ({
+    logout: vi.fn(),
+    getAccessTokenSilently: vi.fn(() => Promise.resolve("fake-token")),
+    isAuthenticated: true,
+    isLoading: false,
+  })),
 }));
 
 import { useInfinitePosts } from "@/hooks";
@@ -53,10 +61,7 @@ import { useInfinitePosts } from "@/hooks";
 const mockedUseInfinitePosts = vi.mocked(useInfinitePosts);
 
 beforeEach(() => {
-  // Mock google sign-out API
-  (globalThis as any).google = {
-    accounts: { id: { disableAutoSelect: vi.fn() } },
-  };
+  vi.clearAllMocks();
 });
 
 function createQueryClient(withProfile = true) {

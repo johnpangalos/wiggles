@@ -1,4 +1,4 @@
-import { GoogleJWTPayload } from "@/middleware/auth";
+import { Auth0JWTPayload } from "@/middleware/auth";
 import { Context } from "hono";
 
 export type Account = {
@@ -20,7 +20,8 @@ export type WigglesEnv = {
   Bindings: {
     WIGGLES: KVNamespace;
     IMAGES_KEY: string;
-    GOOGLE_CLIENT_ID: string;
+    AUTH0_DOMAIN: string;
+    AUTH0_AUDIENCE: string;
     ACCOUNT_ID: string;
     API_KEY: string;
     WIGGLES_KV_ID: string;
@@ -29,7 +30,7 @@ export type WigglesEnv = {
   };
   Variables: {
     JWT: {
-      payload: GoogleJWTPayload;
+      payload: Auth0JWTPayload;
     };
   };
 };
