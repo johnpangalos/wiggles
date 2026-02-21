@@ -1,6 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 export const Login = () => {
   const { loginWithRedirect, isAuthenticated, isLoading, error } = useAuth0();

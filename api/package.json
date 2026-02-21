@@ -12,12 +12,9 @@
   "license": "ISC",
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241230.0",
-    "@types/uuid": "^9.0.2",
     "wrangler": "^3.99.0"
   },
   "dependencies": {
-    "@ssttevee/multipart-parser": "^0.1.9",
-    "hono": "^4.6.0",
-    "uuid": "^9.0.0"
+    "hono": "^4.6.0"
   }
 }

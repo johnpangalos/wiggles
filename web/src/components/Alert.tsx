@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { X } from "react-feather";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 export enum ColorMap {
   INFO,
@@ -42,10 +42,10 @@ export function Alert({ children, type = ColorMap.INFO, onClose }: AlertProps) {
           <div className="flex-grow">{children}</div>
 
           {onClose && (
-            <X
+            <XMarkIcon
               onClick={onClose}
               role="button"
-              className={`text-2xl fill-current text${ColorMap[type]}-600`}
+              className={`size-6 fill-current text${ColorMap[type]}-600`}
             />
           )}
         </div>

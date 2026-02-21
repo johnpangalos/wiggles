@@ -1,7 +1,11 @@
 import { useImageUpload } from "@/hooks/useImageUpload";
-import { ChangeEvent, useRef } from "react";
-import { Home, Icon, Upload, User } from "react-feather";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import React, { ChangeEvent, useRef } from "react";
+import {
+  HomeIcon,
+  ArrowUpTrayIcon,
+  UserIcon,
+} from "@heroicons/react/24/outline";
+import { NavLink, Outlet, useNavigate } from "react-router";
 
 type Result = string | ArrayBuffer | null;
 
@@ -38,16 +42,16 @@ export function BottomNavigation() {
     <>
       <div className="z-10 bg-gray-100 flex pwa:pb-8 items-center justify-center w-full py-3 border-t-2 border-purple-600 bottom-0 fixed px-12">
         <div className="flex items-center justify-around flex-shrink w-full max-w-lg">
-          <NavButton to="/feed" icon={Home} text={"Feed"} />
+          <NavButton to="/feed" icon={HomeIcon} text={"Feed"} />
           <button
             onClick={handleClick}
             ref={uploadButton}
             className="flex flex-col items-center px-4 text-gray-600 no-underline color-transition outline-none"
           >
-            <Upload />
+            <ArrowUpTrayIcon className="size-6" />
             <div className="text-xs">Upload</div>
           </button>
-          <NavButton to="/profile" icon={User} text={"Profile"} />
+          <NavButton to="/profile" icon={UserIcon} text={"Profile"} />
         </div>
       </div>
       <input
@@ -63,7 +67,7 @@ export function BottomNavigation() {
 }
 
 type NavButtonProps = {
-  icon: Icon;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   text: string;
   to: string;
 };
@@ -74,7 +78,7 @@ function NavButton({ icon: Icon, text, to }: NavButtonProps) {
       to={to}
       className="flex flex-col items-center px-4 text-gray-600 no-underline color-transition outline-none"
     >
-      <Icon />
+      <Icon className="size-6" />
       <div className="text-xs">{text}</div>
     </NavLink>
   );
