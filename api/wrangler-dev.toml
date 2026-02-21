@@ -1,6 +1,6 @@
 name = "wiggles-api"
 main = "src/index.ts"
-compatibility_date = "2022-09-11"
+compatibility_date = "2024-09-23"
 account_id = "e5933c765c57d2f3a58d86973c88362c"
 
 [vars]
