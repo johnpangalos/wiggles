@@ -23,9 +23,11 @@ const $w = $({ cwd: apiDir, quiet: true });
 
 // --- Phase 1: List all Cloudflare Images ---
 async function listAllCfImages() {
-  const images: { id: string }[] = [];
-  for await (const image of cf.images.v1.list({ account_id: accountId })) {
-    images.push(image);
+  const images: string[] = [];
+  for await (const page of cf.images.v1.list({ account_id: accountId })) {
+    for (const image of page.images ?? []) {
+      if (image.id) images.push(image.id);
+    }
   }
   return images;
 }
@@ -91,9 +93,9 @@ const idMapping = new Map<string, string>();
 for (let i = 0; i < cfImages.length; i += 10) {
   const batch = cfImages.slice(i, i + 10);
   const results = await Promise.all(
-    batch.map(async (img) => {
-      const r2Key = await migrateImage(img.id);
-      return [img.id, r2Key] as const;
+    batch.map(async (cfImageId) => {
+      const r2Key = await migrateImage(cfImageId);
+      return [cfImageId, r2Key] as const;
     }),
   );
   for (const [cfId, r2Key] of results) {
