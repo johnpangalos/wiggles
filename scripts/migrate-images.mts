@@ -10,12 +10,14 @@ const wranglerToml = fs.readFileSync(
 
 const accountId = wranglerToml.match(/^account_id\s*=\s*"(.+)"/m)?.[1];
 const kvNamespaceId = wranglerToml.match(
-  /\[\[kv_namespaces\]\][^[]*?id\s*=\s*"(.+)"/s,
+  /\[\[kv_namespaces\]\][^[]*?id\s*=\s*"([^"]+)"/s,
 )?.[1];
 if (!accountId || !kvNamespaceId) {
   echo("Failed to parse account_id or kv namespace id from wrangler.toml");
   process.exit(1);
 }
+echo(`Using account_id: ${accountId}`);
+echo(`Using kv_namespace_id: ${kvNamespaceId}`);
 
 const cf = new Cloudflare(); // uses CLOUDFLARE_API_TOKEN env var
 const R2_BUCKET = "wiggles-images";
