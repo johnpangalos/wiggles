@@ -1,7 +1,5 @@
 import { WigglesContext } from "@/types";
-import { parseMultipart } from "@ssttevee/multipart-parser";
 import { HonoRequest } from "hono";
-import { v4 as uuidV4 } from "uuid";
 
 export type ImageSize = "WRPost" | "WRThumbnail";
 export const DAY = 60 * 60 * 24;
@@ -51,35 +49,20 @@ export async function generateSignedUrl(
   return url.toString();
 }
 
-const RE_MULTIPART =
-  /^multipart\/form-data(?:;\s*boundary=(?:"((?:[^"]|\\")+)"|([^\s;]+)))$/;
-
-const getBoundary = (request: HonoRequest): string | undefined => {
-  const contentType = request.raw.headers.get("Content-Type");
-  if (!contentType) return;
-
-  const matches = RE_MULTIPART.exec(contentType);
-  if (!matches) return;
-
-  return matches[1] || matches[2];
-};
-
 export const parseFormDataRequest = async (
   request: HonoRequest
 ): Promise<FormData[] | undefined> => {
-  const boundary = getBoundary(request);
-  if (!boundary || !request.raw.body) return;
-
-  const parts = await parseMultipart(request.raw.body, boundary);
+  const incoming = await request.raw.formData();
+  const files = incoming.getAll("file");
+  if (files.length === 0) return;
 
   const formDataList: FormData[] = [];
-  for (const { name, data, contentType } of parts) {
-    const filename = `${uuidV4()}.${
-      contentType?.includes("png") ? "png" : "jpeg"
-    }`;
+  for (const entry of files) {
+    if (typeof entry === "string") continue;
+    const ext = entry.type?.includes("png") ? "png" : "jpeg";
+    const filename = `${crypto.randomUUID()}.${ext}`;
     const formData = new FormData();
-    const file = new File([data.buffer as ArrayBuffer], filename, { type: contentType }) as Blob;
-    formData.append(name, file, filename);
+    formData.append("file", new File([entry], filename, { type: entry.type }));
     formDataList.push(formData);
   }
 

@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "uuid";
 import { createPosts, deletePosts, readPosts } from "@/db";
 import { getEmailFromPayload } from "@/middleware/auth";
 import { Post, WigglesContext } from "@/types";
@@ -29,7 +28,6 @@ type ImageUploadResponse = {
 
 export async function PostUpload(c: WigglesContext) {
   try {
-    // Compatibility dates aren't yet possible to set: https://developers.cloudflare.com/workers/platform/compatibility-dates#formdata-parsing-supports-file
     const formDataList = await parseFormDataRequest(c.req);
     const promises = formDataList?.map(async (formData) => {
       formData.set("requireSignedURLs", "true");
@@ -66,7 +64,7 @@ export async function PostUpload(c: WigglesContext) {
     const email = getEmailFromPayload(payload);
 
     const postList: Post[] = idList.map((id, idx) => ({
-      id: uuidv4(),
+      id: crypto.randomUUID(),
       contentType: "image/*",
       cfImageId: id,
       timestamp: (timestamp + idx).toString(),

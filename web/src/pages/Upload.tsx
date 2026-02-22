@@ -3,7 +3,7 @@ import { Button } from "@/components";
 import { Loading } from "@/components";
 
 import { Result, useImageUpload } from "@/hooks";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useMutation } from "@tanstack/react-query";
 import { getAuthHeaders } from "@/utils";
 

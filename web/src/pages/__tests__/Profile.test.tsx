@@ -4,19 +4,20 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import { Profile } from "../Profile";
 import type { NewPost } from "@/types";
+import placeholderUrl from "./fixtures/placeholder.png";
 
 const profileData = {
   displayName: "Test User",
   email: "test@example.com",
   id: "account-1",
-  photoURL: "https://example.com/avatar.jpg",
+  photoURL: placeholderUrl,
 };
 
 const mockPosts: NewPost[] = Array.from({ length: 6 }, (_, i) => ({
   id: `post-${i + 1}`,
-  url: `https://example.com/thumb${i + 1}.jpg`,
+  url: placeholderUrl,
   account: profileData,
-  contentType: "image/jpeg",
+  contentType: "image/png",
   timestamp: `${1700000000000 + i * 1000}`,
   accountId: "account-1",
   cfImageId: `cf-img-${i + 1}`,
@@ -98,7 +99,7 @@ describe("Profile", () => {
       isFetchingNextPage: false,
       fetchNextPage: vi.fn(),
       hasNextPage: false,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- partial mock of useInfiniteQuery return type
+       
     } as any);
 
     renderProfile();
@@ -119,7 +120,7 @@ describe("Profile", () => {
       isFetchingNextPage: false,
       fetchNextPage: vi.fn(),
       hasNextPage: false,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- partial mock of useInfiniteQuery return type
+       
     } as any);
 
     renderProfile();
@@ -142,7 +143,7 @@ describe("Profile", () => {
       isFetchingNextPage: false,
       fetchNextPage: vi.fn(),
       hasNextPage: false,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- partial mock of useInfiniteQuery return type
+       
     } as any);
 
     renderProfile();
@@ -159,7 +160,7 @@ describe("Profile", () => {
       isFetchingNextPage: false,
       fetchNextPage: vi.fn(),
       hasNextPage: false,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- partial mock of useInfiniteQuery return type
+       
     } as any);
 
     renderProfile();

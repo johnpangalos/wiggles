@@ -84,3 +84,6 @@ scripts
 .claude
 skills-lock.json
 api/.wrangler
+
+# Vitest screenshot attachments (hashed blobs)
+.vitest-attachments/

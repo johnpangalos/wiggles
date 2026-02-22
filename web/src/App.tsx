@@ -4,12 +4,12 @@ import {
   Route,
   Routes,
   useNavigate,
-} from "react-router-dom";
+} from "react-router";
 import { Login, Upload, Feed, Profile } from "@/pages";
 import { MainLayout } from "./layouts/main";
 import { BreakpointProvider } from "@/hooks";
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { checkRegistration, register, unregister } from "./register-sw";
 import { setTokenAccessor } from "@/utils";
 
@@ -99,7 +99,7 @@ const App = () => {
   );
 };
 
-function RequireAuth({ children }: { children: JSX.Element }): JSX.Element {
+function RequireAuth({ children }: { children: React.JSX.Element }): React.JSX.Element {
   const { isAuthenticated, isLoading, loginWithRedirect, error } = useAuth0();
 
   useEffect(() => {

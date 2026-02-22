@@ -7,6 +7,7 @@ export default mergeConfig(
   defineConfig({
     test: {
       globals: true,
+      setupFiles: ["./src/test-setup.ts"],
       browser: {
         enabled: true,
         provider: playwright(),

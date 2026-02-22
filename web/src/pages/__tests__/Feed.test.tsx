@@ -4,18 +4,19 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { describe, test, expect, vi } from "vitest";
 import { Feed } from "../Feed";
 import type { NewPost } from "@/types";
+import placeholderUrl from "./fixtures/placeholder.png";
 
 const mockPosts: NewPost[] = [
   {
     id: "post-1",
-    url: "https://example.com/image1.jpg",
+    url: placeholderUrl,
     account: {
       displayName: "Test User",
       email: "test@example.com",
       id: "account-1",
-      photoURL: "https://example.com/avatar1.jpg",
+      photoURL: placeholderUrl,
     },
-    contentType: "image/jpeg",
+    contentType: "image/png",
     timestamp: "1700000000000",
     accountId: "account-1",
     cfImageId: "cf-img-1",
@@ -23,12 +24,12 @@ const mockPosts: NewPost[] = [
   },
   {
     id: "post-2",
-    url: "https://example.com/image2.png",
+    url: placeholderUrl,
     account: {
       displayName: "Another User",
       email: "another@example.com",
       id: "account-2",
-      photoURL: "https://example.com/avatar2.jpg",
+      photoURL: placeholderUrl,
     },
     contentType: "image/png",
     timestamp: "1700001000000",
@@ -86,7 +87,7 @@ describe("Feed", () => {
       isFetchingNextPage: false,
       fetchNextPage: vi.fn(),
       hasNextPage: false,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- partial mock of useInfiniteQuery return type
+       
     } as any);
 
     renderFeed();
@@ -104,7 +105,7 @@ describe("Feed", () => {
       isFetchingNextPage: false,
       fetchNextPage: vi.fn(),
       hasNextPage: false,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- partial mock of useInfiniteQuery return type
+       
     } as any);
 
     renderFeed();
@@ -122,7 +123,7 @@ describe("Feed", () => {
       isFetchingNextPage: false,
       fetchNextPage: vi.fn(),
       hasNextPage: false,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- partial mock of useInfiniteQuery return type
+       
     } as any);
 
     renderFeed();
@@ -144,7 +145,7 @@ describe("Feed", () => {
       isFetchingNextPage: false,
       fetchNextPage: vi.fn(),
       hasNextPage: false,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- partial mock of useInfiniteQuery return type
+       
     } as any);
 
     renderFeed();
@@ -165,7 +166,7 @@ describe("Feed", () => {
       isFetchingNextPage: true,
       fetchNextPage: vi.fn(),
       hasNextPage: true,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- partial mock of useInfiniteQuery return type
+       
     } as any);
 
     renderFeed();

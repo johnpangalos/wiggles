@@ -1,5 +1,5 @@
-import { ReactNode } from "react";
-import { Download } from "react-feather";
+import React, { ReactNode } from "react";
+import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import { ProfileImage } from "../components";
 import { Account } from "@/types";
 
@@ -33,7 +33,7 @@ export const Post = ({
   account,
   thumbnail = false,
   url,
-}: PostProps): JSX.Element => {
+}: PostProps): React.JSX.Element => {
   const date = new Date(Number(timestamp));
 
   const downloadResource = (url: string, filename?: string) => {
@@ -82,8 +82,8 @@ export const Post = ({
             <div className="text-sm">Uploaded: {date.toLocaleString()}</div>
           </div>
           {url && (
-            <Download
-              className="pb-1 self-center text-purple-600"
+            <ArrowDownTrayIcon
+              className="size-6 pb-1 self-center text-purple-600"
               role="button"
               onClick={() => downloadResource(url)}
             />
