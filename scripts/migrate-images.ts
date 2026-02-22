@@ -1,9 +1,23 @@
 import "zx/globals";
 
-const CF_ACCOUNT_ID = process.env.CF_ACCOUNT_ID!;
+// --- Parse config from wrangler.toml ---
+const apiDir = path.join(import.meta.dirname, "..", "api");
+const wranglerToml = fs.readFileSync(
+  path.join(apiDir, "wrangler.toml"),
+  "utf-8",
+);
+
+const CF_ACCOUNT_ID = wranglerToml.match(/^account_id\s*=\s*"(.+)"/m)?.[1];
+const KV_NAMESPACE_ID = wranglerToml.match(
+  /\[\[kv_namespaces\]\][^[]*?id\s*=\s*"(.+)"/s,
+)?.[1];
+if (!CF_ACCOUNT_ID || !KV_NAMESPACE_ID) {
+  echo("Failed to parse account_id or kv namespace id from wrangler.toml");
+  process.exit(1);
+}
+
 const CF_API_KEY = process.env.CF_API_KEY!;
 const CF_AUTH_EMAIL = process.env.CF_AUTH_EMAIL!;
-const KV_NAMESPACE_ID = process.env.KV_NAMESPACE_ID!;
 const R2_BUCKET = "wiggles-images";
 
 const cfHeaders = {
@@ -11,7 +25,7 @@ const cfHeaders = {
   "X-Auth-Key": CF_API_KEY,
 };
 
-const $w = $({ cwd: path.join(import.meta.dirname, "..", "api"), quiet: true });
+const $w = $({ cwd: apiDir, quiet: true });
 
 // --- Phase 1: List all Cloudflare Images ---
 async function listAllCfImages(): Promise<{ id: string }[]> {
@@ -59,53 +73,34 @@ async function migrateImage(cfImageId: string): Promise<string> {
 
 // --- Phase 3: Update KV post metadata via wrangler ---
 async function updateKvMetadata(idMapping: Map<string, string>) {
-  let cursor: string | undefined;
-  let done = false;
+  const result =
+    await $w`pnpm wrangler kv key list --namespace-id ${KV_NAMESPACE_ID} --prefix post-`;
+  const keys = JSON.parse(result.stdout) as {
+    name: string;
+    metadata?: { cfImageId?: string; r2Key?: string };
+  }[];
 
-  while (!done) {
-    const url = new URL(
-      `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/storage/kv/namespaces/${KV_NAMESPACE_ID}/keys`,
-    );
-    url.searchParams.set("prefix", "post-");
-    url.searchParams.set("limit", "1000");
-    if (cursor) url.searchParams.set("cursor", cursor);
-
-    const res = await fetch(url.toString(), {
-      headers: { ...cfHeaders, "Content-Type": "application/json" },
-    });
-    const data = (await res.json()) as {
-      result: {
-        name: string;
-        metadata?: { cfImageId?: string; r2Key?: string };
-      }[];
-      result_info: { cursor?: string; count: number };
-    };
-
-    const updates: { key: string; value: string; metadata: object }[] = [];
-    for (const key of data.result) {
-      if (!key.metadata?.cfImageId) continue;
-      const r2Key = idMapping.get(key.metadata.cfImageId);
-      if (!r2Key) {
-        console.warn(
-          `No R2 key found for cfImageId ${key.metadata.cfImageId} (key: ${key.name})`,
-        );
-        continue;
-      }
-
-      const newMetadata = { ...key.metadata, r2Key };
-      delete (newMetadata as Record<string, unknown>).cfImageId;
-      updates.push({ key: key.name, value: "", metadata: newMetadata });
+  const updates: { key: string; value: string; metadata: object }[] = [];
+  for (const key of keys) {
+    if (!key.metadata?.cfImageId) continue;
+    const r2Key = idMapping.get(key.metadata.cfImageId);
+    if (!r2Key) {
+      console.warn(
+        `No R2 key found for cfImageId ${key.metadata.cfImageId} (key: ${key.name})`,
+      );
+      continue;
     }
 
-    if (updates.length > 0) {
-      const bulkFile = tmpfile("kv-bulk.json", JSON.stringify(updates));
-      await $w`pnpm wrangler kv bulk put ${bulkFile} --namespace-id ${KV_NAMESPACE_ID}`;
-      fs.removeSync(bulkFile);
-      echo`Updated ${updates.length} KV entries`;
-    }
+    const newMetadata = { ...key.metadata, r2Key };
+    delete (newMetadata as Record<string, unknown>).cfImageId;
+    updates.push({ key: key.name, value: "", metadata: newMetadata });
+  }
 
-    cursor = data.result_info.cursor;
-    done = !cursor;
+  if (updates.length > 0) {
+    const bulkFile = tmpfile("kv-bulk.json", JSON.stringify(updates));
+    await $w`pnpm wrangler kv bulk put ${bulkFile} --namespace-id ${KV_NAMESPACE_ID}`;
+    fs.removeSync(bulkFile);
+    echo`Updated ${updates.length} KV entries`;
   }
 }
 
