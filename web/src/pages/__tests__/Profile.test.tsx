@@ -59,6 +59,7 @@ vi.mock("@/utils", () => ({
 vi.mock("@auth0/auth0-react", () => ({
   useAuth0: vi.fn(() => ({
     logout: vi.fn(),
+    user: { email: "test@example.com" },
     getAccessTokenSilently: vi.fn(() => Promise.resolve("fake-token")),
     isAuthenticated: true,
     isLoading: false,
@@ -73,16 +74,12 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
-function createQueryClient(withProfile = true) {
-  const qc = new QueryClient({
+function createQueryClient() {
+  return new QueryClient({
     defaultOptions: {
       queries: { retry: false },
     },
   });
-  if (withProfile) {
-    qc.setQueryData(["me"], profileData);
-  }
-  return qc;
 }
 
 function renderProfile(queryClient?: QueryClient) {

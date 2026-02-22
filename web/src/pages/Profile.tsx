@@ -8,7 +8,7 @@ import {
   useBreakpoint,
   UseInfinitePostsOptions,
 } from "@/hooks";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getAuthHeaders } from "@/utils";
 import { useAuth0 } from "@auth0/auth0-react";
 
@@ -30,16 +30,7 @@ const queryKeyConfig = (email?: string): UseInfinitePostsOptions => ({
 });
 
 export function Profile() {
-  const { logout } = useAuth0();
-  const { data: profileData, status: profileStatus } = useQuery({
-    queryKey: ["me"],
-    queryFn: async () => {
-      const headers = await getAuthHeaders();
-      return fetch(`${import.meta.env.VITE_API_URL}/me`, {
-        headers,
-      }).then((res) => res.json());
-    },
-  });
+  const { logout, user } = useAuth0();
   const [selectMode, setSelectMode] = useState(false);
   const [selectedOrderKeys, setSelectedOrderKeys] = useState<
     Record<string, NewPost>
@@ -50,10 +41,10 @@ export function Profile() {
   const parent = React.useRef<HTMLDivElement>(null);
 
   const { status, data, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    useInfinitePosts(queryKeyConfig(profileData?.email));
+    useInfinitePosts(queryKeyConfig(user?.email));
 
   const queryClient = useQueryClient();
-  const queryKey = infinitePostsQueryKey(queryKeyConfig(profileData?.email));
+  const queryKey = infinitePostsQueryKey(queryKeyConfig(user?.email));
 
   const { mutate, status: mutateStatus } = useMutation({
     mutationFn: (orderKeys: string[]) => deleteImages(orderKeys),
@@ -123,11 +114,7 @@ export function Profile() {
     ],
   );
 
-  if (
-    profileStatus === "pending" ||
-    (status === "pending" && !!profileData?.email)
-  )
-    return <Loading />;
+  if (status === "pending") return <Loading />;
   return (
     <div className="h-full px-6 flex flex-col">
       <div>
