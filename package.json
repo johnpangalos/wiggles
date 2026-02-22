@@ -8,14 +8,10 @@
     "lint": "pnpm run -r lint"
   },
   "devDependencies": {
-    "cloudflare": "^5.2.0",
     "eslint": "^9.0.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "prettier": "^3.5",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.0.0"
-  },
-  "dependencies": {
-    "zx": "^8.8.5"
   }
 }
