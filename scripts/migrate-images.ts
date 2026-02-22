@@ -1,18 +1,17 @@
-import { execSync } from "node:child_process";
-import { mkdirSync, writeFileSync, rmSync } from "node:fs";
-import { join } from "node:path";
+import "zx/globals";
 
 const CF_ACCOUNT_ID = process.env.CF_ACCOUNT_ID!;
 const CF_API_KEY = process.env.CF_API_KEY!;
 const CF_AUTH_EMAIL = process.env.CF_AUTH_EMAIL!;
 const KV_NAMESPACE_ID = process.env.KV_NAMESPACE_ID!;
 const R2_BUCKET = "wiggles-images";
-const TMP_DIR = join(import.meta.dirname, ".tmp-migration");
 
 const cfHeaders = {
   "X-Auth-Email": CF_AUTH_EMAIL,
   "X-Auth-Key": CF_API_KEY,
 };
+
+const $w = $({ cwd: path.join(import.meta.dirname, "..", "api"), quiet: true });
 
 // --- Phase 1: List all Cloudflare Images ---
 async function listAllCfImages(): Promise<{ id: string }[]> {
@@ -50,17 +49,11 @@ async function migrateImage(cfImageId: string): Promise<string> {
   const ext = contentType.includes("png") ? "png" : "jpeg";
   const r2Key = `${cfImageId}.${ext}`;
 
-  // Write to temp file, then upload via wrangler
-  const tmpFile = join(TMP_DIR, r2Key);
-  writeFileSync(tmpFile, new Uint8Array(data));
+  const tmp = tmpfile(r2Key, Buffer.from(data));
+  await $w`pnpm wrangler r2 object put ${R2_BUCKET}/${r2Key} --file ${tmp} --content-type ${contentType}`;
+  fs.removeSync(tmp);
 
-  execSync(
-    `pnpm wrangler r2 object put "${R2_BUCKET}/${r2Key}" --file "${tmpFile}" --content-type "${contentType}"`,
-    { cwd: join(import.meta.dirname, "..", "api"), stdio: "pipe" },
-  );
-
-  rmSync(tmpFile);
-  console.log(`Migrated: ${cfImageId} → ${r2Key}`);
+  echo`Migrated: ${cfImageId} → ${r2Key}`;
   return r2Key;
 }
 
@@ -105,16 +98,10 @@ async function updateKvMetadata(idMapping: Map<string, string>) {
     }
 
     if (updates.length > 0) {
-      const bulkFile = join(TMP_DIR, "kv-bulk.json");
-      writeFileSync(bulkFile, JSON.stringify(updates));
-
-      execSync(
-        `pnpm wrangler kv bulk put "${bulkFile}" --namespace-id "${KV_NAMESPACE_ID}"`,
-        { cwd: join(import.meta.dirname, "..", "api"), stdio: "pipe" },
-      );
-
-      rmSync(bulkFile);
-      console.log(`Updated ${updates.length} KV entries`);
+      const bulkFile = tmpfile("kv-bulk.json", JSON.stringify(updates));
+      await $w`pnpm wrangler kv bulk put ${bulkFile} --namespace-id ${KV_NAMESPACE_ID}`;
+      fs.removeSync(bulkFile);
+      echo`Updated ${updates.length} KV entries`;
     }
 
     cursor = data.result_info.cursor;
@@ -123,42 +110,32 @@ async function updateKvMetadata(idMapping: Map<string, string>) {
 }
 
 // --- Run migration ---
-async function main() {
-  mkdirSync(TMP_DIR, { recursive: true });
+echo("Phase 1: Listing all Cloudflare Images...");
+const cfImages = await listAllCfImages();
+echo(`Found ${cfImages.length} images`);
 
-  try {
-    console.log("Phase 1: Listing all Cloudflare Images...");
-    const cfImages = await listAllCfImages();
-    console.log(`Found ${cfImages.length} images`);
-
-    console.log("Phase 2: Downloading from CF Images + uploading to R2...");
-    const idMapping = new Map<string, string>();
-    // Process in batches of 10 to avoid rate limits
-    for (let i = 0; i < cfImages.length; i += 10) {
-      const batch = cfImages.slice(i, i + 10);
-      const results = await Promise.all(
-        batch.map(async (img) => {
-          const r2Key = await migrateImage(img.id);
-          return [img.id, r2Key] as const;
-        }),
-      );
-      for (const [cfId, r2Key] of results) {
-        idMapping.set(cfId, r2Key);
-      }
-    }
-    console.log(`Migrated ${idMapping.size} images to R2`);
-
-    console.log("Phase 3: Updating KV post metadata...");
-    await updateKvMetadata(idMapping);
-
-    console.log("Migration complete!");
-    console.log("Next steps:");
-    console.log("  1. Deploy the updated Worker code (with R2 bindings)");
-    console.log("  2. Verify images load correctly from R2 presigned URLs");
-    console.log("  3. Optionally delete old Cloudflare Images via API");
-  } finally {
-    rmSync(TMP_DIR, { recursive: true, force: true });
+echo("Phase 2: Downloading from CF Images + uploading to R2...");
+const idMapping = new Map<string, string>();
+// Process in batches of 10 to avoid rate limits
+for (let i = 0; i < cfImages.length; i += 10) {
+  const batch = cfImages.slice(i, i + 10);
+  const results = await Promise.all(
+    batch.map(async (img) => {
+      const r2Key = await migrateImage(img.id);
+      return [img.id, r2Key] as const;
+    }),
+  );
+  for (const [cfId, r2Key] of results) {
+    idMapping.set(cfId, r2Key);
   }
 }
+echo(`Migrated ${idMapping.size} images to R2`);
 
-main().catch(console.error);
+echo("Phase 3: Updating KV post metadata...");
+await updateKvMetadata(idMapping);
+
+echo("Migration complete!");
+echo("Next steps:");
+echo("  1. Deploy the updated Worker code (with R2 bindings)");
+echo("  2. Verify images load correctly from R2 presigned URLs");
+echo("  3. Optionally delete old Cloudflare Images via API");
