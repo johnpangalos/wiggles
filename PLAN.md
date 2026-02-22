@@ -19,7 +19,7 @@ Delete:  DELETE /api/posts → CF Images API delete + KV cleanup
 **Key files:**
 - `api/src/handlers/posts.ts` — upload/delete handlers
 - `api/src/utils/index.ts` — `generateSignedUrl()` (HMAC), `parseFormDataRequest()`
-- `api/src/db/posts.ts` — `populatePost()` (URL caching in KV), `createPosts()`, `deletePosts()`
+- `api/src/db/posts.ts` — `populatePost()` (signed URL generation + KV caching), `createPosts()`, `deletePosts()`
 - `api/src/types/index.ts` — `WigglesEnv` bindings, `Post` type
 - `api/wrangler.toml` / `api/wrangler-dev.toml` — config
 
@@ -33,11 +33,11 @@ Delete:  DELETE /api/posts → CF Images API delete + KV cleanup
 
 ```
 Upload:  Frontend → POST /api/upload → R2 bucket.put() → returns r2Key
-Serve:   GET /api/posts → generate S3-presigned R2 GET URL → cache in KV → return to frontend
+Serve:   GET /api/posts → generate S3-presigned R2 GET URL on the fly → return to frontend
 Delete:  DELETE /api/posts → R2 bucket.delete() + KV cleanup
 ```
 
-Images remain private in R2 (no public bucket). The Worker generates time-limited presigned GET URLs using the `@aws-sdk/s3-request-presigner`, cached in KV with the same pattern as today. Frontend `<img src=...>` tags fetch directly from the presigned R2 URL — no auth headers needed, no streaming proxy endpoint needed.
+Images remain private in R2 (no public bucket). The Worker generates time-limited presigned GET URLs using the `@aws-sdk/s3-request-presigner` on every request — no KV URL caching needed. The presigner does local crypto only (no network call), so generating a fresh URL is fast. This eliminates all `image-*` KV keys and removes the risk of serving expired cached URLs. Frontend `<img src=...>` tags fetch directly from the presigned R2 URL — no auth headers needed, no streaming proxy endpoint needed.
 
 ---
 
@@ -151,37 +151,40 @@ Changes:
 - Remove manual HMAC key import / signing logic
 - `expiresIn` is seconds (use `DAY = 86400`)
 
-### Step 5: Update post population (presigned URL + KV cache)
+### Step 5: Update post population (generate presigned URL on the fly)
 
 **File:** `api/src/db/posts.ts`
 
-The `populatePost()` function keeps the same **pattern** (check KV cache → generate signed URL → cache in KV) but switches from the old HMAC URL to the new S3 presigned URL:
+The `populatePost()` function currently checks KV for a cached signed URL, generates one if missing, and caches it. Replace all of that with a direct `generateSignedUrl()` call — the S3 presigner is pure local crypto (no network), so it's fast enough to run on every request. This eliminates all `image-*` KV keys entirely.
 
 ```typescript
 export async function populatePost(
   c: WigglesContext,
   post: Post,
 ): Promise<PostResponse | null> {
-  const imageKey = `image-${post.r2Key}`;  // simplified key (no size variant)
+  const urlPromise = generateSignedUrl(c, post.r2Key, DAY);
 
-  const urlPromise = (async () => {
-    let url = await c.env.WIGGLES.get(imageKey);
-
-    if (url === null) {
-      url = await generateSignedUrl(c, post.r2Key, DAY);
-      c.env.WIGGLES.put(imageKey, url, { expirationTtl: DAY });
-    }
-    return url;
+  const accountPromise = (async () => {
+    const account = await c.env.WIGGLES.get(`account-${post.accountId}`);
+    if (account === null) throw new Error(`Bad post data: ${post.accountId}`);
+    return account;
   })();
 
-  // ... rest stays the same
+  const [url, account] = await Promise.all([urlPromise, accountPromise]);
+
+  return {
+    ...post,
+    url,
+    account: JSON.parse(account),
+    orderKey: (MAX - Number.parseInt(post.timestamp)).toString(),
+  };
 }
 ```
 
 Changes:
-- KV cache key simplified from `image-{id}-size-{size}` to `image-{r2Key}` (no size variants)
-- Remove `size` / `ReadPostOptions` parameter
-- `expirationTtl` uses `DAY` directly (seconds), matching the presigned URL lifetime
+- Remove KV cache read/write for image URLs (`image-{id}-size-{size}` keys gone)
+- Remove `size` / `ReadPostOptions` parameter (no named variants)
+- Fresh presigned URL generated per request — naturally expires after 1 day
 
 ### Step 6: Rewrite image upload handler
 
@@ -316,7 +319,8 @@ export type NewPost = {
 - Remove `ImageSize` type export from `api/src/utils/index.ts`
 - Remove `bufferToHex()` from `api/src/utils/index.ts`
 - Remove `IMAGES_KEY` from any secret configuration
-- Clean up old `image-{cfImageId}-size-{size}` KV entries (they'll auto-expire within 1 day)
+- Old `image-{cfImageId}-size-{size}` KV cache entries will auto-expire within 1 day (no manual cleanup needed)
+- Remove `DAY` and `unixTime()` from utils if no longer referenced (they were only used for KV URL caching TTLs)
 
 ---
 
@@ -580,7 +584,7 @@ To create R2 API tokens: **Cloudflare Dashboard → R2 → Manage R2 API Tokens 
 | `api/wrangler-dev.toml` | Add R2 bucket binding (dev) |
 | `api/src/types/index.ts` | Add `IMAGES_BUCKET`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`; rename `cfImageId` → `r2Key` |
 | `api/src/handlers/posts.ts` | Rewrite upload to use R2 `put()`; simplify `GetPosts` |
-| `api/src/db/posts.ts` | Update `populatePost()` to use new presigned URL; fix deletion to use `IMAGES_BUCKET.delete()` |
+| `api/src/db/posts.ts` | Simplify `populatePost()` — remove KV URL cache, generate presigned URL on the fly; fix deletion to use `IMAGES_BUCKET.delete()` |
 | `api/src/utils/index.ts` | Rewrite `generateSignedUrl()` with S3 presigner; remove `bufferToHex`, `ImageSize`; simplify `parseFormDataRequest` |
 | `web/src/types/index.ts` | Update `cfImageId` → `r2Key` in `NewPost` |
 | `web/src/hooks/useInfinitePosts.ts` | Remove `imageSize` param (optional) |
