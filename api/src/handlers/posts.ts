@@ -41,12 +41,12 @@ export async function PostUpload(c: WigglesContext) {
             "X-Auth-Email": "john@pangalos.dev",
             "X-Auth-Key": c.env.API_KEY,
           },
-        }
+        },
       );
 
       if (response.status > 300)
         throw new Error(
-          `Failed to upload image: ${res.status} ${await res.text()}`
+          `Failed to upload image: ${res.status} ${await res.text()}`,
         );
       const {
         result: { id },
@@ -75,7 +75,7 @@ export async function PostUpload(c: WigglesContext) {
 
     if (res.status > 300)
       throw new Error(
-        `Failed to upload post: ${res.status} ${await res.text()}`
+        `Failed to upload post: ${res.status} ${await res.text()}`,
       );
     return c.json({ message: "success" });
   } catch (e) {
@@ -85,7 +85,7 @@ export async function PostUpload(c: WigglesContext) {
         error:
           "Could not upload image. Have you completed setup? Is it less than 10 MB? Is it a supported file type (PNG, JPEG, GIF, WebP)?",
       },
-      500
+      500,
     );
   }
 }
@@ -101,7 +101,7 @@ export async function DeletePosts(c: WigglesContext) {
       {
         error: "Could not delete images...",
       },
-      500
+      500,
     );
   }
 }

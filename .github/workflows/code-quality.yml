@@ -1,14 +1,14 @@
-name: Typecheck
-on: 
+name: Code Quality
+on:
   push:
     branches-ignore:
       - main
 
 jobs:
-  typecheck:
+  code-quality:
     runs-on: ubuntu-latest
+    name: Code Quality
 
-    name: Typecheck
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -16,6 +16,14 @@ jobs:
       - name: Install Dependencies
         uses: ./.github/actions/install-deps
 
-      - name: Typecheck web
+      - name: Prettier
+        run: pnpm run format:check
+
+      - name: ESLint
+        run: pnpm run -r lint
+
+      - name: Typecheck
         run: pnpm run -r type-check
 
+      - name: Build
+        run: pnpm --filter web build

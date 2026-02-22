@@ -30,4 +30,3 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           workingDirectory: ./api
           command: deploy --outdir dist
-

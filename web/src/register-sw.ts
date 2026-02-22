@@ -29,7 +29,7 @@ export async function unregister() {
         console.log(
           result
             ? "Service worker unregistered"
-            : "Service worker couldn't be unregistered"
+            : "Service worker couldn't be unregistered",
         );
       } else {
         console.log("There is no service worker to unregister");

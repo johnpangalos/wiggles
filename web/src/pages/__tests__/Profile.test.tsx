@@ -26,7 +26,13 @@ const mockPosts: NewPost[] = Array.from({ length: 6 }, (_, i) => ({
 
 vi.mock("@/hooks", () => ({
   useInfinitePosts: vi.fn(),
-  infinitePostsQueryKey: vi.fn(() => ["posts", "infinite", 30, "WRThumbnail", "test@example.com"]),
+  infinitePostsQueryKey: vi.fn(() => [
+    "posts",
+    "infinite",
+    30,
+    "WRThumbnail",
+    "test@example.com",
+  ]),
   useBreakpoint: vi.fn(() => "md"),
 }));
 
@@ -45,7 +51,9 @@ vi.mock("@tanstack/react-virtual", () => ({
 }));
 
 vi.mock("@/utils", () => ({
-  getAuthHeaders: vi.fn(() => Promise.resolve({ Authorization: "Bearer fake-token" })),
+  getAuthHeaders: vi.fn(() =>
+    Promise.resolve({ Authorization: "Bearer fake-token" }),
+  ),
 }));
 
 vi.mock("@auth0/auth0-react", () => ({
@@ -84,7 +92,7 @@ function renderProfile(queryClient?: QueryClient) {
       <div data-testid="profile-root" style={{ minHeight: 1 }}>
         <Profile />
       </div>
-    </QueryClientProvider>
+    </QueryClientProvider>,
   );
 }
 
@@ -99,7 +107,6 @@ describe("Profile", () => {
       isFetchingNextPage: false,
       fetchNextPage: vi.fn(),
       hasNextPage: false,
-       
     } as any);
 
     renderProfile();
@@ -120,14 +127,17 @@ describe("Profile", () => {
       isFetchingNextPage: false,
       fetchNextPage: vi.fn(),
       hasNextPage: false,
-       
     } as any);
 
     renderProfile();
     await expect.element(page.getByText("Select")).toBeVisible();
     await page.getByText("Select").click();
-    await expect.element(page.getByRole("button", { name: "Delete" })).toBeVisible();
-    await expect.element(page.getByRole("button", { name: "Cancel" })).toBeVisible();
+    await expect
+      .element(page.getByRole("button", { name: "Delete" }))
+      .toBeVisible();
+    await expect
+      .element(page.getByRole("button", { name: "Cancel" }))
+      .toBeVisible();
     await expect
       .element(page.getByTestId("profile-root"))
       .toMatchScreenshot("profile-select-mode");
@@ -143,7 +153,6 @@ describe("Profile", () => {
       isFetchingNextPage: false,
       fetchNextPage: vi.fn(),
       hasNextPage: false,
-       
     } as any);
 
     renderProfile();
@@ -160,7 +169,6 @@ describe("Profile", () => {
       isFetchingNextPage: false,
       fetchNextPage: vi.fn(),
       hasNextPage: false,
-       
     } as any);
 
     renderProfile();

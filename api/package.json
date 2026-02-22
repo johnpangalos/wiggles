@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "wrangler dev --config wrangler-dev.toml --remote",
+    "lint": "eslint ./src",
     "type-check": "tsc"
   },
   "keywords": [],

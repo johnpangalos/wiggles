@@ -40,8 +40,8 @@ const base64URLDecode = (s: string) => {
   s = s.replace(/-/g, "+").replace(/_/g, "/").replace(/\s/g, "");
   return new Uint8Array(
     Array.prototype.map.call(atob(s), (c: string) =>
-      c.charCodeAt(0)
-    ) as unknown as ArrayBufferLike
+      c.charCodeAt(0),
+    ) as unknown as ArrayBufferLike,
   );
 };
 
@@ -56,7 +56,7 @@ const asciiToUint8Array = (s: string) => {
 async function validateAuth0Token(
   token: string,
   auth0Domain: string,
-  audience: string
+  audience: string,
 ): Promise<Auth0JWTPayload> {
   const parts = token.split(".");
   if (parts.length !== 3) {
@@ -65,9 +65,7 @@ async function validateAuth0Token(
   const [header, payload, signature] = parts;
 
   const textDecoder = new TextDecoder("utf-8");
-  const { kid, alg } = JSON.parse(
-    textDecoder.decode(base64URLDecode(header))
-  );
+  const { kid, alg } = JSON.parse(textDecoder.decode(base64URLDecode(header)));
   if (alg !== "RS256") {
     throw new Error("Unknown JWT type or algorithm.");
   }
@@ -79,7 +77,7 @@ async function validateAuth0Token(
         cacheTtl: 5 * 60,
         cacheEverything: true,
       },
-    }
+    },
   );
   const { keys } = (await certsResponse.json()) as JWKSResponse;
   if (!keys) {
@@ -98,21 +96,21 @@ async function validateAuth0Token(
     jwk,
     { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
     false,
-    ["verify"]
+    ["verify"],
   );
 
   const verified = await crypto.subtle.verify(
     "RSASSA-PKCS1-v1_5",
     key,
     base64URLDecode(signature),
-    asciiToUint8Array(`${header}.${payload}`)
+    asciiToUint8Array(`${header}.${payload}`),
   );
   if (!verified) {
     throw new Error("Could not verify JWT.");
   }
 
   const payloadObj = JSON.parse(
-    textDecoder.decode(base64URLDecode(payload))
+    textDecoder.decode(base64URLDecode(payload)),
   ) as Auth0JWTPayload;
 
   const expectedIssuer = `https://${auth0Domain}/`;
@@ -145,7 +143,7 @@ export function auth(): MiddlewareHandler<Response | undefined> {
       const payload = await validateAuth0Token(
         token,
         c.env.AUTH0_DOMAIN,
-        c.env.AUTH0_AUDIENCE
+        c.env.AUTH0_AUDIENCE,
       );
 
       c.set("JWT", { payload });

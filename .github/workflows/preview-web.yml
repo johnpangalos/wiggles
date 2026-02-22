@@ -2,9 +2,9 @@ name: Preview Web
 on:
   pull_request:
     paths:
-      - 'web/**'
-      - 'api/**'
-      - '.github/workflows/preview-web.yml'
+      - "web/**"
+      - "api/**"
+      - ".github/workflows/preview-web.yml"
 
 jobs:
   preview:

@@ -120,7 +120,7 @@ export function Profile() {
       isFetchingNextPage,
       // eslint-disable-next-line react-hooks/exhaustive-deps
       JSON.stringify(rowVirtualizer.getVirtualItems()),
-    ]
+    ],
   );
 
   if (status === "pending") return <Loading />;
