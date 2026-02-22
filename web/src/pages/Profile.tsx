@@ -123,7 +123,10 @@ export function Profile() {
     ],
   );
 
-  if (profileStatus === "pending" || (status === "pending" && !!profileData?.email))
+  if (
+    profileStatus === "pending" ||
+    (status === "pending" && !!profileData?.email)
+  )
     return <Loading />;
   return (
     <div className="h-full px-6 flex flex-col">
