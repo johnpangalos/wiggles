@@ -23,14 +23,23 @@ const cf = new Cloudflare(); // uses CLOUDFLARE_API_TOKEN env var
 const R2_BUCKET = "wiggles-images";
 const $w = $({ cwd: apiDir, quiet: true });
 
-// --- Phase 1: List all Cloudflare Images ---
+// --- Phase 1: List all Cloudflare Images (v2 API, up to 10k per request) ---
 async function listAllCfImages() {
   const images: string[] = [];
-  for await (const page of cf.images.v1.list({ account_id: accountId })) {
+  let continuationToken: string | null | undefined;
+
+  do {
+    const page = await cf.images.v2.list({
+      account_id: accountId,
+      per_page: 10000,
+      continuation_token: continuationToken,
+    });
     for (const image of page.images ?? []) {
       if (image.id) images.push(image.id);
     }
-  }
+    continuationToken = page.continuation_token;
+  } while (continuationToken);
+
   return images;
 }
 
