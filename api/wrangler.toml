@@ -15,6 +15,10 @@ ENV = "production"
   id = "a6c8694133f14020808088b6c53300a8"
   preview_id = "a6c8694133f14020808088b6c53300a8"
 
+[[r2_buckets]]
+  binding = "IMAGES_BUCKET"
+  bucket_name = "wiggles-images"
+
 [env.staging]
 route = { pattern = "dev.wiggle-room.xyz/api/*", zone_name = "wiggle-room.xyz" }
 
@@ -27,3 +31,7 @@ ENV = "staging"
   binding = "WIGGLES"
   id = "a6c8694133f14020808088b6c53300a8"
   preview_id = "a6c8694133f14020808088b6c53300a8"
+
+[[env.staging.r2_buckets]]
+  binding = "IMAGES_BUCKET"
+  bucket_name = "wiggles-images"

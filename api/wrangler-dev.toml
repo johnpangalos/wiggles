@@ -12,3 +12,7 @@ ENV = "development"
   binding = "WIGGLES"
   id = "a6c8694133f14020808088b6c53300a8"
   preview_id = "a6c8694133f14020808088b6c53300a8"
+
+[[r2_buckets]]
+  binding = "IMAGES_BUCKET"
+  bucket_name = "wiggles-images-dev"

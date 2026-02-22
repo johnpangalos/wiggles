@@ -1,6 +1,6 @@
 import { getEmailFromPayload } from "@/middleware/auth";
 import { Account, Post, WigglesContext } from "@/types";
-import { DAY, generateSignedUrl, ImageSize, unixTime } from "@/utils";
+import { DAY, generateSignedUrl } from "@/utils";
 
 const MAX = 9999999999999;
 export const POST_KEY_PREFIX = "post-feed";
@@ -8,11 +8,6 @@ export const POST_KEY_PREFIX = "post-feed";
 export function genPostKey(id: string) {
   return `${POST_KEY_PREFIX}-${id}`;
 }
-
-type ReadPostOptions = {
-  size?: ImageSize;
-  cursor?: string;
-};
 
 type PostResponse = {
   url: string;
@@ -23,28 +18,15 @@ type PostResponse = {
 export async function populatePost(
   c: WigglesContext,
   post: Post,
-  options?: ReadPostOptions,
 ): Promise<PostResponse | null> {
-  const size = options?.size ? options.size : "WRPost";
-
-  const imageKey = `image-${post.cfImageId}-size-${size}`;
-
-  const urlPromise = (async () => {
-    let url = await c.env.WIGGLES.get(imageKey);
-
-    if (url === null) {
-      const expiration = unixTime(DAY);
-      url = await generateSignedUrl(c, post.cfImageId, expiration, size);
-      c.env.WIGGLES.put(imageKey, url, { expirationTtl: expiration });
-    }
-    return url;
-  })();
+  const urlPromise = generateSignedUrl(c, post.r2Key, DAY);
 
   const accountPromise = (async () => {
     const account = await c.env.WIGGLES.get(`account-${post.accountId}`);
     if (account === null) throw new Error(`Bad post data: ${post.accountId}`);
     return account;
   })();
+
   const [url, account] = await Promise.all([urlPromise, accountPromise]);
 
   return {
@@ -57,7 +39,6 @@ export async function populatePost(
 
 type ReadPostsOptions = {
   limit: number;
-  size: ImageSize;
   cursor?: string;
   email?: string;
 };
@@ -74,7 +55,7 @@ export async function readPosts(c: WigglesContext, options: ReadPostsOptions) {
     const post = key.metadata;
     if (post === undefined) throw new Error("Bad data");
 
-    promises.push(populatePost(c, post, options));
+    promises.push(populatePost(c, post));
   }
   const posts = await Promise.all(promises);
   const cursor = result.list_complete ? undefined : result.cursor;
@@ -147,16 +128,6 @@ export async function deletePosts(c: WigglesContext, orderKeys: string[]) {
     },
   );
 
-  for (const post of posts) {
-    await fetch(
-      `https://api.cloudflare.com/client/v4/accounts/${c.env.API_KEY}/images/v1/${post.cfImageId}`,
-      {
-        method: "DELETE",
-        headers: {
-          "X-Auth-Email": "john@pangalos.dev",
-          "X-Auth-Key": c.env.API_KEY,
-        },
-      },
-    );
-  }
+  const r2Keys = posts.map((p) => p.r2Key);
+  await c.env.IMAGES_BUCKET.delete(r2Keys);
 }

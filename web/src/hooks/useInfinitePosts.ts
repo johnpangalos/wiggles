@@ -3,10 +3,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { NewPost } from "@/types";
 import { getAuthHeaders } from "@/utils";
 
-export type ImageSize = "WRPost" | "WRThumbnail";
-
 export type UseInfinitePostsOptions = {
-  imageSize: ImageSize;
   limit?: number;
   email?: string;
   enabled?: boolean;
@@ -17,14 +14,13 @@ type GetPostsOptions = {
 } & UseInfinitePostsOptions;
 
 async function getPosts({
-  imageSize,
   pageParam,
   limit,
   email,
 }: GetPostsOptions): Promise<{ posts: NewPost[]; cursor: string }> {
   const headers = await getAuthHeaders();
   return await fetch(
-    `${import.meta.env.VITE_API_URL}/posts?size=${imageSize}&limit=${limit}${
+    `${import.meta.env.VITE_API_URL}/posts?limit=${limit}${
       pageParam ? `&cursor=${pageParam}` : ""
     }${email ? `&email=${email}` : ""}`,
     { headers },
@@ -32,22 +28,19 @@ async function getPosts({
 }
 
 export function infinitePostsQueryKey({
-  imageSize,
   limit = 10,
   email,
 }: UseInfinitePostsOptions) {
-  return ["posts", "infinite", limit, imageSize, email];
+  return ["posts", "infinite", limit, email];
 }
 export function useInfinitePosts({
-  imageSize,
   limit = 10,
   email,
   enabled,
 }: UseInfinitePostsOptions) {
   return useInfiniteQuery({
-    queryKey: infinitePostsQueryKey({ imageSize, limit, email }),
-    queryFn: ({ pageParam }) =>
-      getPosts({ imageSize, pageParam, limit, email }),
+    queryKey: infinitePostsQueryKey({ limit, email }),
+    queryFn: ({ pageParam }) => getPosts({ pageParam, limit, email }),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage: { posts: NewPost[]; cursor: string }) =>
       lastPage.cursor || undefined,

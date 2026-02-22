@@ -16,6 +16,8 @@
     "wrangler": "^3.99.0"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.995.0",
+    "@aws-sdk/s3-request-presigner": "^3.995.0",
     "hono": "^4.6.0"
   }
 }
