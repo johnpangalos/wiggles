@@ -1,4 +1,8 @@
-import { getEmailFromPayload, getNameFromPayload, getPictureFromPayload } from "@/middleware/auth";
+import {
+  getEmailFromPayload,
+  getNameFromPayload,
+  getPictureFromPayload,
+} from "@/middleware/auth";
 import { Account, WigglesContext } from "@/types";
 
 export async function GetMe(c: WigglesContext) {

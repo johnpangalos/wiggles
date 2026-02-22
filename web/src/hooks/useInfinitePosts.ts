@@ -27,7 +27,7 @@ async function getPosts({
     `${import.meta.env.VITE_API_URL}/posts?size=${imageSize}&limit=${limit}${
       pageParam ? `&cursor=${pageParam}` : ""
     }${email ? `&email=${email}` : ""}`,
-    { headers }
+    { headers },
   ).then((res) => res.json());
 }
 
@@ -46,7 +46,8 @@ export function useInfinitePosts({
 }: UseInfinitePostsOptions) {
   return useInfiniteQuery({
     queryKey: infinitePostsQueryKey({ imageSize, limit, email }),
-    queryFn: ({ pageParam }) => getPosts({ imageSize, pageParam, limit, email }),
+    queryFn: ({ pageParam }) =>
+      getPosts({ imageSize, pageParam, limit, email }),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage: { posts: NewPost[]; cursor: string }) =>
       lastPage.cursor || undefined,

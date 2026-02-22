@@ -99,7 +99,11 @@ const App = () => {
   );
 };
 
-function RequireAuth({ children }: { children: React.JSX.Element }): React.JSX.Element {
+function RequireAuth({
+  children,
+}: {
+  children: React.JSX.Element;
+}): React.JSX.Element {
   const { isAuthenticated, isLoading, loginWithRedirect, error } = useAuth0();
 
   useEffect(() => {

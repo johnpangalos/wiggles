@@ -42,7 +42,7 @@ export const Feed = () => {
       isFetchingNextPage,
       // eslint-disable-next-line react-hooks/exhaustive-deps
       JSON.stringify(rowVirtualizer.getVirtualItems()),
-    ]
+    ],
   );
 
   return (

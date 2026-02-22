@@ -34,7 +34,7 @@ export function Alert({ children, type = ColorMap.INFO, onClose }: AlertProps) {
     <div className="fixed mb-20 bottom-0 pt-4 px-3 w-full">
       <div
         className={`border ${colorClasses(
-          type
+          type,
         )} px-4 py-3 rounded h-full w-full`}
         role="alert"
       >

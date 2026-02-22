@@ -36,5 +36,5 @@ export type WigglesContext = Context<WigglesEnv>;
 
 export type MiddlewareHandler<T> = (
   c: WigglesContext,
-  next: () => Promise<void>
+  next: () => Promise<void>,
 ) => Promise<T>;

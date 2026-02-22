@@ -3,7 +3,7 @@ import { Component, useState, useEffect, createRef, ReactNode } from "react";
 type MenuProps = {
   id: string;
   activator: ReactNode;
-  items: typeof Component[];
+  items: (typeof Component)[];
 };
 export function Menu({ activator, id, items }: MenuProps) {
   const menu = createRef<HTMLDivElement>();

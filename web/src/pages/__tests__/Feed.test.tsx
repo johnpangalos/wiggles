@@ -76,7 +76,7 @@ function renderFeed() {
       <div data-testid="feed-root" style={{ minHeight: 1 }}>
         <Feed />
       </div>
-    </QueryClientProvider>
+    </QueryClientProvider>,
   );
 }
 
@@ -87,7 +87,6 @@ describe("Feed", () => {
       isFetchingNextPage: false,
       fetchNextPage: vi.fn(),
       hasNextPage: false,
-       
     } as any);
 
     renderFeed();
@@ -105,7 +104,6 @@ describe("Feed", () => {
       isFetchingNextPage: false,
       fetchNextPage: vi.fn(),
       hasNextPage: false,
-       
     } as any);
 
     renderFeed();
@@ -123,7 +121,6 @@ describe("Feed", () => {
       isFetchingNextPage: false,
       fetchNextPage: vi.fn(),
       hasNextPage: false,
-       
     } as any);
 
     renderFeed();
@@ -145,7 +142,6 @@ describe("Feed", () => {
       isFetchingNextPage: false,
       fetchNextPage: vi.fn(),
       hasNextPage: false,
-       
     } as any);
 
     renderFeed();
@@ -166,7 +162,6 @@ describe("Feed", () => {
       isFetchingNextPage: true,
       fetchNextPage: vi.fn(),
       hasNextPage: true,
-       
     } as any);
 
     renderFeed();

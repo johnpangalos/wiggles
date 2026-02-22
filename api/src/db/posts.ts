@@ -23,7 +23,7 @@ type PostResponse = {
 export async function populatePost(
   c: WigglesContext,
   post: Post,
-  options?: ReadPostOptions
+  options?: ReadPostOptions,
 ): Promise<PostResponse | null> {
   const size = options?.size ? options.size : "WRPost";
 
@@ -112,7 +112,7 @@ export async function createPosts(c: WigglesContext, postList: Post[]) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
-    }
+    },
   );
 }
 
@@ -144,7 +144,7 @@ export async function deletePosts(c: WigglesContext, orderKeys: string[]) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(keysToDelete),
-    }
+    },
   );
 
   for (const post of posts) {
@@ -156,7 +156,7 @@ export async function deletePosts(c: WigglesContext, orderKeys: string[]) {
           "X-Auth-Email": "john@pangalos.dev",
           "X-Auth-Key": c.env.API_KEY,
         },
-      }
+      },
     );
   }
 }

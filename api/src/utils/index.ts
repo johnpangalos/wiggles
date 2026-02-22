@@ -17,10 +17,10 @@ export async function generateSignedUrl(
   c: WigglesContext,
   imageId: string,
   expiration: number,
-  size: ImageSize
+  size: ImageSize,
 ) {
   const url = new URL(
-    `https://imagedelivery.net/rU-SUfJIowrXlhOg19NLsQ/${imageId}/${size}`
+    `https://imagedelivery.net/rU-SUfJIowrXlhOg19NLsQ/${imageId}/${size}`,
   );
   const encoder = new TextEncoder();
   const secretKeyData = encoder.encode(c.env.IMAGES_KEY);
@@ -29,7 +29,7 @@ export async function generateSignedUrl(
     secretKeyData.buffer as ArrayBuffer,
     { name: "HMAC", hash: "SHA-256" },
     false,
-    ["sign"]
+    ["sign"],
   );
 
   const expiry = Math.floor(Date.now() / 1000) + expiration;
@@ -40,7 +40,7 @@ export async function generateSignedUrl(
   const mac = await crypto.subtle.sign(
     "HMAC",
     key,
-    encoder.encode(stringToSign)
+    encoder.encode(stringToSign),
   );
   const sig = bufferToHex(new Uint8Array(mac).buffer);
 
@@ -50,7 +50,7 @@ export async function generateSignedUrl(
 }
 
 export const parseFormDataRequest = async (
-  request: HonoRequest
+  request: HonoRequest,
 ): Promise<FormData[] | undefined> => {
   const incoming = await request.raw.formData();
   const files = incoming.getAll("file");

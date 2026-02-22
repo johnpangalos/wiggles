@@ -4,7 +4,7 @@ type CircleButtonProps = {
   children: ReactNode;
   className?: string;
   onClick: (
-    event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
+    event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
   ) => void;
 };
 

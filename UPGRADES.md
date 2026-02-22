@@ -10,10 +10,10 @@ Wiggles is a pnpm monorepo (web + api) whose dependencies have drifted significa
 
 The project has visual regression tests using Vitest browser mode with Playwright (`toMatchScreenshot()`). These serve as the primary safety net for upgrades.
 
-| Suite | Tests | Screenshots |
-|-------|-------|-------------|
-| `Feed.test.tsx` | 5 | `feed-empty-state`, `feed-with-posts`, `feed-single-post`, `feed-multiple-pages` |
-| `Profile.test.tsx` | 4 | `profile-thumbnail-grid`, `profile-select-mode`, `profile-empty`, `profile-loading` |
+| Suite              | Tests | Screenshots                                                                         |
+| ------------------ | ----- | ----------------------------------------------------------------------------------- |
+| `Feed.test.tsx`    | 5     | `feed-empty-state`, `feed-with-posts`, `feed-single-post`, `feed-multiple-pages`    |
+| `Profile.test.tsx` | 4     | `profile-thumbnail-grid`, `profile-select-mode`, `profile-empty`, `profile-loading` |
 
 **Workflow for each phase:**
 
@@ -39,6 +39,7 @@ The project has visual regression tests using Vitest browser mode with Playwrigh
 - [ ] **Bump `@types/react-dom`:** `^18.2.7` → `^18.3`
 
 **Verify:**
+
 ```bash
 pnpm run -r type-check          # no type errors
 pnpm run -r lint                # no lint errors
@@ -51,23 +52,28 @@ pnpm --filter web build         # production build succeeds
 ## Phase 2: Contained major-version bumps ✅
 
 ### Tooling
+
 - [x] **Removed `husky` and `lint-staged`** — removed from root `package.json` along with their config blocks. No `.husky` directory existed.
 - [x] **Added `onlyBuiltDependencies`** to `pnpm-workspace.yaml` for `browser-tabs-lock`, `esbuild`, `sharp`, `workerd`.
 
 ### API-side
+
 - [x] **`hono`:** `^3.3.4` → `^4.6.0` — Updated `api/src/utils/index.ts`: `request.headers` → `request.raw.headers`, `request.body` → `request.raw.body` (deprecated convenience properties removed in v4). Custom `MiddlewareHandler` type, `Context`, `cors`, `logger` all compatible without changes.
 - [x] **`@cloudflare/workers-types`:** `^3.19.0` → `^4.20241230.0` — `KVNamespaceListResult` changed to discriminated union (`list_complete: true | false`). Updated `api/src/db/posts.ts` to narrow on `list_complete` before accessing `cursor`.
 - [x] **`wrangler`:** `^3.4.0` → `^3.99.0`
 - [x] **`toucan-js`:** `^3.2.1` → `^4.0.0` — No code changes needed; constructor options and `captureException` API unchanged.
 
 ### Web-side
+
 - [x] **`zustand`:** `^4.4.0` → `^5.0.0` — Fixed default import to named import (`import { create } from "zustand"`) in `web/src/hooks/useImageUpload.ts`. The `create<T>()(fn)` pattern works as-is.
 - [x] **`@tanstack/react-virtual`:** `3.0.0-beta.54` → `^3.11.0` (stable) — No code changes needed. `useVirtualizer` API identical.
 
 ### Additional fixes
+
 - [x] **`api/src/handlers/posts.ts`:** Changed `c.json({ message: "No content" }, 204)` → `c.body(null, 204)` — Hono v4 correctly types 204 as non-contentful status.
 
 **Verified:**
+
 - `pnpm run -r type-check` — passes
 - `pnpm --filter web test` — all 9 tests pass, screenshot baselines unchanged
 - `pnpm --filter web build` — production build succeeds
@@ -77,6 +83,7 @@ pnpm --filter web build         # production build succeeds
 ## Phase 3: High-impact framework upgrades ✅
 
 ### 3A: Remove Sentry ✅
+
 - [x] **Removed `@sentry/react` and `@sentry/tracing`** from `web/package.json`
 - [x] **Removed `toucan-js`** from `api/package.json`
 - [x] **Deleted `api/src/middleware/sentry.ts`**, removed sentry export from `api/src/middleware/index.ts`
@@ -88,6 +95,7 @@ pnpm --filter web build         # production build succeeds
 - [x] **Cleaned `web/src/env.d.ts`** — removed `VITE_RELEASE` type
 
 ### 3B: TanStack Query v4 → v5 ✅
+
 - [x] **`@tanstack/react-query` + devtools:** `^4` → `^5`
 - [x] `useInfinitePosts.ts` — converted to single-object API, added `initialPageParam`
 - [x] `Profile.tsx` — converted `useQuery` and `useMutation` to object syntax, `invalidateQueries` now takes `{ queryKey }`
@@ -95,6 +103,7 @@ pnpm --filter web build         # production build succeeds
 - [x] Renamed `status === "loading"` → `status === "pending"` in `Profile.tsx`, `Upload.tsx`, and `Profile.test.tsx`
 
 ### 3C: ESLint 8 → 9 + flat config ✅
+
 - [x] **Deleted `.eslintrc.cjs`**, created `eslint.config.mjs` (flat config)
 - [x] **Replaced** `@typescript-eslint/eslint-plugin` + `@typescript-eslint/parser` + `eslint-plugin-react` with unified `typescript-eslint` v8
 - [x] **Updated `eslint-plugin-react-hooks`** to v5
@@ -102,12 +111,14 @@ pnpm --filter web build         # production build succeeds
 - [x] Added test file override to allow `@typescript-eslint/no-explicit-any` in test files
 
 ### 3D: Tailwind CSS v3 → v4 ✅
+
 - [x] **Deleted `tailwind.config.cjs`** and **`postcss.config.cjs`**
 - [x] **Migrated to CSS-based config** in `web/src/styles/index.css` — `@import "tailwindcss"`, `@theme` for breakpoints, `@custom-variant pwa`
 - [x] **Added `@tailwindcss/vite`** plugin to `vite.config.ts`
 - [x] **Removed `autoprefixer` and `postcss`** from devDependencies (built into Tailwind v4)
 
 **Verified after each sub-phase:**
+
 - `pnpm run -r type-check` — passes
 - `pnpm lint` — passes
 - `pnpm test` — all 9 tests pass
@@ -137,22 +148,22 @@ compatibility_date ──────► native FormData, crypto.randomUUID()
 
 ## Key files
 
-| File | Affected by |
-|------|-------------|
-| `web/src/index.tsx` | Sentry removal, TanStack Query v5 |
-| `web/src/hooks/useInfinitePosts.ts` | TanStack Query v5 |
-| `web/src/hooks/useImageUpload.ts` | Zustand import fix + v5 |
-| `web/src/pages/Profile.tsx` | TanStack Query v5 |
-| `web/src/pages/Upload.tsx` | TanStack Query v5 |
-| `web/src/App.tsx` | Sentry removal |
-| `web/src/pages/__tests__/Profile.test.tsx` | TanStack Query v5 (status rename) |
-| `web/src/styles/index.css` | Tailwind v4 (CSS-based config) |
-| `web/vite.config.ts` | Tailwind v4 (@tailwindcss/vite) |
-| `api/src/types/index.ts` | Hono v4, workers-types v4, Sentry removal |
-| `api/src/index.ts` | Sentry removal |
-| `api/src/utils/index.ts` | Hono v4 (request.raw.*) |
-| `api/src/db/posts.ts` | workers-types v4 (KVNamespaceListResult) |
-| `api/src/handlers/posts.ts` | Hono v4 (c.body for 204) |
-| `eslint.config.mjs` | ESLint 9 (new, replaces .eslintrc.cjs) |
-| `.nvmrc` | Node version fix |
-| `wrangler.toml` / `wrangler-dev.toml` | compatibility_date |
+| File                                       | Affected by                               |
+| ------------------------------------------ | ----------------------------------------- |
+| `web/src/index.tsx`                        | Sentry removal, TanStack Query v5         |
+| `web/src/hooks/useInfinitePosts.ts`        | TanStack Query v5                         |
+| `web/src/hooks/useImageUpload.ts`          | Zustand import fix + v5                   |
+| `web/src/pages/Profile.tsx`                | TanStack Query v5                         |
+| `web/src/pages/Upload.tsx`                 | TanStack Query v5                         |
+| `web/src/App.tsx`                          | Sentry removal                            |
+| `web/src/pages/__tests__/Profile.test.tsx` | TanStack Query v5 (status rename)         |
+| `web/src/styles/index.css`                 | Tailwind v4 (CSS-based config)            |
+| `web/vite.config.ts`                       | Tailwind v4 (@tailwindcss/vite)           |
+| `api/src/types/index.ts`                   | Hono v4, workers-types v4, Sentry removal |
+| `api/src/index.ts`                         | Sentry removal                            |
+| `api/src/utils/index.ts`                   | Hono v4 (request.raw.\*)                  |
+| `api/src/db/posts.ts`                      | workers-types v4 (KVNamespaceListResult)  |
+| `api/src/handlers/posts.ts`                | Hono v4 (c.body for 204)                  |
+| `eslint.config.mjs`                        | ESLint 9 (new, replaces .eslintrc.cjs)    |
+| `.nvmrc`                                   | Node version fix                          |
+| `wrangler.toml` / `wrangler-dev.toml`      | compatibility_date                        |
