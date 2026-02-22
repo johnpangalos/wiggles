@@ -1,5 +1,6 @@
 import "zx/globals";
 import Cloudflare from "cloudflare";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 // --- Parse config from wrangler.toml ---
 const apiDir = path.join(import.meta.dirname, "..", "api");
@@ -23,12 +24,25 @@ const cf = new Cloudflare(); // uses CLOUDFLARE_API_TOKEN env var
 const R2_BUCKET = "wiggles-images";
 const $w = $({ cwd: apiDir, quiet: true });
 
+// R2 S3-compatible client — uses R2_ACCESS_KEY_ID + R2_SECRET_ACCESS_KEY env vars
+const r2 = new S3Client({
+  region: "auto",
+  endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
+  credentials: {
+    accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+  },
+});
+
 // --- Phase 1: List all Cloudflare Images (v2 API, up to 10k per request) ---
 async function listAllCfImages() {
   const images: string[] = [];
   let continuationToken: string | null | undefined;
 
   do {
+    if (!accountId) {
+      throw new Error("ahhh! no account id")
+    }
     const page = await cf.images.v2.list({
       account_id: accountId,
       per_page: 10000,
@@ -43,7 +57,7 @@ async function listAllCfImages() {
   return images;
 }
 
-// --- Phase 2: Download from CF Images + Upload to R2 via wrangler ---
+// --- Phase 2: Download from CF Images + Upload to R2 via S3 API ---
 async function migrateImage(cfImageId: string): Promise<string> {
   const res = await cf.images.v1.blobs.get(cfImageId, {
     account_id: accountId,
@@ -53,9 +67,14 @@ async function migrateImage(cfImageId: string): Promise<string> {
   const ext = contentType.includes("png") ? "png" : "jpeg";
   const r2Key = `${cfImageId}.${ext}`;
 
-  const tmp = tmpfile(r2Key, Buffer.from(data));
-  await $w`pnpm wrangler r2 object put ${R2_BUCKET}/${r2Key} --file ${tmp} --content-type ${contentType}`;
-  fs.removeSync(tmp);
+  await r2.send(
+    new PutObjectCommand({
+      Bucket: R2_BUCKET,
+      Key: r2Key,
+      Body: Buffer.from(data),
+      ContentType: contentType,
+    }),
+  );
 
   echo`Migrated: ${cfImageId} → ${r2Key}`;
   return r2Key;
