@@ -20,7 +20,7 @@ jobs:
         run: pnpm run format:check
 
       - name: ESLint
-        run: pnpm eslint .
+        run: pnpm run -r lint
 
       - name: Typecheck
         run: pnpm run -r type-check

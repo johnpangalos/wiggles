@@ -3,12 +3,7 @@ import reactHooks from "eslint-plugin-react-hooks";
 
 export default tseslint.config(
   {
-    ignores: [
-      "**/dist/**",
-      "**/node_modules/**",
-      "serviceWorker.js",
-      "**/*.cjs",
-    ],
+    ignores: ["**/dist/**", "**/node_modules/**"],
   },
   ...tseslint.configs.recommended,
   {
