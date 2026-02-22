@@ -31,7 +31,7 @@ const queryKeyConfig = (email?: string): UseInfinitePostsOptions => ({
 
 export function Profile() {
   const { logout } = useAuth0();
-  const { data: profileData } = useQuery({
+  const { data: profileData, status: profileStatus } = useQuery({
     queryKey: ["me"],
     queryFn: async () => {
       const headers = await getAuthHeaders();
@@ -123,7 +123,8 @@ export function Profile() {
     ],
   );
 
-  if (status === "pending") return <Loading />;
+  if (profileStatus === "pending" || (status === "pending" && !!profileData?.email))
+    return <Loading />;
   return (
     <div className="h-full px-6 flex flex-col">
       <div>
