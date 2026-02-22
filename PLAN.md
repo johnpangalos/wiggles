@@ -17,6 +17,7 @@ Delete:  DELETE /api/posts → CF Images API delete + KV cleanup
 ```
 
 **Key files:**
+
 - `api/src/handlers/posts.ts` — upload/delete handlers
 - `api/src/utils/index.ts` — `generateSignedUrl()` (HMAC), `parseFormDataRequest()`
 - `api/src/db/posts.ts` — `populatePost()` (signed URL generation + KV caching), `createPosts()`, `deletePosts()`
@@ -24,6 +25,7 @@ Delete:  DELETE /api/posts → CF Images API delete + KV cleanup
 - `api/wrangler.toml` / `api/wrangler-dev.toml` — config
 
 **Existing bugs found:**
+
 - `db/posts.ts:152` — deletion URL uses `c.env.API_KEY` instead of `c.env.ACCOUNT_ID`
 - `handlers/posts.ts:48` — references `res` instead of `response`
 
@@ -66,11 +68,13 @@ Add R2 binding alongside existing KV binding:
 ```
 
 The bucket must be created beforehand via:
+
 ```bash
 wrangler r2 bucket create wiggles-images
 ```
 
 And for dev:
+
 ```bash
 wrangler r2 bucket create wiggles-images-dev
 ```
@@ -87,17 +91,17 @@ export type Post = {
   contentType: string;
   timestamp: string;
   accountId: string;
-  r2Key: string;           // was cfImageId
+  r2Key: string; // was cfImageId
 };
 
 export type WigglesEnv = {
   Bindings: {
     WIGGLES: KVNamespace;
-    IMAGES_BUCKET: R2Bucket;       // NEW — R2 binding
-    R2_ACCESS_KEY_ID: string;      // NEW — for presigned URLs
-    R2_SECRET_ACCESS_KEY: string;  // NEW — for presigned URLs
-    ACCOUNT_ID: string;            // keep (KV bulk API + R2 S3 endpoint)
-    API_KEY: string;               // keep (KV bulk API)
+    IMAGES_BUCKET: R2Bucket; // NEW — R2 binding
+    R2_ACCESS_KEY_ID: string; // NEW — for presigned URLs
+    R2_SECRET_ACCESS_KEY: string; // NEW — for presigned URLs
+    ACCOUNT_ID: string; // keep (KV bulk API + R2 S3 endpoint)
+    API_KEY: string; // keep (KV bulk API)
     AUTH0_DOMAIN: string;
     AUTH0_AUDIENCE: string;
     WIGGLES_KV_ID: string;
@@ -146,6 +150,7 @@ export async function generateSignedUrl(
 ```
 
 Changes:
+
 - Remove `ImageSize` parameter (R2 serves originals, no named variants)
 - Remove `bufferToHex()` helper
 - Remove manual HMAC key import / signing logic
@@ -182,6 +187,7 @@ export async function populatePost(
 ```
 
 Changes:
+
 - Remove KV cache read/write for image URLs (`image-{id}-size-{size}` keys gone)
 - Remove `size` / `ReadPostOptions` parameter (no named variants)
 - Fresh presigned URL generated per request — naturally expires after 1 day
@@ -200,7 +206,7 @@ export async function PostUpload(c: WigglesContext) {
 
     const r2Keys = await Promise.all(
       files.map(async ({ file, key }) => {
-        const data = await file.arrayBuffer();  // buffer for known length
+        const data = await file.arrayBuffer(); // buffer for known length
         await c.env.IMAGES_BUCKET.put(key, data, {
           httpMetadata: { contentType: file.type },
         });
@@ -222,7 +228,9 @@ export async function PostUpload(c: WigglesContext) {
 
     const res = await createPosts(c, postList);
     if (res.status > 300)
-      throw new Error(`Failed to upload post: ${res.status} ${await res.text()}`);
+      throw new Error(
+        `Failed to upload post: ${res.status} ${await res.text()}`,
+      );
     return c.json({ message: "success" });
   } catch (e) {
     if (e instanceof Error) console.error(e.message);
@@ -232,6 +240,7 @@ export async function PostUpload(c: WigglesContext) {
 ```
 
 Key points:
+
 - Use `file.arrayBuffer()` before `put()` to avoid the R2 stream-length gotcha (unknown stream length causes silent truncation)
 - Remove `ImageUploadResponse` type
 - Remove the `fetch()` call to `api.cloudflare.com/.../images/v1`
@@ -296,13 +305,13 @@ await c.env.IMAGES_BUCKET.delete(r2Keys);
 
 ```typescript
 export type NewPost = {
-  url: string;              // now a presigned R2 URL
+  url: string; // now a presigned R2 URL
   account: Account;
   id: string;
   contentType: string;
   timestamp: string;
   accountId: string;
-  r2Key: string;            // was cfImageId
+  r2Key: string; // was cfImageId
   orderKey: string;
 };
 ```
@@ -346,7 +355,10 @@ const R2_BUCKET = "wiggles-images";
 const s3 = new S3Client({
   region: "auto",
   endpoint: `https://${CF_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-  credentials: { accessKeyId: R2_ACCESS_KEY_ID, secretAccessKey: R2_SECRET_ACCESS_KEY },
+  credentials: {
+    accessKeyId: R2_ACCESS_KEY_ID,
+    secretAccessKey: R2_SECRET_ACCESS_KEY,
+  },
 });
 
 const cfHeaders = {
@@ -365,7 +377,7 @@ async function listAllCfImages(): Promise<{ id: string }[]> {
       `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/images/v1?page=${page}&per_page=100`,
       { headers: cfHeaders },
     );
-    const data = await res.json() as {
+    const data = (await res.json()) as {
       result: { images: { id: string }[] };
       result_info: { count: number };
     };
@@ -384,20 +396,23 @@ async function migrateImage(cfImageId: string): Promise<string> {
     `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/images/v1/${cfImageId}/blob`,
     { headers: cfHeaders },
   );
-  if (!downloadRes.ok) throw new Error(`Failed to download ${cfImageId}: ${downloadRes.status}`);
+  if (!downloadRes.ok)
+    throw new Error(`Failed to download ${cfImageId}: ${downloadRes.status}`);
 
   const data = await downloadRes.arrayBuffer();
   const contentType = downloadRes.headers.get("content-type") || "image/jpeg";
   const ext = contentType.includes("png") ? "png" : "jpeg";
-  const r2Key = `${cfImageId}.${ext}`;  // use cfImageId as base for traceability
+  const r2Key = `${cfImageId}.${ext}`; // use cfImageId as base for traceability
 
   // Upload to R2
-  await s3.send(new PutObjectCommand({
-    Bucket: R2_BUCKET,
-    Key: r2Key,
-    Body: new Uint8Array(data),
-    ContentType: contentType,
-  }));
+  await s3.send(
+    new PutObjectCommand({
+      Bucket: R2_BUCKET,
+      Key: r2Key,
+      Body: new Uint8Array(data),
+      ContentType: contentType,
+    }),
+  );
 
   console.log(`Migrated: ${cfImageId} → ${r2Key}`);
   return r2Key;
@@ -417,9 +432,14 @@ async function updateKvMetadata(idMapping: Map<string, string>) {
     url.searchParams.set("limit", "1000");
     if (cursor) url.searchParams.set("cursor", cursor);
 
-    const res = await fetch(url.toString(), { headers: { ...cfHeaders, "Content-Type": "application/json" } });
-    const data = await res.json() as {
-      result: { name: string; metadata?: { cfImageId?: string; r2Key?: string } }[];
+    const res = await fetch(url.toString(), {
+      headers: { ...cfHeaders, "Content-Type": "application/json" },
+    });
+    const data = (await res.json()) as {
+      result: {
+        name: string;
+        metadata?: { cfImageId?: string; r2Key?: string };
+      }[];
       result_info: { cursor?: string; count: number };
     };
 
@@ -428,7 +448,9 @@ async function updateKvMetadata(idMapping: Map<string, string>) {
       if (!key.metadata?.cfImageId) continue;
       const r2Key = idMapping.get(key.metadata.cfImageId);
       if (!r2Key) {
-        console.warn(`No R2 key found for cfImageId ${key.metadata.cfImageId} (key: ${key.name})`);
+        console.warn(
+          `No R2 key found for cfImageId ${key.metadata.cfImageId} (key: ${key.name})`,
+        );
         continue;
       }
 
@@ -510,6 +532,7 @@ The migration must happen in this specific order to avoid downtime:
 ### Rollback Strategy
 
 If something goes wrong after deploying the new Worker:
+
 - Old `image-{cfImageId}-size-{size}` KV cache entries auto-expire (1 day TTL), so they'll be gone
 - Keep the old Worker code ready to re-deploy
 - The migration script is idempotent — re-running it won't duplicate R2 objects (same key = overwrite)
@@ -540,18 +563,21 @@ This allows deploying the new Worker before the migration script finishes, handl
 The current setup uses Cloudflare Images named variants (`WRPost` and `WRThumbnail`) to serve different sizes. With R2, there are three options:
 
 ### Option A: Serve originals only (Recommended for now)
+
 - Simplest approach — serve the original image at all sizes
 - Frontend already constrains image display size via CSS (`h-[115px]` for thumbnails, `h-[424px]` for posts)
 - Trade-off: slightly more bandwidth for thumbnail views, but images are already small enough for a photo-sharing app
 - Can add resizing later if needed
 
 ### Option B: Cloudflare Image Resizing (add later if needed)
+
 - A separate Cloudflare product that can resize on-the-fly
 - Works with any origin including R2
 - Would require enabling Image Resizing on the zone and using URL parameters like `/cdn-cgi/image/width=200/api/images/:key`
 - Per-request pricing but with caching
 
 ### Option C: Pre-generate thumbnails on upload
+
 - On upload, use a library or Cloudflare Image Resizing to create a thumbnail
 - Store both `{uuid}.jpeg` and `{uuid}-thumb.jpeg` in R2
 - More storage, more upload complexity, but fast thumbnail serving
@@ -562,14 +588,14 @@ The current setup uses Cloudflare Images named variants (`WRPost` and `WRThumbna
 
 ## Environment Variables / Secrets Changes
 
-| Variable | Status | Notes |
-|----------|--------|-------|
-| `IMAGES_KEY` | **Remove** | No longer needed (was for HMAC signing) |
-| `R2_ACCESS_KEY_ID` | **Add** | R2 S3-compatible API token (for presigned URLs) |
-| `R2_SECRET_ACCESS_KEY` | **Add** | R2 S3-compatible API secret (for presigned URLs) |
-| `ACCOUNT_ID` | Keep | Used for KV bulk API + R2 S3 endpoint |
-| `API_KEY` | Keep | Used for KV bulk API calls |
-| `IMAGES_BUCKET` | **Add** | R2 bucket binding in wrangler.toml (not a secret) |
+| Variable               | Status     | Notes                                             |
+| ---------------------- | ---------- | ------------------------------------------------- |
+| `IMAGES_KEY`           | **Remove** | No longer needed (was for HMAC signing)           |
+| `R2_ACCESS_KEY_ID`     | **Add**    | R2 S3-compatible API token (for presigned URLs)   |
+| `R2_SECRET_ACCESS_KEY` | **Add**    | R2 S3-compatible API secret (for presigned URLs)  |
+| `ACCOUNT_ID`           | Keep       | Used for KV bulk API + R2 S3 endpoint             |
+| `API_KEY`              | Keep       | Used for KV bulk API calls                        |
+| `IMAGES_BUCKET`        | **Add**    | R2 bucket binding in wrangler.toml (not a secret) |
 
 To create R2 API tokens: **Cloudflare Dashboard → R2 → Manage R2 API Tokens → Create API Token** with "Object Read & Write" permission scoped to the `wiggles-images` bucket.
 
@@ -577,15 +603,15 @@ To create R2 API tokens: **Cloudflare Dashboard → R2 → Manage R2 API Tokens 
 
 ## Summary of File Changes
 
-| File | Action |
-|------|--------|
-| `api/package.json` | Add `@aws-sdk/client-s3`, `@aws-sdk/s3-request-presigner` |
-| `api/wrangler.toml` | Add R2 bucket binding |
-| `api/wrangler-dev.toml` | Add R2 bucket binding (dev) |
-| `api/src/types/index.ts` | Add `IMAGES_BUCKET`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`; rename `cfImageId` → `r2Key` |
-| `api/src/handlers/posts.ts` | Rewrite upload to use R2 `put()`; simplify `GetPosts` |
-| `api/src/db/posts.ts` | Simplify `populatePost()` — remove KV URL cache, generate presigned URL on the fly; fix deletion to use `IMAGES_BUCKET.delete()` |
-| `api/src/utils/index.ts` | Rewrite `generateSignedUrl()` with S3 presigner; remove `bufferToHex`, `ImageSize`; simplify `parseFormDataRequest` |
-| `web/src/types/index.ts` | Update `cfImageId` → `r2Key` in `NewPost` |
-| `web/src/hooks/useInfinitePosts.ts` | Remove `imageSize` param (optional) |
-| `scripts/migrate-images.ts` | **New** — bulk migration script |
+| File                                | Action                                                                                                                           |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `api/package.json`                  | Add `@aws-sdk/client-s3`, `@aws-sdk/s3-request-presigner`                                                                        |
+| `api/wrangler.toml`                 | Add R2 bucket binding                                                                                                            |
+| `api/wrangler-dev.toml`             | Add R2 bucket binding (dev)                                                                                                      |
+| `api/src/types/index.ts`            | Add `IMAGES_BUCKET`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`; rename `cfImageId` → `r2Key`                                    |
+| `api/src/handlers/posts.ts`         | Rewrite upload to use R2 `put()`; simplify `GetPosts`                                                                            |
+| `api/src/db/posts.ts`               | Simplify `populatePost()` — remove KV URL cache, generate presigned URL on the fly; fix deletion to use `IMAGES_BUCKET.delete()` |
+| `api/src/utils/index.ts`            | Rewrite `generateSignedUrl()` with S3 presigner; remove `bufferToHex`, `ImageSize`; simplify `parseFormDataRequest`              |
+| `web/src/types/index.ts`            | Update `cfImageId` → `r2Key` in `NewPost`                                                                                        |
+| `web/src/hooks/useInfinitePosts.ts` | Remove `imageSize` param (optional)                                                                                              |
+| `scripts/migrate-images.ts`         | **New** — bulk migration script                                                                                                  |
