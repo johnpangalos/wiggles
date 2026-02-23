@@ -9,7 +9,7 @@ export const Feed = () => {
   const parent = useRef<HTMLDivElement>(null);
 
   const { data, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    useInfinitePosts({ imageSize: "WRPost" });
+    useInfinitePosts({});
   const posts = data ? data.pages.flatMap(({ posts }) => posts) : [];
 
   const rowVirtualizer = useVirtualizer({

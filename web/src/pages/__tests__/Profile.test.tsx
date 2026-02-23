@@ -20,7 +20,7 @@ const mockPosts: NewPost[] = Array.from({ length: 6 }, (_, i) => ({
   contentType: "image/png",
   timestamp: `${1700000000000 + i * 1000}`,
   accountId: "account-1",
-  cfImageId: `cf-img-${i + 1}`,
+  r2Key: `cf-img-${i + 1}`,
   orderKey: `order-${i + 1}`,
 }));
 
@@ -30,7 +30,6 @@ vi.mock("@/hooks", () => ({
     "posts",
     "infinite",
     30,
-    "WRThumbnail",
     "test@example.com",
   ]),
   useBreakpoint: vi.fn(() => "md"),

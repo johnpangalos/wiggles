@@ -23,7 +23,6 @@ const deleteImages = async (orderKeys: string[]) => {
 };
 
 const queryKeyConfig = (email?: string): UseInfinitePostsOptions => ({
-  imageSize: "WRThumbnail",
   limit: 30,
   email,
   enabled: !!email,

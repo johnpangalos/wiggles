@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "wrangler dev --config wrangler-dev.toml --remote",
+    "dev": "wrangler dev --config wrangler-dev.jsonc --remote",
     "lint": "eslint ./src",
     "type-check": "tsc"
   },
@@ -13,9 +13,11 @@
   "license": "ISC",
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241230.0",
-    "wrangler": "^3.99.0"
+    "wrangler": "^4"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.995.0",
+    "@aws-sdk/s3-request-presigner": "^3.995.0",
     "hono": "^4.6.0"
   }
 }
