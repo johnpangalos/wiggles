@@ -1,6 +1,6 @@
 import { getEmailFromPayload } from "@/middleware/auth";
 import { Account, Post, WigglesContext } from "@/types";
-import { DAY, generateSignedUrl } from "@/utils";
+import { imageUrl } from "@/utils";
 
 const MAX = 9999999999999;
 export const POST_KEY_PREFIX = "post-feed";
@@ -19,24 +19,19 @@ export async function populatePost(
   c: WigglesContext,
   post: Post,
 ): Promise<PostResponse | null> {
-  const urlPromise = generateSignedUrl(c, post.r2Key, DAY);
+  const url = imageUrl(c, post.r2Key);
 
-  const accountPromise = (async () => {
-    const account = await c.env.WIGGLES.get(`account-${post.accountId}`);
-    if (account === null) {
-      console.error({
-        level: "error",
-        handler: "populatePost",
-        postId: post.id,
-        accountId: post.accountId,
-        message: `Account not found for post`,
-      });
-      throw new Error(`Bad post data: ${post.accountId}`);
-    }
-    return account;
-  })();
-
-  const [url, account] = await Promise.all([urlPromise, accountPromise]);
+  const account = await c.env.WIGGLES.get(`account-${post.accountId}`);
+  if (account === null) {
+    console.error({
+      level: "error",
+      handler: "populatePost",
+      postId: post.id,
+      accountId: post.accountId,
+      message: `Account not found for post`,
+    });
+    throw new Error(`Bad post data: ${post.accountId}`);
+  }
 
   return {
     ...post,

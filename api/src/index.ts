@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { cors } from "hono/cors";
-import { GetMe, GetPosts, PostUpload, DeletePosts } from "@/handlers";
+import { GetMe, GetPosts, PostUpload, DeletePosts, GetImage } from "@/handlers";
 import { WigglesEnv } from "@/types";
 import { auth } from "@/middleware";
 
@@ -18,6 +18,10 @@ app.onError((err, c) => {
   });
   return c.json({ error: "Internal Server Error" }, 500);
 });
+
+// Image serving route — outside /api/* so it skips auth (img tags can't send headers).
+// R2 keys are UUIDs so unguessability provides access control.
+app.get("/images/:key", GetImage);
 
 app.use(
   "/api/*",
