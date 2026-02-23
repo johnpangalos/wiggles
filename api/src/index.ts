@@ -7,6 +7,18 @@ import { auth } from "@/middleware";
 
 const app = new Hono<WigglesEnv>();
 
+app.onError((err, c) => {
+  console.error({
+    level: "error",
+    handler: "global",
+    method: c.req.method,
+    path: c.req.path,
+    message: err.message,
+    stack: err.stack,
+  });
+  return c.json({ error: "Internal Server Error" }, 500);
+});
+
 app.use(
   "/api/*",
   cors({

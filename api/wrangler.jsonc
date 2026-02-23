@@ -15,6 +15,10 @@
   "r2_buckets": [
     { "binding": "IMAGES_BUCKET", "bucket_name": "wiggles-images" }
   ],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
   "env": {
     "staging": {
       "route": { "pattern": "dev.wiggle-room.xyz/api/*", "zone_name": "wiggle-room.xyz" },
@@ -28,7 +32,11 @@
       ],
       "r2_buckets": [
         { "binding": "IMAGES_BUCKET", "bucket_name": "wiggles-images" }
-      ]
+      ],
+      "observability": {
+        "enabled": true,
+        "head_sampling_rate": 1
+      }
     }
   }
 }

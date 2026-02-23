@@ -12,7 +12,20 @@ export async function GetPosts(c: WigglesContext) {
 
   const email: string | undefined = c.req.query("email");
 
-  return c.json(await readPosts(c, { cursor, limit, email }));
+  try {
+    return c.json(await readPosts(c, { cursor, limit, email }));
+  } catch (e) {
+    console.error({
+      level: "error",
+      handler: "GetPosts",
+      cursor,
+      limit,
+      email,
+      message: e instanceof Error ? e.message : "Unknown error",
+      stack: e instanceof Error ? e.stack : undefined,
+    });
+    return c.json({ error: "Could not fetch posts." }, 500);
+  }
 }
 
 export async function PostUpload(c: WigglesContext) {
@@ -49,7 +62,12 @@ export async function PostUpload(c: WigglesContext) {
       );
     return c.json({ message: "success" });
   } catch (e) {
-    if (e instanceof Error) console.error(e.message);
+    console.error({
+      level: "error",
+      handler: "PostUpload",
+      message: e instanceof Error ? e.message : "Unknown error",
+      stack: e instanceof Error ? e.stack : undefined,
+    });
     return c.json({ error: "Could not upload image." }, 500);
   }
 }
@@ -60,7 +78,13 @@ export async function DeletePosts(c: WigglesContext) {
     await deletePosts(c, orderKeys);
     return c.json({ message: "OK" });
   } catch (e) {
-    if (e instanceof Error) console.error(e.message);
+    console.error({
+      level: "error",
+      handler: "DeletePosts",
+      orderKeys,
+      message: e instanceof Error ? e.message : "Unknown error",
+      stack: e instanceof Error ? e.stack : undefined,
+    });
     return c.json(
       {
         error: "Could not delete images...",

@@ -23,7 +23,16 @@ export async function populatePost(
 
   const accountPromise = (async () => {
     const account = await c.env.WIGGLES.get(`account-${post.accountId}`);
-    if (account === null) throw new Error(`Bad post data: ${post.accountId}`);
+    if (account === null) {
+      console.error({
+        level: "error",
+        handler: "populatePost",
+        postId: post.id,
+        accountId: post.accountId,
+        message: `Account not found for post`,
+      });
+      throw new Error(`Bad post data: ${post.accountId}`);
+    }
     return account;
   })();
 
@@ -83,7 +92,14 @@ export async function createPosts(c: WigglesContext, postList: Post[]) {
     ];
   }, []);
 
-  return await fetch(
+  console.log({
+    level: "info",
+    handler: "createPosts",
+    postCount: postList.length,
+    kvKeyCount: body.length,
+  });
+
+  const res = await fetch(
     `https://api.cloudflare.com/client/v4/accounts/${c.env.ACCOUNT_ID}/storage/kv/namespaces/${c.env.WIGGLES_KV_ID}/bulk`,
     {
       method: "PUT",
@@ -95,6 +111,19 @@ export async function createPosts(c: WigglesContext, postList: Post[]) {
       body: JSON.stringify(body),
     },
   );
+
+  if (res.status > 300) {
+    const responseBody = await res.clone().text();
+    console.error({
+      level: "error",
+      handler: "createPosts",
+      status: res.status,
+      responseBody,
+      message: "KV bulk write failed",
+    });
+  }
+
+  return res;
 }
 
 export async function deletePosts(c: WigglesContext, orderKeys: string[]) {
@@ -107,15 +136,29 @@ export async function deletePosts(c: WigglesContext, orderKeys: string[]) {
     const accountKey = `post-account-${getEmailFromPayload(payload)}-${key}`;
 
     const res = await c.env.WIGGLES.getWithMetadata<Post>(feedKey);
-    if (res.metadata === null)
+    if (res.metadata === null) {
+      console.error({
+        level: "error",
+        handler: "deletePosts",
+        feedKey,
+        message: "Post not found in KV",
+      });
       throw new Error(`The id ${feedKey} does not exist.`);
+    }
 
     posts.push(res.metadata);
     keysToDelete.push(accountKey);
     keysToDelete.push(feedKey);
   }
 
-  await fetch(
+  console.log({
+    level: "info",
+    handler: "deletePosts",
+    keysToDelete: keysToDelete.length,
+    r2Keys: posts.map((p) => p.r2Key),
+  });
+
+  const deleteRes = await fetch(
     `https://api.cloudflare.com/client/v4/accounts/${c.env.ACCOUNT_ID}/storage/kv/namespaces/${c.env.WIGGLES_KV_ID}/bulk`,
     {
       method: "DELETE",
@@ -127,6 +170,17 @@ export async function deletePosts(c: WigglesContext, orderKeys: string[]) {
       body: JSON.stringify(keysToDelete),
     },
   );
+
+  if (deleteRes.status > 300) {
+    const responseBody = await deleteRes.text();
+    console.error({
+      level: "error",
+      handler: "deletePosts",
+      status: deleteRes.status,
+      responseBody,
+      message: "KV bulk delete failed",
+    });
+  }
 
   const r2Keys = posts.map((p) => p.r2Key);
   await c.env.IMAGES_BUCKET.delete(r2Keys);

@@ -13,5 +13,9 @@
   ],
   "r2_buckets": [
     { "binding": "IMAGES_BUCKET", "bucket_name": "wiggles-images-dev" }
-  ]
+  ],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
 }
