@@ -19,7 +19,7 @@ export async function populatePost(
   c: WigglesContext,
   post: Post,
 ): Promise<PostResponse | null> {
-  const url = imageUrl(c, post.r2Key);
+  const url = imageUrl(c, post.imageId);
 
   const account = await c.env.WIGGLES.get(`account-${post.accountId}`);
   if (account === null) {
@@ -150,7 +150,7 @@ export async function deletePosts(c: WigglesContext, orderKeys: string[]) {
     level: "info",
     handler: "deletePosts",
     keysToDelete: keysToDelete.length,
-    r2Keys: posts.map((p) => p.r2Key),
+    imageIds: posts.map((p) => p.imageId),
   });
 
   const deleteRes = await fetch(
@@ -177,6 +177,6 @@ export async function deletePosts(c: WigglesContext, orderKeys: string[]) {
     });
   }
 
-  const r2Keys = posts.map((p) => p.r2Key);
-  await c.env.IMAGES_BUCKET.delete(r2Keys);
+  const imageIds = posts.map((p) => p.imageId);
+  await c.env.IMAGES_BUCKET.delete(imageIds);
 }

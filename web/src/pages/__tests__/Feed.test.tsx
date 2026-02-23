@@ -19,7 +19,7 @@ const mockPosts: NewPost[] = [
     contentType: "image/png",
     timestamp: "1700000000000",
     accountId: "account-1",
-    r2Key: "cf-img-1",
+    imageId: "cf-img-1",
     orderKey: "order-1",
   },
   {
@@ -34,7 +34,7 @@ const mockPosts: NewPost[] = [
     contentType: "image/png",
     timestamp: "1700001000000",
     accountId: "account-2",
-    r2Key: "cf-img-2",
+    imageId: "cf-img-2",
     orderKey: "order-2",
   },
 ];

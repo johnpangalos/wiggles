@@ -52,6 +52,6 @@ export type NewPost = {
   contentType: string;
   timestamp: string;
   accountId: string;
-  r2Key: string;
+  imageId: string;
   orderKey: string;
 };

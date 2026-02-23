@@ -10,11 +10,11 @@ export type ImageResizeOptions = {
 
 export function imageUrl(
   c: WigglesContext,
-  r2Key: string,
+  imageId: string,
   resize?: ImageResizeOptions,
 ): string {
   const url = new URL(c.req.url);
-  const base = `${url.origin}/api/images/${r2Key}`;
+  const base = `${url.origin}/api/images/${imageId}`;
 
   if (!resize) return base;
 
