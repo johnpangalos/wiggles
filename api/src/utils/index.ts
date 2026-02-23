@@ -1,9 +1,31 @@
 import { WigglesContext } from "@/types";
 import { HonoRequest } from "hono";
 
-export function imageUrl(c: WigglesContext, r2Key: string): string {
+export type ImageResizeOptions = {
+  w?: number;
+  h?: number;
+  fit?: "scale-down" | "contain" | "cover" | "crop" | "pad";
+  q?: number;
+};
+
+export function imageUrl(
+  c: WigglesContext,
+  r2Key: string,
+  resize?: ImageResizeOptions,
+): string {
   const url = new URL(c.req.url);
-  return `${url.origin}/api/images/${r2Key}`;
+  const base = `${url.origin}/api/images/${r2Key}`;
+
+  if (!resize) return base;
+
+  const params = new URLSearchParams();
+  if (resize.w) params.set("w", resize.w.toString());
+  if (resize.h) params.set("h", resize.h.toString());
+  if (resize.fit) params.set("fit", resize.fit);
+  if (resize.q) params.set("q", resize.q.toString());
+
+  const qs = params.toString();
+  return qs ? `${base}?${qs}` : base;
 }
 
 export const parseFormDataRequest = async (
