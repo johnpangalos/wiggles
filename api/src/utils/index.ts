@@ -3,7 +3,7 @@ import { HonoRequest } from "hono";
 
 export function imageUrl(c: WigglesContext, r2Key: string): string {
   const url = new URL(c.req.url);
-  return `${url.origin}/images/${r2Key}`;
+  return `${url.origin}/api/images/${r2Key}`;
 }
 
 export const parseFormDataRequest = async (

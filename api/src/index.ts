@@ -19,10 +19,6 @@ app.onError((err, c) => {
   return c.json({ error: "Internal Server Error" }, 500);
 });
 
-// Image serving route — outside /api/* so it skips auth (img tags can't send headers).
-// R2 keys are UUIDs so unguessability provides access control.
-app.get("/images/:key", GetImage);
-
 app.use(
   "/api/*",
   cors({
@@ -31,6 +27,12 @@ app.use(
     allowMethods: ["GET", "POST", "OPTIONS"],
   }),
 );
+
+// Registered before auth — Hono dispatches in registration order, so the
+// route handler returns a response without calling next(), skipping auth.
+// img tags can't send Authorization headers, and the R2 keys are UUIDs.
+app.get("/api/images/:key", GetImage);
+
 app.use("/api/*", auth());
 app.use("/api/*", logger());
 
