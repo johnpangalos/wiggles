@@ -71,9 +71,9 @@ export function Profile() {
   const rowVirtualizer = useVirtualizer({
     count: hasNextPage ? postRows.length + 1 : postRows.length,
     getScrollElement: () => parent.current,
-    estimateSize: () => (["xxs", "xs", "sm"].includes(breakpoint) ? 150 : 200),
+    estimateSize: () => (["xxs", "xs", "sm"].includes(breakpoint) ? 130 : 200),
     measureElement: () =>
-      ["xxs", "xs", "sm"].includes(breakpoint) ? 150 : 200,
+      ["xxs", "xs", "sm"].includes(breakpoint) ? 130 : 200,
     overscan: 5,
   });
 
