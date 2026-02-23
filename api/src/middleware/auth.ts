@@ -151,7 +151,14 @@ export function auth(): MiddlewareHandler<Response | undefined> {
       await next();
       return;
     } catch (e) {
-      if (e instanceof Error) console.error(e.message);
+      console.error({
+        level: "error",
+        handler: "auth",
+        method: c.req.method,
+        path: c.req.path,
+        message: e instanceof Error ? e.message : "Unknown auth error",
+        stack: e instanceof Error ? e.stack : undefined,
+      });
     }
 
     return c.json({ message: "Unauthorized", ok: false }, 401);

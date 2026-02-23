@@ -20,8 +20,6 @@ export type WigglesEnv = {
   Bindings: {
     WIGGLES: KVNamespace;
     IMAGES_BUCKET: R2Bucket;
-    R2_ACCESS_KEY_ID: string;
-    R2_SECRET_ACCESS_KEY: string;
     AUTH0_DOMAIN: string;
     AUTH0_AUDIENCE: string;
     ACCOUNT_ID: string;

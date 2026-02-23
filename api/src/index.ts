@@ -1,11 +1,23 @@
 import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { cors } from "hono/cors";
-import { GetMe, GetPosts, PostUpload, DeletePosts } from "@/handlers";
+import { GetMe, GetPosts, PostUpload, DeletePosts, GetImage } from "@/handlers";
 import { WigglesEnv } from "@/types";
 import { auth } from "@/middleware";
 
 const app = new Hono<WigglesEnv>();
+
+app.onError((err, c) => {
+  console.error({
+    level: "error",
+    handler: "global",
+    method: c.req.method,
+    path: c.req.path,
+    message: err.message,
+    stack: err.stack,
+  });
+  return c.json({ error: "Internal Server Error" }, 500);
+});
 
 app.use(
   "/api/*",
@@ -15,6 +27,12 @@ app.use(
     allowMethods: ["GET", "POST", "OPTIONS"],
   }),
 );
+
+// Registered before auth — Hono dispatches in registration order, so the
+// route handler returns a response without calling next(), skipping auth.
+// img tags can't send Authorization headers, and the R2 keys are UUIDs.
+app.get("/api/images/:key", GetImage);
+
 app.use("/api/*", auth());
 app.use("/api/*", logger());
 
