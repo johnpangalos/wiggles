@@ -4,13 +4,15 @@ import { Loading } from "@/components";
 
 import { Result, useImageUpload } from "@/hooks";
 import { useNavigate } from "react-router";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getAuthHeaders } from "@/utils";
+import { infinitePostsQueryKey } from "@/hooks";
 
 export const Upload = () => {
   const urls = useImageUpload((state) => state.urls);
   const resetImageUpload = useImageUpload((state) => state.reset);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const files = useImageUpload((state) => state.files);
 
   const formData = useMemo(() => {
@@ -31,7 +33,11 @@ export const Upload = () => {
       if (res.status > 300) throw new Error("upload failed");
       return await res.json();
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      resetImageUpload();
+      await queryClient.invalidateQueries({
+        queryKey: infinitePostsQueryKey({}),
+      });
       navigate(-1);
     },
   });
