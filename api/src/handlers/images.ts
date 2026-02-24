@@ -19,8 +19,8 @@ function parseFit(value: string | undefined): Fit {
 
 function negotiateFormat(accept: string | undefined): ImageFormat {
   if (!accept) return "jpeg";
-  if (accept.includes("image/avif")) return "avif";
   if (accept.includes("image/webp")) return "webp";
+  if (accept.includes("image/avif")) return "avif";
   return "jpeg";
 }
 
