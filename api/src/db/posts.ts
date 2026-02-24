@@ -30,7 +30,7 @@ export async function populatePost(
       accountId: post.accountId,
       message: `Account not found for post`,
     });
-    throw new Error(`Bad post data: ${post.accountId}`);
+    return null;
   }
 
   return {
@@ -61,7 +61,8 @@ export async function readPosts(c: WigglesContext, options: ReadPostsOptions) {
 
     promises.push(populatePost(c, post));
   }
-  const posts = await Promise.all(promises);
+  const results = await Promise.all(promises);
+  const posts = results.filter((post): post is PostResponse => post !== null);
   const cursor = result.list_complete ? undefined : result.cursor;
   return { posts, cursor };
 }
