@@ -55,11 +55,7 @@ export async function PostUpload(c: WigglesContext) {
       accountId: email,
     }));
 
-    const res = await createPosts(c, postList);
-    if (res.status > 300)
-      throw new Error(
-        `Failed to upload post: ${res.status} ${await res.text()}`,
-      );
+    await createPosts(c, postList);
     return c.json({ message: "success" });
   } catch (e) {
     console.error({

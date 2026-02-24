@@ -67,58 +67,34 @@ export async function readPosts(c: WigglesContext, options: ReadPostsOptions) {
 }
 
 export async function createPosts(c: WigglesContext, postList: Post[]) {
-  const body = postList.reduce<
-    { key: string; value: string; metadata?: object }[]
-  >((acc, post) => {
+  const entries = postList.flatMap((post) => {
+    const sortKey = MAX - Number.parseInt(post.timestamp);
     return [
-      ...acc,
       {
-        key: `post-feed-${MAX - Number.parseInt(post.timestamp)}`,
+        key: `post-feed-${sortKey}`,
         value: "",
         metadata: post,
       },
       {
-        key: `post-account-${post.accountId}-${
-          MAX - Number.parseInt(post.timestamp)
-        }`,
+        key: `post-account-${post.accountId}-${sortKey}`,
         value: "",
         metadata: post,
       },
     ];
-  }, []);
+  });
 
   console.log({
     level: "info",
     handler: "createPosts",
     postCount: postList.length,
-    kvKeyCount: body.length,
+    kvKeyCount: entries.length,
   });
 
-  const res = await fetch(
-    `https://api.cloudflare.com/client/v4/accounts/${c.env.ACCOUNT_ID}/storage/kv/namespaces/${c.env.WIGGLES_KV_ID}/bulk`,
-    {
-      method: "PUT",
-      headers: {
-        "X-Auth-Email": "john@pangalos.dev",
-        "X-Auth-Key": c.env.API_KEY,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    },
+  await Promise.all(
+    entries.map(({ key, value, metadata }) =>
+      c.env.WIGGLES.put(key, value, { metadata }),
+    ),
   );
-
-  if (res.status > 300) {
-    const responseBody = await res.clone().text();
-    console.error({
-      level: "error",
-      handler: "createPosts",
-      status: res.status,
-      responseBody,
-      message: "KV bulk write failed",
-    });
-  }
-
-  return res;
 }
 
 export async function deletePosts(c: WigglesContext, orderKeys: string[]) {
@@ -153,29 +129,7 @@ export async function deletePosts(c: WigglesContext, orderKeys: string[]) {
     r2Keys: posts.map((p) => p.r2Key),
   });
 
-  const deleteRes = await fetch(
-    `https://api.cloudflare.com/client/v4/accounts/${c.env.ACCOUNT_ID}/storage/kv/namespaces/${c.env.WIGGLES_KV_ID}/bulk`,
-    {
-      method: "DELETE",
-      headers: {
-        "X-Auth-Email": "john@pangalos.dev",
-        "X-Auth-Key": c.env.API_KEY,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(keysToDelete),
-    },
-  );
-
-  if (deleteRes.status > 300) {
-    const responseBody = await deleteRes.text();
-    console.error({
-      level: "error",
-      handler: "deletePosts",
-      status: deleteRes.status,
-      responseBody,
-      message: "KV bulk delete failed",
-    });
-  }
+  await Promise.all(keysToDelete.map((key) => c.env.WIGGLES.delete(key)));
 
   const r2Keys = posts.map((p) => p.r2Key);
   await c.env.IMAGES_BUCKET.delete(r2Keys);
