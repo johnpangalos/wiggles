@@ -19,7 +19,9 @@ export async function populatePost(
   c: WigglesContext,
   post: Post,
 ): Promise<PostResponse | null> {
-  const url = imageUrl(c, post.imageId);
+  // Fall back to legacy r2Key field for posts created before the rename
+  const id = post.imageId ?? (post as unknown as { r2Key: string }).r2Key;
+  const url = imageUrl(c, id);
 
   const account = await c.env.WIGGLES.get(`account-${post.accountId}`);
   if (account === null) {
