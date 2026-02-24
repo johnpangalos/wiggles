@@ -28,6 +28,8 @@ function Auth0ProviderWithNavigate({
         redirect_uri: window.location.origin + "/feed",
         audience: import.meta.env.VITE_AUTH0_AUDIENCE,
       }}
+      cacheLocation="localstorage"
+      useRefreshTokens
       onRedirectCallback={(appState) => {
         navigate(appState?.returnTo || "/feed");
       }}
