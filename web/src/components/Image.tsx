@@ -22,13 +22,16 @@ export function Image({
   if (!post) return <></>;
   const src = resizedUrl(post.url, thumbnail);
   return (
-    <div className={thumbnail ? "h-[115px] md:h-[164px]" : "h-[424px]"}>
-      <img
-        className="w-full h-full bg-no-repeat object-contain object-center"
-        loading={loading}
-        src={src}
-        alt={post.url}
-      />
+    <div>
+      <div className={thumbnail ? "h-[115px] md:h-[164px]" : "h-[424px]"}>
+        <img
+          className="w-full h-full bg-no-repeat object-contain object-center"
+          loading={loading}
+          src={src}
+          alt={post.url}
+        />
+      </div>
+      <p className="text-xs text-gray-500 break-all mt-1">{src}</p>
     </div>
   );
 }
