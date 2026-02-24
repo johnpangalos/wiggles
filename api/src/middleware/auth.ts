@@ -9,9 +9,9 @@ export type Auth0JWTPayload = {
   iat: number;
   azp?: string;
   scope?: string;
-  "https://wiggle-room.xyz/email": string;
-  "https://wiggle-room.xyz/name": string;
-  "https://wiggle-room.xyz/picture": string;
+  email: string;
+  name: string;
+  picture: string;
 };
 
 type JWK = {
@@ -25,15 +25,15 @@ type JWKSResponse = {
 };
 
 export function getEmailFromPayload(payload: Auth0JWTPayload): string {
-  return payload["https://wiggle-room.xyz/email"];
+  return payload.email;
 }
 
 export function getNameFromPayload(payload: Auth0JWTPayload): string {
-  return payload["https://wiggle-room.xyz/name"];
+  return payload.name;
 }
 
 export function getPictureFromPayload(payload: Auth0JWTPayload): string {
-  return payload["https://wiggle-room.xyz/picture"];
+  return payload.picture;
 }
 
 const base64URLDecode = (s: string) => {
@@ -145,6 +145,23 @@ export function auth(): MiddlewareHandler<Response | undefined> {
         c.env.AUTH0_DOMAIN,
         c.env.AUTH0_AUDIENCE,
       );
+
+      const userinfoRes = await fetch(
+        `https://${c.env.AUTH0_DOMAIN}/userinfo`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      if (!userinfoRes.ok) {
+        throw new Error("Failed to fetch userinfo from Auth0");
+      }
+      const userinfo = (await userinfoRes.json()) as {
+        email?: string;
+        name?: string;
+        picture?: string;
+      };
+
+      payload.email = userinfo.email ?? "";
+      payload.name = userinfo.name ?? "";
+      payload.picture = userinfo.picture ?? "";
 
       c.set("JWT", { payload });
 

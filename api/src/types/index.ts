@@ -22,9 +22,6 @@ export type WigglesEnv = {
     IMAGES_BUCKET: R2Bucket;
     AUTH0_DOMAIN: string;
     AUTH0_AUDIENCE: string;
-    ACCOUNT_ID: string;
-    API_KEY: string;
-    WIGGLES_KV_ID: string;
   };
   Variables: {
     JWT: {

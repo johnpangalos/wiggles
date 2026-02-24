@@ -1,4 +1,4 @@
-import { createPosts, deletePosts, readPosts } from "@/db";
+import { createPosts, deletePosts, ensureAccount, readPosts } from "@/db";
 import { getEmailFromPayload } from "@/middleware/auth";
 import { Post, WigglesContext } from "@/types";
 import { parseFormDataRequest } from "@/utils";
@@ -47,6 +47,8 @@ export async function PostUpload(c: WigglesContext) {
     const { payload } = c.get("JWT");
     const email = getEmailFromPayload(payload);
 
+    await ensureAccount(c, payload);
+
     const postList: Post[] = r2Keys.map((r2Key, idx) => ({
       id: crypto.randomUUID(),
       contentType: "image/*",
@@ -55,11 +57,7 @@ export async function PostUpload(c: WigglesContext) {
       accountId: email,
     }));
 
-    const res = await createPosts(c, postList);
-    if (res.status > 300)
-      throw new Error(
-        `Failed to upload post: ${res.status} ${await res.text()}`,
-      );
+    await createPosts(c, postList);
     return c.json({ message: "success" });
   } catch (e) {
     console.error({

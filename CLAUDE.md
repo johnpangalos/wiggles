@@ -66,6 +66,10 @@ pnpm --filter web test:update   # update snapshots
 - Feed uses `@tanstack/react-virtual` for virtualized scrolling
 - Image URLs are signed with HMAC and expire after 1 day
 
+## Git
+
+- Always use `--no-gpg-sign` when committing
+
 ## Code Style
 
 - TypeScript strict mode everywhere
