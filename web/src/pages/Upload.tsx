@@ -6,7 +6,6 @@ import { Result, useImageUpload } from "@/hooks";
 import { useNavigate } from "react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getAuthHeaders } from "@/utils";
-import { infinitePostsQueryKey } from "@/hooks";
 
 export const Upload = () => {
   const urls = useImageUpload((state) => state.urls);
@@ -36,7 +35,7 @@ export const Upload = () => {
     onSuccess: async () => {
       resetImageUpload();
       await queryClient.invalidateQueries({
-        queryKey: infinitePostsQueryKey({}),
+        queryKey: ["posts"],
       });
       navigate(-1);
     },
