@@ -33,7 +33,7 @@ export async function PostUpload(c: WigglesContext) {
     const files = await parseFormDataRequest(c.req);
     if (!files) return c.body(null, 204);
 
-    const imageIds = await Promise.all(
+    const r2Keys = await Promise.all(
       files.map(async ({ file, key }) => {
         const data = await file.arrayBuffer();
         await c.env.IMAGES_BUCKET.put(key, data, {
@@ -47,10 +47,10 @@ export async function PostUpload(c: WigglesContext) {
     const { payload } = c.get("JWT");
     const email = getEmailFromPayload(payload);
 
-    const postList: Post[] = imageIds.map((imageId, idx) => ({
+    const postList: Post[] = r2Keys.map((r2Key, idx) => ({
       id: crypto.randomUUID(),
       contentType: "image/*",
-      imageId,
+      r2Key,
       timestamp: (timestamp + idx).toString(),
       accountId: email,
     }));

@@ -13,7 +13,7 @@ export type Post = {
   contentType: string;
   timestamp: string;
   accountId: string;
-  imageId: string;
+  r2Key: string;
 };
 
 export type WigglesEnv = {

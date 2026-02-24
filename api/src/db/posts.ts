@@ -19,9 +19,7 @@ export async function populatePost(
   c: WigglesContext,
   post: Post,
 ): Promise<PostResponse | null> {
-  // Fall back to legacy r2Key field for posts created before the rename
-  const id = post.imageId ?? (post as unknown as { r2Key: string }).r2Key;
-  const url = imageUrl(c, id);
+  const url = imageUrl(c, post.r2Key);
 
   const account = await c.env.WIGGLES.get(`account-${post.accountId}`);
   if (account === null) {
@@ -152,7 +150,7 @@ export async function deletePosts(c: WigglesContext, orderKeys: string[]) {
     level: "info",
     handler: "deletePosts",
     keysToDelete: keysToDelete.length,
-    imageIds: posts.map((p) => p.imageId),
+    r2Keys: posts.map((p) => p.r2Key),
   });
 
   const deleteRes = await fetch(
@@ -179,6 +177,6 @@ export async function deletePosts(c: WigglesContext, orderKeys: string[]) {
     });
   }
 
-  const imageIds = posts.map((p) => p.imageId);
-  await c.env.IMAGES_BUCKET.delete(imageIds);
+  const r2Keys = posts.map((p) => p.r2Key);
+  await c.env.IMAGES_BUCKET.delete(r2Keys);
 }
