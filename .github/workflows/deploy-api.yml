@@ -5,6 +5,7 @@ on:
       - main
     paths:
       - "api/**"
+      - ".github/workflows/deploy-api.yml"
   workflow_dispatch:
 
 jobs:
