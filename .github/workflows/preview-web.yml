@@ -1,9 +1,14 @@
-name: Preview Web
+name: Preview
 on:
   pull_request:
     paths:
-      - "web/**"
-      - "api/**"
+      - "app/**"
+      - "workers/**"
+      - "public/**"
+      - "package.json"
+      - "wrangler.jsonc"
+      - "vite.config.ts"
+      - "react-router.config.ts"
       - ".github/workflows/preview-web.yml"
 
 jobs:
@@ -14,7 +19,7 @@ jobs:
       deployments: write
       pull-requests: write
 
-    name: Cloudflare Pages Preview
+    name: Cloudflare Workers Preview
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -22,21 +27,11 @@ jobs:
       - name: Install Dependencies
         uses: ./.github/actions/install-deps
 
-      - name: Deploy Staging API
+      - name: Build
+        run: pnpm build
+
+      - name: Deploy Preview
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          workingDirectory: ./api
-          command: deploy --env staging
-
-      - name: Build
-        run: cd web && pnpm build --mode staging
-
-      - name: Deploy Preview
-        uses: cloudflare/pages-action@1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: e5933c765c57d2f3a58d86973c88362c
-          projectName: wiggles
-          directory: web/dist
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          command: versions upload
