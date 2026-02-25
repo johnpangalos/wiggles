@@ -1,14 +1,11 @@
-# Temporarily disabled while updating technologies in the stack
-# name: Deploy API
-# on:
-#   push:
-#     branches:
-#       - main
-#     paths:
-#       - 'api/**'
-#   workflow_dispatch:
-name: Deploy API (disabled)
-on: workflow_dispatch
+name: Deploy API
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "api/**"
+  workflow_dispatch:
 
 jobs:
   publish:
