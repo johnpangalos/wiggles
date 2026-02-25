@@ -45,13 +45,6 @@ export async function GetImage(c: WigglesContext) {
   const w = c.req.query("w");
   const h = c.req.query("h");
 
-  console.log("[GetImage] request", {
-    key,
-    w,
-    h,
-    url: c.req.url,
-  });
-
   // When resize params are present, use Cloudflare Image Resizing.
   // fetch() with cf.image fetches the original URL (without query params),
   // which re-enters this handler and falls through to the R2 path below.
@@ -67,20 +60,20 @@ export async function GetImage(c: WigglesContext) {
     const originUrl = new URL(c.req.url);
     originUrl.search = "";
 
-    console.log("[GetImage] resize", {
-      originUrl: originUrl.toString(),
-      options,
-    });
-
     const response = await fetch(originUrl.toString(), {
       cf: { image: options },
     });
 
-    console.log("[GetImage] resize response", {
-      status: response.status,
-      contentType: response.headers.get("Content-Type"),
-      headers: Object.fromEntries(response.headers.entries()),
-    });
+    if (!response.ok) {
+      console.error("[GetImage] resize failed", {
+        key,
+        status: response.status,
+        contentType: response.headers.get("Content-Type"),
+        cfResized: response.headers.get("cf-resized"),
+        originUrl: originUrl.toString(),
+        options,
+      });
+    }
 
     const headers = new Headers(response.headers);
     headers.set("Cache-Control", "public, max-age=86400");
@@ -107,13 +100,6 @@ export async function GetImage(c: WigglesContext) {
   if (!r2Headers.has("Content-Type")) {
     r2Headers.set("Content-Type", contentTypeFromKey(key));
   }
-
-  console.log("[GetImage] R2 origin response", {
-    key,
-    httpMetadata: object.httpMetadata,
-    contentType: r2Headers.get("Content-Type"),
-    size: object.size,
-  });
 
   const headers = new Headers(r2Headers);
   headers.set("Cache-Control", "public, max-age=86400");
