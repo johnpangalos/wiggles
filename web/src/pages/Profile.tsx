@@ -5,12 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import {
-  useLoaderData,
-  useNavigation,
-  useRevalidator,
-  useSearchParams,
-} from "react-router";
+import { useLoaderData } from "react-router";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { NewPost } from "@/types";
 import { Button, Image, Post } from "@/components";
@@ -37,16 +32,10 @@ async function fetchProfilePosts(
   return res.json();
 }
 
-export async function profileLoader({
-  request,
-}: {
-  request: Request;
-}): Promise<ProfilePostsResponse> {
+export async function profileLoader(): Promise<ProfilePostsResponse> {
   const email = getUserEmail();
   if (!email) return { posts: [], cursor: undefined };
-  const url = new URL(request.url);
-  const cursor = url.searchParams.get("cursor") || undefined;
-  return await fetchProfilePosts(email, cursor);
+  return await fetchProfilePosts(email);
 }
 
 const deleteImages = async (orderKeys: string[]) => {
@@ -60,14 +49,13 @@ const deleteImages = async (orderKeys: string[]) => {
 };
 
 export function Profile() {
-  const { logout } = useAuth0();
-  const { posts, cursor } = useLoaderData() as ProfilePostsResponse;
-  const [, setSearchParams] = useSearchParams();
-  const navigation = useNavigation();
-  const { revalidate } = useRevalidator();
-
+  const { logout, user } = useAuth0();
+  const initialData = useLoaderData() as ProfilePostsResponse;
+  const [posts, setPosts] = useState<NewPost[]>(initialData.posts);
+  const [cursor, setCursor] = useState<string | undefined>(initialData.cursor);
+  const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
+  const fetchingRef = useRef(false);
   const hasNextPage = !!cursor;
-  const isFetchingNextPage = navigation.state === "loading";
 
   const [selectMode, setSelectMode] = useState(false);
   const [selectedOrderKeys, setSelectedOrderKeys] = useState<
@@ -78,17 +66,31 @@ export function Profile() {
   };
   const parent = useRef<HTMLDivElement>(null);
 
-  const fetchNextPage = useCallback(() => {
-    if (!cursor || isFetchingNextPage) return;
-    setSearchParams({ cursor });
-  }, [cursor, isFetchingNextPage, setSearchParams]);
+  const fetchNextPage = useCallback(async () => {
+    if (fetchingRef.current || !cursor || !user?.email) return;
+    fetchingRef.current = true;
+    setIsFetchingNextPage(true);
+    try {
+      const data = await fetchProfilePosts(user.email, cursor);
+      setPosts((prev) => [...prev, ...data.posts]);
+      setCursor(data.cursor);
+    } finally {
+      fetchingRef.current = false;
+      setIsFetchingNextPage(false);
+    }
+  }, [cursor, user?.email]);
 
   const { mutate, status: mutateStatus } = useMutation({
     mutationFn: (orderKeys: string[]) => deleteImages(orderKeys),
     onSettled: () => {
       setSelectedOrderKeys({});
       setSelectMode(false);
-      revalidate();
+      if (user?.email) {
+        fetchProfilePosts(user.email).then((data) => {
+          setPosts(data.posts);
+          setCursor(data.cursor);
+        });
+      }
     },
   });
 
