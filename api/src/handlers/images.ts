@@ -1,5 +1,20 @@
 import { WigglesContext } from "@/types";
 
+const EXT_TO_CONTENT_TYPE: Record<string, string> = {
+  jpeg: "image/jpeg",
+  jpg: "image/jpeg",
+  png: "image/png",
+  gif: "image/gif",
+  webp: "image/webp",
+  avif: "image/avif",
+  svg: "image/svg+xml",
+};
+
+function contentTypeFromKey(key: string): string {
+  const ext = key.split(".").pop()?.toLowerCase();
+  return (ext && EXT_TO_CONTENT_TYPE[ext]) || "image/jpeg";
+}
+
 const VALID_FIT = new Set([
   "scale-down",
   "contain",

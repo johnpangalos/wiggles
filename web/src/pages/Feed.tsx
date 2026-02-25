@@ -1,16 +1,66 @@
-import { Fragment, useEffect, useRef } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import { useLoaderData } from "react-router";
 import { useVirtualizer } from "@tanstack/react-virtual";
 
 import { Post } from "@/components";
 import { Image } from "@/components";
-import { useInfinitePosts } from "@/hooks";
+import { NewPost } from "@/types";
+import { getAuthHeaders } from "@/utils";
+
+export type PostsResponse = { posts: NewPost[]; cursor?: string };
+
+async function fetchPosts(cursor?: string, limit = 10): Promise<PostsResponse> {
+  const headers = await getAuthHeaders();
+  const params = new URLSearchParams({ limit: String(limit) });
+  if (cursor) params.set("cursor", cursor);
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/posts?${params}`, {
+    headers,
+  });
+  if (!res.ok) return { posts: [], cursor: undefined };
+  return res.json();
+}
+
+export async function feedLoader(): Promise<PostsResponse> {
+  try {
+    return await fetchPosts();
+  } catch {
+    return { posts: [], cursor: undefined };
+  }
+}
 
 export const Feed = () => {
+  const initialData = useLoaderData() as PostsResponse;
+  const [posts, setPosts] = useState<NewPost[]>(initialData.posts);
+  const [cursor, setCursor] = useState<string | undefined>(initialData.cursor);
+  const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
+  const fetchingRef = useRef(false);
+  const hasNextPage = !!cursor;
   const parent = useRef<HTMLDivElement>(null);
 
-  const { data, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    useInfinitePosts({});
-  const posts = data ? data.pages.flatMap(({ posts }) => posts) : [];
+  // Re-fetch if loader returned empty (e.g., auth wasn't ready during loader)
+  useEffect(() => {
+    if (initialData.posts.length === 0) {
+      fetchPosts().then((data) => {
+        setPosts(data.posts);
+        setCursor(data.cursor);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const fetchNextPage = useCallback(async () => {
+    if (fetchingRef.current || !cursor) return;
+    fetchingRef.current = true;
+    setIsFetchingNextPage(true);
+    try {
+      const data = await fetchPosts(cursor);
+      setPosts((prev) => [...prev, ...data.posts]);
+      setCursor(data.cursor);
+    } finally {
+      fetchingRef.current = false;
+      setIsFetchingNextPage(false);
+    }
+  }, [cursor]);
 
   const rowVirtualizer = useVirtualizer({
     count: hasNextPage ? posts.length + 1 : posts.length,

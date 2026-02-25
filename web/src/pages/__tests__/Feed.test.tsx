@@ -1,7 +1,6 @@
 import { render } from "vitest-browser-react";
 import { page } from "vitest/browser";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { describe, test, expect, vi } from "vitest";
+import { describe, test, expect, vi, beforeEach } from "vitest";
 import { Feed } from "../Feed";
 import type { NewPost } from "@/types";
 import placeholderUrl from "./fixtures/placeholder.png";
@@ -39,8 +38,15 @@ const mockPosts: NewPost[] = [
   },
 ];
 
-vi.mock("@/hooks", () => ({
-  useInfinitePosts: vi.fn(),
+vi.mock("react-router", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("react-router")>()),
+  useLoaderData: vi.fn(),
+}));
+
+vi.mock("@/utils", () => ({
+  getAuthHeaders: vi.fn(() =>
+    Promise.resolve({ Authorization: "Bearer fake-token" }),
+  ),
 }));
 
 // Mock the virtualizer to render items directly without layout measurement
@@ -57,37 +63,37 @@ vi.mock("@tanstack/react-virtual", () => ({
   })),
 }));
 
-import { useInfinitePosts } from "@/hooks";
+import { useLoaderData } from "react-router";
 
-const mockedUseInfinitePosts = vi.mocked(useInfinitePosts);
+const mockedUseLoaderData = vi.mocked(useLoaderData);
 
-function createQueryClient() {
-  return new QueryClient({
-    defaultOptions: {
-      queries: { retry: false },
-    },
-  });
-}
+// Mock fetch to prevent actual API calls in effects
+const mockFetch = vi.fn(() =>
+  Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({ posts: [], cursor: undefined }),
+  }),
+);
+vi.stubGlobal("fetch", mockFetch);
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
 
 function renderFeed() {
-  const queryClient = createQueryClient();
   return render(
-    <QueryClientProvider client={queryClient}>
-      <div data-testid="feed-root" style={{ minHeight: 1 }}>
-        <Feed />
-      </div>
-    </QueryClientProvider>,
+    <div data-testid="feed-root" style={{ minHeight: 1 }}>
+      <Feed />
+    </div>,
   );
 }
 
 describe("Feed", () => {
   test("renders empty state when no posts are available", async () => {
-    mockedUseInfinitePosts.mockReturnValue({
-      data: { pages: [{ posts: [], cursor: "" }], pageParams: [] },
-      isFetchingNextPage: false,
-      fetchNextPage: vi.fn(),
-      hasNextPage: false,
-    } as any);
+    mockedUseLoaderData.mockReturnValue({
+      posts: [],
+      cursor: undefined,
+    });
 
     renderFeed();
     const root = page.getByTestId("feed-root");
@@ -96,15 +102,10 @@ describe("Feed", () => {
   });
 
   test("renders feed with posts", async () => {
-    mockedUseInfinitePosts.mockReturnValue({
-      data: {
-        pages: [{ posts: mockPosts, cursor: "next-cursor" }],
-        pageParams: [],
-      },
-      isFetchingNextPage: false,
-      fetchNextPage: vi.fn(),
-      hasNextPage: false,
-    } as any);
+    mockedUseLoaderData.mockReturnValue({
+      posts: mockPosts,
+      cursor: undefined,
+    });
 
     renderFeed();
     const root = page.getByTestId("feed-root");
@@ -113,15 +114,10 @@ describe("Feed", () => {
   });
 
   test("renders post with correct account info", async () => {
-    mockedUseInfinitePosts.mockReturnValue({
-      data: {
-        pages: [{ posts: [mockPosts[0]], cursor: "" }],
-        pageParams: [],
-      },
-      isFetchingNextPage: false,
-      fetchNextPage: vi.fn(),
-      hasNextPage: false,
-    } as any);
+    mockedUseLoaderData.mockReturnValue({
+      posts: [mockPosts[0]],
+      cursor: undefined,
+    });
 
     renderFeed();
     await expect.element(page.getByText("Test User")).toBeVisible();
@@ -130,19 +126,11 @@ describe("Feed", () => {
       .toMatchScreenshot("feed-single-post");
   });
 
-  test("renders multiple pages of posts", async () => {
-    mockedUseInfinitePosts.mockReturnValue({
-      data: {
-        pages: [
-          { posts: [mockPosts[0]], cursor: "cursor-1" },
-          { posts: [mockPosts[1]], cursor: "" },
-        ],
-        pageParams: [],
-      },
-      isFetchingNextPage: false,
-      fetchNextPage: vi.fn(),
-      hasNextPage: false,
-    } as any);
+  test("renders multiple posts", async () => {
+    mockedUseLoaderData.mockReturnValue({
+      posts: mockPosts,
+      cursor: undefined,
+    });
 
     renderFeed();
     const root = page.getByTestId("feed-root");
@@ -153,16 +141,14 @@ describe("Feed", () => {
     });
   });
 
-  test("renders loading state when fetching next page", async () => {
-    mockedUseInfinitePosts.mockReturnValue({
-      data: {
-        pages: [{ posts: mockPosts, cursor: "next-cursor" }],
-        pageParams: [],
-      },
-      isFetchingNextPage: true,
-      fetchNextPage: vi.fn(),
-      hasNextPage: true,
-    } as any);
+  test("renders loading indicator when more pages available", async () => {
+    // Make fetch hang so the loading/hasNextPage state persists
+    mockFetch.mockImplementation(() => new Promise(() => {}));
+
+    mockedUseLoaderData.mockReturnValue({
+      posts: mockPosts,
+      cursor: "next-cursor",
+    });
 
     renderFeed();
     const root = page.getByTestId("feed-root");
