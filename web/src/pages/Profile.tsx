@@ -5,7 +5,12 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useLoaderData } from "react-router";
+import {
+  useLoaderData,
+  useNavigation,
+  useRevalidator,
+  useSearchParams,
+} from "react-router";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { NewPost } from "@/types";
 import { Button, Image, Post } from "@/components";
@@ -32,11 +37,17 @@ async function fetchProfilePosts(
   return res.json();
 }
 
-export async function profileLoader(): Promise<ProfilePostsResponse> {
+export async function profileLoader({
+  request,
+}: {
+  request: Request;
+}): Promise<ProfilePostsResponse> {
   try {
     const email = getUserEmail();
     if (!email) return { posts: [], cursor: undefined };
-    return await fetchProfilePosts(email);
+    const url = new URL(request.url);
+    const cursor = url.searchParams.get("cursor") || undefined;
+    return await fetchProfilePosts(email, cursor);
   } catch {
     return { posts: [], cursor: undefined };
   }
@@ -53,13 +64,14 @@ const deleteImages = async (orderKeys: string[]) => {
 };
 
 export function Profile() {
-  const { logout, user } = useAuth0();
-  const initialData = useLoaderData() as ProfilePostsResponse;
-  const [posts, setPosts] = useState<NewPost[]>(initialData.posts);
-  const [cursor, setCursor] = useState<string | undefined>(initialData.cursor);
-  const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
-  const fetchingRef = useRef(false);
+  const { logout } = useAuth0();
+  const { posts, cursor } = useLoaderData() as ProfilePostsResponse;
+  const [, setSearchParams] = useSearchParams();
+  const navigation = useNavigation();
+  const { revalidate } = useRevalidator();
+
   const hasNextPage = !!cursor;
+  const isFetchingNextPage = navigation.state === "loading";
 
   const [selectMode, setSelectMode] = useState(false);
   const [selectedOrderKeys, setSelectedOrderKeys] = useState<
@@ -68,45 +80,19 @@ export function Profile() {
   const signOut = () => {
     logout({ logoutParams: { returnTo: window.location.origin + "/login" } });
   };
-  const parent = React.useRef<HTMLDivElement>(null);
+  const parent = useRef<HTMLDivElement>(null);
 
-  // Re-fetch if loader returned empty (e.g., auth wasn't ready during loader)
-  useEffect(() => {
-    if (initialData.posts.length === 0 && user?.email) {
-      fetchProfilePosts(user.email).then((data) => {
-        setPosts(data.posts);
-        setCursor(data.cursor);
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const fetchNextPage = useCallback(async () => {
-    if (fetchingRef.current || !cursor || !user?.email) return;
-    fetchingRef.current = true;
-    setIsFetchingNextPage(true);
-    try {
-      const data = await fetchProfilePosts(user.email, cursor);
-      setPosts((prev) => [...prev, ...data.posts]);
-      setCursor(data.cursor);
-    } finally {
-      fetchingRef.current = false;
-      setIsFetchingNextPage(false);
-    }
-  }, [cursor, user?.email]);
+  const fetchNextPage = useCallback(() => {
+    if (!cursor || isFetchingNextPage) return;
+    setSearchParams({ cursor });
+  }, [cursor, isFetchingNextPage, setSearchParams]);
 
   const { mutate, status: mutateStatus } = useMutation({
     mutationFn: (orderKeys: string[]) => deleteImages(orderKeys),
     onSettled: () => {
       setSelectedOrderKeys({});
       setSelectMode(false);
-      // Re-fetch posts after deletion
-      if (user?.email) {
-        fetchProfilePosts(user.email).then((data) => {
-          setPosts(data.posts);
-          setCursor(data.cursor);
-        });
-      }
+      revalidate();
     },
   });
 

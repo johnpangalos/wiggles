@@ -24,9 +24,14 @@ const mockPosts: NewPost[] = Array.from({ length: 6 }, (_, i) => ({
   orderKey: `order-${i + 1}`,
 }));
 
+const mockSetSearchParams = vi.fn();
+
 vi.mock("react-router", async (importOriginal) => ({
   ...(await importOriginal<typeof import("react-router")>()),
   useLoaderData: vi.fn(),
+  useSearchParams: vi.fn(() => [new URLSearchParams(), mockSetSearchParams]),
+  useNavigation: vi.fn(() => ({ state: "idle" })),
+  useRevalidator: vi.fn(() => ({ revalidate: vi.fn() })),
 }));
 
 vi.mock("@/hooks", () => ({
@@ -67,15 +72,6 @@ vi.mock("@auth0/auth0-react", () => ({
 import { useLoaderData } from "react-router";
 
 const mockedUseLoaderData = vi.mocked(useLoaderData);
-
-// Mock fetch to prevent actual API calls in effects
-const mockFetch = vi.fn(() =>
-  Promise.resolve({
-    ok: true,
-    json: () => Promise.resolve({ posts: [], cursor: undefined }),
-  }),
-);
-vi.stubGlobal("fetch", mockFetch);
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -149,9 +145,6 @@ describe("Profile", () => {
   });
 
   test("renders loading indicator when more pages available", async () => {
-    // Make fetch hang so the loading/hasNextPage state persists
-    mockFetch.mockImplementation(() => new Promise(() => {}));
-
     mockedUseLoaderData.mockReturnValue({
       posts: mockPosts,
       cursor: "next-cursor",
