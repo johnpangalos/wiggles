@@ -42,15 +42,11 @@ export async function profileLoader({
 }: {
   request: Request;
 }): Promise<ProfilePostsResponse> {
-  try {
-    const email = getUserEmail();
-    if (!email) return { posts: [], cursor: undefined };
-    const url = new URL(request.url);
-    const cursor = url.searchParams.get("cursor") || undefined;
-    return await fetchProfilePosts(email, cursor);
-  } catch {
-    return { posts: [], cursor: undefined };
-  }
+  const email = getUserEmail();
+  if (!email) return { posts: [], cursor: undefined };
+  const url = new URL(request.url);
+  const cursor = url.searchParams.get("cursor") || undefined;
+  return await fetchProfilePosts(email, cursor);
 }
 
 const deleteImages = async (orderKeys: string[]) => {
