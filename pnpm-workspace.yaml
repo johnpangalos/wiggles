@@ -1,9 +1,0 @@
-packages:
-  - "web"
-  - "api"
-
-onlyBuiltDependencies:
-  - browser-tabs-lock
-  - esbuild
-  - sharp
-  - workerd

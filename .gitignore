@@ -82,7 +82,10 @@ scripts
 
 .agents
 skills-lock.json
-api/.wrangler
+.wrangler
+
+# React Router generated types
+.react-router/
 
 # Vitest screenshot attachments (hashed blobs)
 .vitest-attachments/

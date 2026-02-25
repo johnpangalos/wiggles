@@ -1,0 +1,26 @@
+{
+  "name": "wiggles",
+  "compatibility_date": "2024-09-23",
+  "account_id": "e5933c765c57d2f3a58d86973c88362c",
+  // AUTH0_CLIENT_ID and AUTH0_CLIENT_SECRET must be set via `wrangler secret` or .dev.vars
+  // SESSION_SECRET must also be set as a secret
+  "vars": {
+    "AUTH0_DOMAIN": "dev-zeu8o0dkwj1gdp7c.eu.auth0.com",
+    "AUTH0_AUDIENCE": "https://wiggle-room.xyz",
+    "ENV": "production",
+  },
+  "kv_namespaces": [
+    {
+      "binding": "WIGGLES",
+      "id": "a6c8694133f14020808088b6c53300a8",
+      "preview_id": "a6c8694133f14020808088b6c53300a8",
+    },
+  ],
+  "r2_buckets": [
+    { "binding": "IMAGES_BUCKET", "bucket_name": "wiggles-images" },
+  ],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+  },
+}

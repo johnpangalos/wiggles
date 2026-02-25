@@ -4,10 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Wiggles is a full-stack image sharing PWA. It's a pnpm monorepo with two packages:
+Wiggles is a full-stack image sharing PWA built with React Router v7 framework mode on Cloudflare Workers.
 
-- **`/api`** — Cloudflare Workers backend using Hono, with KV for storage and Cloudflare Images for media
-- **`/web`** — React 18 frontend using Vite, TailwindCSS, and React Router v6
+- **`/app`** — React Router v7 application (routes, components, hooks, server-side logic)
+- **`/workers`** — Cloudflare Workers entry point
+- **`/public`** — Static assets (icons, manifest, service worker)
 
 ## Commands
 
@@ -15,56 +16,58 @@ Wiggles is a full-stack image sharing PWA. It's a pnpm monorepo with two package
 
 ```bash
 pnpm install                    # install all dependencies
-pnpm --filter web dev           # start frontend dev server (Vite)
-pnpm --filter api dev           # start API dev server (wrangler dev --remote)
+pnpm dev                        # start dev server (react-router dev + workerd)
 ```
 
 ### Build & Type Check
 
 ```bash
-pnpm --filter web build         # production build of frontend
-pnpm run -r type-check          # typecheck all packages
+pnpm build                      # production build
+pnpm type-check                 # react-router typegen + tsc
 ```
 
 ### Lint
 
 ```bash
-pnpm run -r lint                # lint all packages
+pnpm lint                       # lint app/ directory
 ```
 
-### Test (web only)
+### Test
 
 ```bash
-pnpm --filter web test          # run tests once (Vitest + Playwright browser)
-pnpm --filter web test:watch    # watch mode
-pnpm --filter web test:update   # update snapshots
+pnpm test                       # run tests once (Vitest + Playwright browser)
+pnpm test:watch                 # watch mode
+pnpm test:update                # update snapshots
 ```
 
 ## Architecture
 
-### Frontend (`/web/src`)
+### App (`/app`)
 
-- **Routing:** React Router v6 — routes: `/feed`, `/login`, `/upload`, `/profile`
-- **Server state:** TanStack React Query v4 with infinite scroll pagination
+- **Framework:** React Router v7 framework mode with SSR on Cloudflare Workers
+- **Routing:** File-based routes in `app/routes/` — `/feed`, `/login`, `/upload`, `/profile`
+- **Server state:** TanStack React Query v5 with infinite scroll pagination
 - **Local state:** Zustand (image upload store)
-- **Auth:** Google OAuth ID tokens stored in localStorage, validated via `RequireAuth` wrapper
-- **Styling:** TailwindCSS with custom PWA standalone variant
-- **Path alias:** `@/` maps to `./src`
-- **Entry:** `index.tsx` → `App.tsx`
+- **Auth:** Auth0 OAuth code flow with server-side cookie sessions
+- **Styling:** TailwindCSS v4 with custom PWA standalone variant
+- **Path alias:** `~/` maps to `./app`
+- **Entry:** `workers/app.ts` → `app/root.tsx`
 
-### Backend (`/api/src`)
+### Server-side (`/app/lib`)
 
-- **Framework:** Hono with middleware pattern (auth, sentry)
 - **Storage:** Cloudflare KV with key patterns: `account-{email}`, `post-feed-{ts}`, `post-account-{email}-{ts}`
-- **Images:** Upload to Cloudflare Images API, deliver via HMAC-signed URLs cached in KV
-- **Auth middleware:** Validates Google JWT RS256 signatures against Google's public keys
-- **Config:** `wrangler.toml` (prod), `wrangler-dev.toml` (dev)
+- **Images:** Upload to R2 bucket, serve with Cloudflare Image Resizing
+- **Auth:** Auth0 authorization code flow, cookie session via `createCookieSessionStorage`
+- **DB layer:** `app/lib/db/accounts.ts`, `app/lib/db/posts.ts`
+- **Config:** `wrangler.jsonc` (secrets via `wrangler secret` or `.dev.vars`)
 
 ### Key Patterns
 
 - Posts use cursor-based pagination (timestamp keys in KV)
 - Feed uses `@tanstack/react-virtual` for virtualized scrolling
-- Image URLs are signed with HMAC and expire after 1 day
+- Layout route `_main.tsx` acts as auth guard (redirects to /login if no session)
+- Resource routes (`api.*`) replace the old Hono API handlers
+- Image URLs are served via `/api/images/:key` with optional resize params
 
 ## Git
 
