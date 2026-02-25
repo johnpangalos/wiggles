@@ -1,23 +1,12 @@
-import {
-  BrowserRouter as Router,
-  Navigate,
-  Route,
-  Routes,
-  useNavigate,
-} from "react-router";
-import { Login, Upload, Feed, Profile } from "@/pages";
-import { MainLayout } from "./layouts/main";
+import { Outlet, RouterProvider, useNavigate } from "react-router";
 import { BreakpointProvider } from "@/hooks";
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import React, { useEffect } from "react";
 import { checkRegistration, register, unregister } from "./register-sw";
 import { setTokenAccessor } from "@/utils";
+import { router } from "@/routes";
 
-function Auth0ProviderWithNavigate({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function Auth0ProviderWithNavigate() {
   const navigate = useNavigate();
 
   return (
@@ -35,7 +24,7 @@ function Auth0ProviderWithNavigate({
       }}
     >
       <TokenAccessorSetup />
-      {children}
+      <Outlet />
     </Auth0Provider>
   );
 }
@@ -60,48 +49,13 @@ const App = () => {
   return (
     <BreakpointProvider>
       <div id="App" className="h-[100svh] overflow-hidden text-gray-800">
-        <Router>
-          <Auth0ProviderWithNavigate>
-            <Routes>
-              <Route path="/" element={<MainLayout />}>
-                <Route
-                  path="feed"
-                  element={
-                    <RequireAuth>
-                      <Feed />
-                    </RequireAuth>
-                  }
-                />
-                <Route path="login" element={<Login />} />
-
-                <Route
-                  path={"upload"}
-                  element={
-                    <RequireAuth>
-                      <Upload />
-                    </RequireAuth>
-                  }
-                />
-                <Route
-                  path="profile"
-                  element={
-                    <RequireAuth>
-                      <Profile />
-                    </RequireAuth>
-                  }
-                />
-                <Route path="/" element={<Navigate to="feed" />} />
-                <Route path="*" element={<Navigate to="feed" />} />
-              </Route>
-            </Routes>
-          </Auth0ProviderWithNavigate>
-        </Router>
+        <RouterProvider router={router} />
       </div>
     </BreakpointProvider>
   );
 };
 
-function RequireAuth({
+export function RequireAuth({
   children,
 }: {
   children: React.JSX.Element;
