@@ -19,7 +19,7 @@ jobs:
       deployments: write
       pull-requests: write
 
-    name: Cloudflare Workers Preview
+    name: Cloudflare Pages Preview
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,7 +31,10 @@ jobs:
         run: pnpm build
 
       - name: Deploy Preview
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/pages-action@1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          command: versions upload
+          accountId: e5933c765c57d2f3a58d86973c88362c
+          projectName: wiggles
+          directory: build/client
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
