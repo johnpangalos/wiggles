@@ -24,3 +24,14 @@ export async function getAuthHeaders(): Promise<
     return {};
   }
 }
+
+// User email accessor: set by Auth0Provider wrapper, used by loaders
+let _userEmail: string | undefined;
+
+export function setUserEmail(email: string | undefined): void {
+  _userEmail = email;
+}
+
+export function getUserEmail(): string | undefined {
+  return _userEmail;
+}

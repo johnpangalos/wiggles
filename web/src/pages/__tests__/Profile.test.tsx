@@ -24,14 +24,12 @@ const mockPosts: NewPost[] = Array.from({ length: 6 }, (_, i) => ({
   orderKey: `order-${i + 1}`,
 }));
 
+vi.mock("react-router", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("react-router")>()),
+  useLoaderData: vi.fn(),
+}));
+
 vi.mock("@/hooks", () => ({
-  useInfinitePosts: vi.fn(),
-  infinitePostsQueryKey: vi.fn(() => [
-    "posts",
-    "infinite",
-    30,
-    "test@example.com",
-  ]),
   useBreakpoint: vi.fn(() => "md"),
 }));
 
@@ -53,6 +51,7 @@ vi.mock("@/utils", () => ({
   getAuthHeaders: vi.fn(() =>
     Promise.resolve({ Authorization: "Bearer fake-token" }),
   ),
+  getUserEmail: vi.fn(() => "test@example.com"),
 }));
 
 vi.mock("@auth0/auth0-react", () => ({
@@ -65,9 +64,18 @@ vi.mock("@auth0/auth0-react", () => ({
   })),
 }));
 
-import { useInfinitePosts } from "@/hooks";
+import { useLoaderData } from "react-router";
 
-const mockedUseInfinitePosts = vi.mocked(useInfinitePosts);
+const mockedUseLoaderData = vi.mocked(useLoaderData);
+
+// Mock fetch to prevent actual API calls in effects
+const mockFetch = vi.fn(() =>
+  Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({ posts: [], cursor: undefined }),
+  }),
+);
+vi.stubGlobal("fetch", mockFetch);
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -94,16 +102,10 @@ function renderProfile(queryClient?: QueryClient) {
 
 describe("Profile", () => {
   test("renders profile with thumbnail grid", async () => {
-    mockedUseInfinitePosts.mockReturnValue({
-      status: "success",
-      data: {
-        pages: [{ posts: mockPosts, cursor: "" }],
-        pageParams: [],
-      },
-      isFetchingNextPage: false,
-      fetchNextPage: vi.fn(),
-      hasNextPage: false,
-    } as any);
+    mockedUseLoaderData.mockReturnValue({
+      posts: mockPosts,
+      cursor: undefined,
+    });
 
     renderProfile();
     await expect.element(page.getByText("Select")).toBeVisible();
@@ -114,16 +116,10 @@ describe("Profile", () => {
   });
 
   test("renders select mode toolbar", async () => {
-    mockedUseInfinitePosts.mockReturnValue({
-      status: "success",
-      data: {
-        pages: [{ posts: mockPosts, cursor: "" }],
-        pageParams: [],
-      },
-      isFetchingNextPage: false,
-      fetchNextPage: vi.fn(),
-      hasNextPage: false,
-    } as any);
+    mockedUseLoaderData.mockReturnValue({
+      posts: mockPosts,
+      cursor: undefined,
+    });
 
     renderProfile();
     await expect.element(page.getByText("Select")).toBeVisible();
@@ -140,16 +136,10 @@ describe("Profile", () => {
   });
 
   test("renders empty profile with no posts", async () => {
-    mockedUseInfinitePosts.mockReturnValue({
-      status: "success",
-      data: {
-        pages: [{ posts: [], cursor: "" }],
-        pageParams: [],
-      },
-      isFetchingNextPage: false,
-      fetchNextPage: vi.fn(),
-      hasNextPage: false,
-    } as any);
+    mockedUseLoaderData.mockReturnValue({
+      posts: [],
+      cursor: undefined,
+    });
 
     renderProfile();
     await expect.element(page.getByText("Select")).toBeVisible();
@@ -158,18 +148,19 @@ describe("Profile", () => {
       .toMatchScreenshot("profile-empty");
   });
 
-  test("renders loading state", async () => {
-    mockedUseInfinitePosts.mockReturnValue({
-      status: "pending",
-      data: undefined,
-      isFetchingNextPage: false,
-      fetchNextPage: vi.fn(),
-      hasNextPage: false,
-    } as any);
+  test("renders loading indicator when more pages available", async () => {
+    // Make fetch hang so the loading/hasNextPage state persists
+    mockFetch.mockImplementation(() => new Promise(() => {}));
+
+    mockedUseLoaderData.mockReturnValue({
+      posts: mockPosts,
+      cursor: "next-cursor",
+    });
 
     renderProfile();
+    await expect.element(page.getByText("Select")).toBeVisible();
     await expect
       .element(page.getByTestId("profile-root"))
-      .toMatchScreenshot("profile-loading");
+      .toMatchScreenshot("profile-with-cursor");
   });
 });
