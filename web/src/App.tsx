@@ -3,7 +3,7 @@ import { BreakpointProvider } from "@/hooks";
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import React, { useEffect } from "react";
 import { checkRegistration, register, unregister } from "./register-sw";
-import { setTokenAccessor } from "@/utils";
+import { setTokenAccessor, setUserEmail } from "@/utils";
 import { router } from "@/routes";
 
 export function Auth0ProviderWithNavigate() {
@@ -30,10 +30,13 @@ export function Auth0ProviderWithNavigate() {
 }
 
 function TokenAccessorSetup() {
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently, user } = useAuth0();
   useEffect(() => {
     setTokenAccessor(getAccessTokenSilently);
   }, [getAccessTokenSilently]);
+  useEffect(() => {
+    setUserEmail(user?.email);
+  }, [user?.email]);
   return null;
 }
 

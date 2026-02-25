@@ -1,16 +1,46 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { useLoaderData } from "react-router";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { NewPost } from "@/types";
-import { Button, Image, Loading, Post } from "@/components";
-import {
-  useInfinitePosts,
-  infinitePostsQueryKey,
-  useBreakpoint,
-  UseInfinitePostsOptions,
-} from "@/hooks";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { getAuthHeaders } from "@/utils";
+import { Button, Image, Post } from "@/components";
+import { useBreakpoint } from "@/hooks";
+import { useMutation } from "@tanstack/react-query";
+import { getAuthHeaders, getUserEmail } from "@/utils";
 import { useAuth0 } from "@auth0/auth0-react";
+
+export type ProfilePostsResponse = { posts: NewPost[]; cursor?: string };
+
+async function fetchProfilePosts(
+  email: string,
+  cursor?: string,
+  limit = 30,
+): Promise<ProfilePostsResponse> {
+  const headers = await getAuthHeaders();
+  const params = new URLSearchParams({ limit: String(limit) });
+  if (cursor) params.set("cursor", cursor);
+  params.set("email", email);
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/posts?${params}`, {
+    headers,
+  });
+  if (!res.ok) return { posts: [], cursor: undefined };
+  return res.json();
+}
+
+export async function profileLoader(): Promise<ProfilePostsResponse> {
+  try {
+    const email = getUserEmail();
+    if (!email) return { posts: [], cursor: undefined };
+    return await fetchProfilePosts(email);
+  } catch {
+    return { posts: [], cursor: undefined };
+  }
+}
 
 const deleteImages = async (orderKeys: string[]) => {
   const res = await fetch(`${import.meta.env.VITE_API_URL}/bulk-delete`, {
@@ -22,14 +52,15 @@ const deleteImages = async (orderKeys: string[]) => {
   return await res.json();
 };
 
-const queryKeyConfig = (email?: string): UseInfinitePostsOptions => ({
-  limit: 30,
-  email,
-  enabled: !!email,
-});
-
 export function Profile() {
   const { logout, user } = useAuth0();
+  const initialData = useLoaderData() as ProfilePostsResponse;
+  const [posts, setPosts] = useState<NewPost[]>(initialData.posts);
+  const [cursor, setCursor] = useState<string | undefined>(initialData.cursor);
+  const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
+  const fetchingRef = useRef(false);
+  const hasNextPage = !!cursor;
+
   const [selectMode, setSelectMode] = useState(false);
   const [selectedOrderKeys, setSelectedOrderKeys] = useState<
     Record<string, NewPost>
@@ -39,33 +70,54 @@ export function Profile() {
   };
   const parent = React.useRef<HTMLDivElement>(null);
 
-  const { status, data, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    useInfinitePosts(queryKeyConfig(user?.email));
+  // Re-fetch if loader returned empty (e.g., auth wasn't ready during loader)
+  useEffect(() => {
+    if (initialData.posts.length === 0 && user?.email) {
+      fetchProfilePosts(user.email).then((data) => {
+        setPosts(data.posts);
+        setCursor(data.cursor);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const queryClient = useQueryClient();
-  const queryKey = infinitePostsQueryKey(queryKeyConfig(user?.email));
+  const fetchNextPage = useCallback(async () => {
+    if (fetchingRef.current || !cursor || !user?.email) return;
+    fetchingRef.current = true;
+    setIsFetchingNextPage(true);
+    try {
+      const data = await fetchProfilePosts(user.email, cursor);
+      setPosts((prev) => [...prev, ...data.posts]);
+      setCursor(data.cursor);
+    } finally {
+      fetchingRef.current = false;
+      setIsFetchingNextPage(false);
+    }
+  }, [cursor, user?.email]);
 
   const { mutate, status: mutateStatus } = useMutation({
     mutationFn: (orderKeys: string[]) => deleteImages(orderKeys),
     onSettled: () => {
       setSelectedOrderKeys({});
       setSelectMode(false);
-      queryClient.invalidateQueries({ queryKey });
+      // Re-fetch posts after deletion
+      if (user?.email) {
+        fetchProfilePosts(user.email).then((data) => {
+          setPosts(data.posts);
+          setCursor(data.cursor);
+        });
+      }
     },
   });
 
-  const postRows = data
-    ? data.pages
-        .flatMap((posts) => posts.posts)
-        .reduce<NewPost[][]>((acc, curr, index) => {
-          if (index % 3 === 0) {
-            acc.push([curr]);
-            return acc;
-          }
-          acc[acc.length - 1].push(curr);
-          return acc;
-        }, [])
-    : [];
+  const postRows = posts.reduce<NewPost[][]>((acc, curr, index) => {
+    if (index % 3 === 0) {
+      acc.push([curr]);
+      return acc;
+    }
+    acc[acc.length - 1].push(curr);
+    return acc;
+  }, []);
 
   const breakpoint = useBreakpoint();
   const rowVirtualizer = useVirtualizer({
@@ -85,7 +137,7 @@ export function Profile() {
     handleResize();
     return () => window.removeEventListener("resize", handleResize);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
+  }, []);
 
   useEffect(
     () => {
@@ -113,7 +165,6 @@ export function Profile() {
     ],
   );
 
-  if (status === "pending") return <Loading />;
   return (
     <div className="h-full px-6 flex flex-col">
       <div>
