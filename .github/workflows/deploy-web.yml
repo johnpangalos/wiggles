@@ -1,15 +1,12 @@
-# Temporarily disabled while updating technologies in the stack
-# name: Deploy Web
-# on:
-#   push:
-#     branches:
-#       - main
-#     paths:
-#       - 'web/**'
-#       - '.github/workflows/deploy-web.yml'
-#   workflow_dispatch:
-name: Deploy Web (disabled)
-on: workflow_dispatch
+name: Deploy Web
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "web/**"
+      - ".github/workflows/deploy-web.yml"
+  workflow_dispatch:
 
 jobs:
   publish:
