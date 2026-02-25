@@ -1,5 +1,6 @@
 import { createBrowserRouter, Navigate } from "react-router";
 import { Login, Upload, Feed, Profile } from "@/pages";
+import { feedLoader } from "@/pages/Feed";
 import { MainLayout } from "@/layouts/main";
 import { Auth0ProviderWithNavigate, RequireAuth } from "@/App";
 
@@ -13,6 +14,7 @@ export const router = createBrowserRouter([
         children: [
           {
             path: "feed",
+            loader: feedLoader,
             element: (
               <RequireAuth>
                 <Feed />
