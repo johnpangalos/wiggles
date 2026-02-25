@@ -102,6 +102,12 @@ export async function GetImage(c: WigglesContext) {
   const r2Headers = new Headers();
   object.writeHttpMetadata(r2Headers);
 
+  // Ensure Content-Type is always set so Cloudflare Image Resizing (cf.image)
+  // can identify the response as an image on its origin sub-request.
+  if (!r2Headers.has("Content-Type")) {
+    r2Headers.set("Content-Type", contentTypeFromKey(key));
+  }
+
   console.log("[GetImage] R2 origin response", {
     key,
     httpMetadata: object.httpMetadata,
