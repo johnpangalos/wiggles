@@ -5,11 +5,11 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useLoaderData } from "react-router";
+import { useLoaderData, useFetcher } from "react-router";
+import type { ActionFunctionArgs } from "react-router";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { NewPost } from "@/types";
 import { Button, Image, Post } from "@/components";
-import { useMutation } from "@tanstack/react-query";
 import { getAuthHeaders, getUserEmail } from "@/utils";
 import { useAuth0 } from "@auth0/auth0-react";
 
@@ -37,7 +37,10 @@ export async function profileLoader(): Promise<ProfilePostsResponse> {
   return await fetchProfilePosts(email);
 }
 
-const deleteImages = async (orderKeys: string[]) => {
+export async function profileAction({ request }: ActionFunctionArgs) {
+  const formData = await request.formData();
+  const orderKeys = formData.getAll("orderKey") as string[];
+
   const res = await fetch(`${import.meta.env.VITE_API_URL}/bulk-delete`, {
     method: "POST",
     body: JSON.stringify(orderKeys),
@@ -45,7 +48,7 @@ const deleteImages = async (orderKeys: string[]) => {
   });
   if (res.status > 300) throw new Error("delete failed");
   return await res.json();
-};
+}
 
 export function Profile() {
   const { logout, user } = useAuth0();
@@ -79,19 +82,19 @@ export function Profile() {
     }
   }, [cursor, user?.email]);
 
-  const { mutate, status: mutateStatus } = useMutation({
-    mutationFn: (orderKeys: string[]) => deleteImages(orderKeys),
-    onSettled: () => {
+  const fetcher = useFetcher();
+
+  // After the action completes, React Router revalidates the loader automatically.
+  // Sync the fresh loader data into local state and reset selection.
+  useEffect(() => {
+    if (fetcher.state === "idle" && fetcher.data) {
+      setPosts(initialData.posts);
+      setCursor(initialData.cursor);
       setSelectedOrderKeys({});
       setSelectMode(false);
-      if (user?.email) {
-        fetchProfilePosts(user.email).then((data) => {
-          setPosts(data.posts);
-          setCursor(data.cursor);
-        });
-      }
-    },
-  });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetcher.state, fetcher.data]);
 
   const postRows = posts.reduce<NewPost[][]>((acc, curr, index) => {
     if (index % 3 === 0) {
@@ -151,7 +154,7 @@ export function Profile() {
         <div className="m-auto md:max-w-xl py-4 h-16">
           {selectMode ? (
             <>
-              {mutateStatus === "pending" ? (
+              {fetcher.state !== "idle" ? (
                 "Loading..."
               ) : (
                 <div className="flex items-center">
@@ -167,7 +170,11 @@ export function Profile() {
                   <div className="space-x-2">
                     <Button
                       onClick={() => {
-                        mutate(Object.keys(selectedOrderKeys));
+                        const formData = new FormData();
+                        Object.keys(selectedOrderKeys).forEach((key) =>
+                          formData.append("orderKey", key),
+                        );
+                        fetcher.submit(formData, { method: "POST" });
                       }}
                       variant="primary"
                     >

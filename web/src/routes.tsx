@@ -1,7 +1,7 @@
 import { createBrowserRouter, Navigate, useRouteError } from "react-router";
 import { Login, Upload, Feed, Profile } from "@/pages";
 import { feedLoader } from "@/pages/Feed";
-import { profileLoader } from "@/pages/Profile";
+import { profileAction, profileLoader } from "@/pages/Profile";
 import { MainLayout } from "@/layouts/main";
 import { Auth0ProviderWithNavigate, RequireAuth } from "@/App";
 
@@ -51,6 +51,7 @@ export const router = createBrowserRouter([
           {
             path: "profile",
             loader: profileLoader,
+            action: profileAction,
             errorElement: <ProfileErrorBoundary />,
             element: (
               <RequireAuth>

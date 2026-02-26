@@ -2,7 +2,9 @@ import { render } from "vitest-browser-react";
 import { page } from "vitest/browser";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import { Profile } from "../Profile";
+import { createMemoryRouter, RouterProvider } from "react-router";
+import { Profile, profileAction } from "../Profile";
+import type { ProfilePostsResponse } from "../Profile";
 import type { NewPost } from "@/types";
 import placeholderUrl from "./fixtures/placeholder.png";
 
@@ -22,11 +24,6 @@ const mockPosts: NewPost[] = Array.from({ length: 6 }, (_, i) => ({
   accountId: "account-1",
   r2Key: `cf-img-${i + 1}`,
   orderKey: `order-${i + 1}`,
-}));
-
-vi.mock("react-router", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("react-router")>()),
-  useLoaderData: vi.fn(),
 }));
 
 vi.mock("@tanstack/react-virtual", () => ({
@@ -61,10 +58,6 @@ vi.mock("@auth0/auth0-react", () => ({
   })),
 }));
 
-import { useLoaderData } from "react-router";
-
-const mockedUseLoaderData = vi.mocked(useLoaderData);
-
 // Mock fetch to prevent actual API calls in effects
 const mockFetch = vi.fn(() =>
   Promise.resolve({
@@ -86,25 +79,36 @@ function createQueryClient() {
   });
 }
 
-function renderProfile(queryClient?: QueryClient) {
+function renderProfile(
+  data: ProfilePostsResponse = { posts: [], cursor: undefined },
+  queryClient?: QueryClient,
+) {
   const qc = queryClient ?? createQueryClient();
+  const router = createMemoryRouter(
+    [
+      {
+        path: "/profile",
+        loader: () => data,
+        action: profileAction,
+        element: (
+          <div data-testid="profile-root" style={{ minHeight: 1 }}>
+            <Profile />
+          </div>
+        ),
+      },
+    ],
+    { initialEntries: ["/profile"] },
+  );
   return render(
     <QueryClientProvider client={qc}>
-      <div data-testid="profile-root" style={{ minHeight: 1 }}>
-        <Profile />
-      </div>
+      <RouterProvider router={router} />
     </QueryClientProvider>,
   );
 }
 
 describe("Profile", () => {
   test("renders profile with thumbnail grid", async () => {
-    mockedUseLoaderData.mockReturnValue({
-      posts: mockPosts,
-      cursor: undefined,
-    });
-
-    renderProfile();
+    renderProfile({ posts: mockPosts, cursor: undefined });
     await expect.element(page.getByText("Select")).toBeVisible();
     await expect.element(page.getByText("Logout")).toBeVisible();
     await expect
@@ -113,12 +117,7 @@ describe("Profile", () => {
   });
 
   test("renders select mode toolbar", async () => {
-    mockedUseLoaderData.mockReturnValue({
-      posts: mockPosts,
-      cursor: undefined,
-    });
-
-    renderProfile();
+    renderProfile({ posts: mockPosts, cursor: undefined });
     await expect.element(page.getByText("Select")).toBeVisible();
     await page.getByText("Select").click();
     await expect
@@ -133,12 +132,7 @@ describe("Profile", () => {
   });
 
   test("renders empty profile with no posts", async () => {
-    mockedUseLoaderData.mockReturnValue({
-      posts: [],
-      cursor: undefined,
-    });
-
-    renderProfile();
+    renderProfile({ posts: [], cursor: undefined });
     await expect.element(page.getByText("Select")).toBeVisible();
     await expect
       .element(page.getByTestId("profile-root"))
@@ -149,12 +143,7 @@ describe("Profile", () => {
     // Make fetch hang so the loading/hasNextPage state persists
     mockFetch.mockImplementation(() => new Promise(() => {}));
 
-    mockedUseLoaderData.mockReturnValue({
-      posts: mockPosts,
-      cursor: "next-cursor",
-    });
-
-    renderProfile();
+    renderProfile({ posts: mockPosts, cursor: "next-cursor" });
     await expect.element(page.getByText("Select")).toBeVisible();
     await expect
       .element(page.getByTestId("profile-root"))
