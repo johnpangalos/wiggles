@@ -1,18 +1,29 @@
-import { FC, useMemo } from "react";
+import { FC, useEffect, useMemo } from "react";
 import { Button } from "@/components";
 import { Loading } from "@/components";
 
 import { Result, useImageUpload } from "@/hooks";
-import { useNavigate } from "react-router";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate, useFetcher } from "react-router";
+import type { ActionFunctionArgs } from "react-router";
 import { getAuthHeaders } from "@/utils";
+
+export async function uploadAction({ request }: ActionFunctionArgs) {
+  const formData = await request.formData();
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/upload`, {
+    method: "POST",
+    body: formData,
+    headers: { ...(await getAuthHeaders()) },
+  });
+  if (res.status > 300) throw new Error("upload failed");
+  return await res.json();
+}
 
 export const Upload = () => {
   const urls = useImageUpload((state) => state.urls);
   const resetImageUpload = useImageUpload((state) => state.reset);
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const files = useImageUpload((state) => state.files);
+  const fetcher = useFetcher();
 
   const formData = useMemo(() => {
     const form = new FormData();
@@ -22,26 +33,15 @@ export const Upload = () => {
     return form;
   }, [files]);
 
-  const uploadImagesMutation = useMutation({
-    mutationFn: async (formData: FormData) => {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/upload`, {
-        method: "POST",
-        body: formData,
-        headers: { ...(await getAuthHeaders()) },
-      });
-      if (res.status > 300) throw new Error("upload failed");
-      return await res.json();
-    },
-    onSuccess: async () => {
+  useEffect(() => {
+    if (fetcher.state === "idle" && fetcher.data) {
       resetImageUpload();
-      await queryClient.invalidateQueries({
-        queryKey: ["posts"],
-      });
       navigate(-1);
-    },
-  });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetcher.state, fetcher.data]);
 
-  if (uploadImagesMutation.status === "pending") return <Loading />;
+  if (fetcher.state !== "idle") return <Loading />;
 
   return (
     <>
@@ -71,7 +71,10 @@ export const Upload = () => {
             </Button>
             <Button
               onClick={() => {
-                uploadImagesMutation.mutate(formData);
+                fetcher.submit(formData, {
+                  method: "POST",
+                  encType: "multipart/form-data",
+                });
               }}
               variant="primary"
             >
