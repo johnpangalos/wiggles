@@ -1,6 +1,5 @@
 import { render } from "vitest-browser-react";
 import { page } from "vitest/browser";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import { createMemoryRouter, RouterProvider } from "react-router";
 import { Profile, profileAction } from "../Profile";
@@ -71,19 +70,9 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
-function createQueryClient() {
-  return new QueryClient({
-    defaultOptions: {
-      queries: { retry: false },
-    },
-  });
-}
-
 function renderProfile(
   data: ProfilePostsResponse = { posts: [], cursor: undefined },
-  queryClient?: QueryClient,
 ) {
-  const qc = queryClient ?? createQueryClient();
   const router = createMemoryRouter(
     [
       {
@@ -99,11 +88,7 @@ function renderProfile(
     ],
     { initialEntries: ["/profile"] },
   );
-  return render(
-    <QueryClientProvider client={qc}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>,
-  );
+  return render(<RouterProvider router={router} />);
 }
 
 describe("Profile", () => {
