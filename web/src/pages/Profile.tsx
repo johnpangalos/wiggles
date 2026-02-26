@@ -9,7 +9,6 @@ import { useLoaderData } from "react-router";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { NewPost } from "@/types";
 import { Button, Image, Post } from "@/components";
-import { useBreakpoint } from "@/hooks";
 import { useMutation } from "@tanstack/react-query";
 import { getAuthHeaders, getUserEmail } from "@/utils";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -103,13 +102,10 @@ export function Profile() {
     return acc;
   }, []);
 
-  const breakpoint = useBreakpoint();
   const rowVirtualizer = useVirtualizer({
     count: hasNextPage ? postRows.length + 1 : postRows.length,
     getScrollElement: () => parent.current,
-    estimateSize: () => (["xxs", "xs", "sm"].includes(breakpoint) ? 150 : 200),
-    measureElement: () =>
-      ["xxs", "xs", "sm"].includes(breakpoint) ? 150 : 200,
+    estimateSize: () => 150,
     overscan: 5,
   });
 
@@ -219,10 +215,11 @@ export function Profile() {
 
               return (
                 <div
-                  className="absolute top-0 space-x-3 flex md:max-w-xl w-full"
+                  ref={rowVirtualizer.measureElement}
+                  data-index={virtualItem.index}
+                  className="absolute top-0 space-x-3 flex md:max-w-xl w-full h-[150px] md:h-[200px]"
                   key={`${virtualItem.key}`}
                   style={{
-                    height: `${virtualItem.size}px`,
                     transform: `translateY(${virtualItem.start}px)`,
                   }}
                 >
@@ -230,10 +227,7 @@ export function Profile() {
                     return (
                       <div
                         key={`${virtualItem.key}-${index}`}
-                        className="w-1/3"
-                        style={{
-                          height: `${virtualItem.size}px`,
-                        }}
+                        className="w-1/3 h-full"
                       >
                         <Post
                           id={post.id}

@@ -1,5 +1,4 @@
 import { Outlet, RouterProvider, useNavigate } from "react-router";
-import { BreakpointProvider } from "@/hooks";
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import React, { useEffect } from "react";
 import { checkRegistration, register, unregister } from "./register-sw";
@@ -50,11 +49,9 @@ const App = () => {
     registerSW();
   }, []);
   return (
-    <BreakpointProvider>
-      <div id="App" className="h-[100svh] overflow-hidden text-gray-800">
-        <RouterProvider router={router} />
-      </div>
-    </BreakpointProvider>
+    <div id="App" className="h-[100svh] overflow-hidden text-gray-800">
+      <RouterProvider router={router} />
+    </div>
   );
 };
 
