@@ -29,10 +29,6 @@ vi.mock("react-router", async (importOriginal) => ({
   useLoaderData: vi.fn(),
 }));
 
-vi.mock("@/hooks", () => ({
-  useBreakpoint: vi.fn(() => "md"),
-}));
-
 vi.mock("@tanstack/react-virtual", () => ({
   useVirtualizer: vi.fn(({ count }: { count: number }) => ({
     getTotalSize: () => count * 200,
@@ -44,6 +40,7 @@ vi.mock("@tanstack/react-virtual", () => ({
         start: i * 200,
       })),
     measure: vi.fn(),
+    measureElement: vi.fn(),
   })),
 }));
 
