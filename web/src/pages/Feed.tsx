@@ -37,15 +37,26 @@ export const Feed = () => {
   const hasNextPage = !!cursor;
   const parent = useRef<HTMLDivElement>(null);
 
-  // Re-fetch if loader returned empty (e.g., auth wasn't ready during loader)
+  // Sync loader data into local state whenever it changes (e.g. revalidation)
   useEffect(() => {
-    if (initialData.posts.length === 0) {
-      fetchPosts().then((data) => {
+    setPosts(initialData.posts);
+    setCursor(initialData.cursor);
+  }, [initialData]);
+
+  // Background refetch to handle KV list eventual consistency.
+  // The loader data is shown immediately; this catches recently-written posts
+  // that may not yet appear in KV list results.
+  useEffect(() => {
+    let cancelled = false;
+    fetchPosts().then((data) => {
+      if (!cancelled && data.posts.length > 0) {
         setPosts(data.posts);
         setCursor(data.cursor);
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const fetchNextPage = useCallback(async () => {

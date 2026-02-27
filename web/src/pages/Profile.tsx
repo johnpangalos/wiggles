@@ -63,6 +63,7 @@ export function Profile() {
   const [selectedOrderKeys, setSelectedOrderKeys] = useState<
     Record<string, NewPost>
   >({});
+  const deletedKeysRef = useRef<Set<string>>(new Set());
   const signOut = () => {
     logout({ logoutParams: { returnTo: window.location.origin + "/login" } });
   };
@@ -84,17 +85,21 @@ export function Profile() {
 
   const fetcher = useFetcher();
 
-  // After the action completes, React Router revalidates the loader automatically.
-  // Sync the fresh loader data into local state and reset selection.
+  // Sync fresh loader data into local state after revalidation completes.
+  // Filter out any posts that were optimistically deleted in case KV list
+  // hasn't fully propagated the deletion yet.
   useEffect(() => {
     if (fetcher.state === "idle" && fetcher.data) {
-      setPosts(initialData.posts);
+      const deleted = deletedKeysRef.current;
+      const freshPosts =
+        deleted.size > 0
+          ? initialData.posts.filter((p) => !deleted.has(p.orderKey))
+          : initialData.posts;
+      setPosts(freshPosts);
       setCursor(initialData.cursor);
-      setSelectedOrderKeys({});
-      setSelectMode(false);
+      deletedKeysRef.current = new Set();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetcher.state, fetcher.data]);
+  }, [fetcher.state, fetcher.data, initialData]);
 
   const postRows = posts.reduce<NewPost[][]>((acc, curr, index) => {
     if (index % 3 === 0) {
@@ -171,9 +176,19 @@ export function Profile() {
                     <Button
                       onClick={() => {
                         const formData = new FormData();
-                        Object.keys(selectedOrderKeys).forEach((key) =>
+                        const keysToDelete = Object.keys(selectedOrderKeys);
+                        keysToDelete.forEach((key) =>
                           formData.append("orderKey", key),
                         );
+                        // Optimistic delete: remove posts from UI immediately
+                        deletedKeysRef.current = new Set(keysToDelete);
+                        setPosts((prev) =>
+                          prev.filter(
+                            (p) => selectedOrderKeys[p.orderKey] === undefined,
+                          ),
+                        );
+                        setSelectedOrderKeys({});
+                        setSelectMode(false);
                         fetcher.submit(formData, { method: "POST" });
                       }}
                       variant="primary"
