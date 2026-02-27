@@ -41,6 +41,16 @@ export async function populatePost(
   };
 }
 
+export async function readPost(
+  c: WigglesContext,
+  orderKey: string,
+): Promise<PostResponse | null> {
+  const feedKey = `post-feed-${orderKey}`;
+  const res = await c.env.WIGGLES.getWithMetadata<Post>(feedKey);
+  if (res.metadata === null) return null;
+  return populatePost(c, res.metadata);
+}
+
 type ReadPostsOptions = {
   limit: number;
   cursor?: string;

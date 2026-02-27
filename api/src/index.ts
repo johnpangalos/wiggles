@@ -1,7 +1,14 @@
 import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { cors } from "hono/cors";
-import { GetMe, GetPosts, PostUpload, DeletePosts, GetImage } from "@/handlers";
+import {
+  GetMe,
+  GetPost,
+  GetPosts,
+  PostUpload,
+  DeletePosts,
+  GetImage,
+} from "@/handlers";
 import { WigglesEnv } from "@/types";
 import { auth } from "@/middleware";
 
@@ -36,6 +43,7 @@ app.get("/api/images/:key", GetImage);
 app.use("/api/*", auth());
 app.use("/api/*", logger());
 
+app.get("/api/posts/:orderKey", GetPost);
 app.get("/api/posts", GetPosts);
 app.get("/api/me", GetMe);
 

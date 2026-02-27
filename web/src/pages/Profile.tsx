@@ -1,11 +1,4 @@
-import React, {
-  Fragment,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { useLoaderData, useFetcher } from "react-router";
 import type { ActionFunctionArgs } from "react-router";
 import { useVirtualizer } from "@tanstack/react-virtual";
@@ -104,19 +97,7 @@ export function Profile() {
   }, [fetcher.state, fetcher.data, initialData]);
 
   // Poll with backoff when any visible post is still pending (image uploading).
-  const refetchProfile = useMemo(
-    () => async () => {
-      const email = user?.email;
-      if (!email) return posts;
-      const data = await fetchProfilePosts(email);
-      return data.posts;
-    },
-    [user?.email, posts],
-  );
-  const onProfilePollUpdate = useCallback((fresh: NewPost[]) => {
-    setPosts(fresh);
-  }, []);
-  usePendingPoll(posts, refetchProfile, onProfilePollUpdate);
+  usePendingPoll(posts, setPosts);
 
   const postRows = posts.reduce<NewPost[][]>((acc, curr, index) => {
     if (index % 3 === 0) {
