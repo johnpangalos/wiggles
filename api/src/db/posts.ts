@@ -130,8 +130,10 @@ export async function deletePosts(c: WigglesContext, orderKeys: string[]) {
     r2Keys: posts.map((p) => p.r2Key),
   });
 
-  await Promise.all(keysToDelete.map((key) => c.env.WIGGLES.delete(key)));
-
+  // Delete R2 images first, then remove KV entries so posts disappear from
+  // listings only after the underlying images are already gone.
   const r2Keys = posts.map((p) => p.r2Key);
   await c.env.IMAGES_BUCKET.delete(r2Keys);
+
+  await Promise.all(keysToDelete.map((key) => c.env.WIGGLES.delete(key)));
 }
