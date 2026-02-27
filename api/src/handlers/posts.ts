@@ -33,31 +33,39 @@ export async function PostUpload(c: WigglesContext) {
     const files = await parseFormDataRequest(c.req);
     if (!files) return c.body(null, 204);
 
-    const r2Keys = await Promise.all(
-      files.map(async ({ file, key }) => {
-        const data = await file.arrayBuffer();
-        await c.env.IMAGES_BUCKET.put(key, data, {
-          httpMetadata: { contentType: file.type },
-        });
-        return key;
-      }),
-    );
-
     const timestamp = +new Date();
     const { payload } = c.get("JWT");
     const email = getEmailFromPayload(payload);
 
     await ensureAccount(c, payload);
 
-    const postList: Post[] = r2Keys.map((r2Key, idx) => ({
+    // 1. Create KV entries immediately with pending flag so posts appear in
+    //    feeds right away while images are still uploading.
+    const postList: Post[] = files.map(({ key }, idx) => ({
       id: crypto.randomUUID(),
       contentType: "image/*",
-      r2Key,
+      r2Key: key,
       timestamp: (timestamp + idx).toString(),
       accountId: email,
+      pending: true,
     }));
 
     await createPosts(c, postList);
+
+    // 2. Upload images to R2.
+    await Promise.all(
+      files.map(async ({ file, key }) => {
+        const data = await file.arrayBuffer();
+        await c.env.IMAGES_BUCKET.put(key, data, {
+          httpMetadata: { contentType: file.type },
+        });
+      }),
+    );
+
+    // 3. Update KV entries to clear the pending flag.
+    const readyPosts: Post[] = postList.map((p) => ({ ...p, pending: false }));
+    await createPosts(c, readyPosts);
+
     return c.json({ message: "success" });
   } catch (e) {
     console.error({

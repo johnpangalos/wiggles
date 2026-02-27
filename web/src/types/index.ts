@@ -54,4 +54,5 @@ export type NewPost = {
   accountId: string;
   r2Key: string;
   orderKey: string;
+  pending?: boolean;
 };

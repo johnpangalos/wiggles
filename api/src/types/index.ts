@@ -14,6 +14,7 @@ export type Post = {
   timestamp: string;
   accountId: string;
   r2Key: string;
+  pending?: boolean;
 };
 
 export type WigglesEnv = {

@@ -1,9 +1,17 @@
-import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useLoaderData } from "react-router";
 import { useVirtualizer } from "@tanstack/react-virtual";
 
 import { Post } from "@/components";
 import { Image } from "@/components";
+import { usePendingPoll } from "@/hooks";
 import { NewPost } from "@/types";
 import { getAuthHeaders } from "@/utils";
 
@@ -58,6 +66,19 @@ export const Feed = () => {
       cancelled = true;
     };
   }, []);
+
+  // Poll with backoff when any visible post is still pending (image uploading).
+  const refetchFeed = useMemo(
+    () => async () => {
+      const data = await fetchPosts();
+      return data.posts;
+    },
+    [],
+  );
+  const onPollUpdate = useCallback((fresh: NewPost[]) => {
+    setPosts(fresh);
+  }, []);
+  usePendingPoll(posts, refetchFeed, onPollUpdate);
 
   const fetchNextPage = useCallback(async () => {
     if (fetchingRef.current || !cursor) return;

@@ -2,6 +2,7 @@ import React, {
   Fragment,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -10,6 +11,7 @@ import type { ActionFunctionArgs } from "react-router";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { NewPost } from "@/types";
 import { Button, Image, Post } from "@/components";
+import { usePendingPoll } from "@/hooks";
 import { getAuthHeaders, getUserEmail } from "@/utils";
 import { useAuth0 } from "@auth0/auth0-react";
 
@@ -100,6 +102,21 @@ export function Profile() {
       deletedKeysRef.current = new Set();
     }
   }, [fetcher.state, fetcher.data, initialData]);
+
+  // Poll with backoff when any visible post is still pending (image uploading).
+  const refetchProfile = useMemo(
+    () => async () => {
+      const email = user?.email;
+      if (!email) return posts;
+      const data = await fetchProfilePosts(email);
+      return data.posts;
+    },
+    [user?.email, posts],
+  );
+  const onProfilePollUpdate = useCallback((fresh: NewPost[]) => {
+    setPosts(fresh);
+  }, []);
+  usePendingPoll(posts, refetchProfile, onProfilePollUpdate);
 
   const postRows = posts.reduce<NewPost[][]>((acc, curr, index) => {
     if (index % 3 === 0) {
