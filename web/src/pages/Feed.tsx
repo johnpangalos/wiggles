@@ -96,7 +96,7 @@ export const Feed = () => {
   );
 
   return (
-    <div ref={parent} className="h-full flex flex-col overflow-auto pt-4 px-6">
+    <div ref={parent} className="h-full flex flex-col overflow-auto pt-4">
       <div
         className="w-full flex-grow relative"
         style={{
