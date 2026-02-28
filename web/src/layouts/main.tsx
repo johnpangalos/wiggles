@@ -40,7 +40,7 @@ export function BottomNavigation() {
 
   return (
     <>
-      <div className="z-10 bg-gray-100 flex pb-[env(safe-area-inset-bottom)] items-center justify-center w-full py-3 border-t-2 border-purple-600 flex-none px-12">
+      <nav className="z-10 bg-gray-100 flex pb-[env(safe-area-inset-bottom)] items-center justify-center w-full py-3 border-t-2 border-purple-600 flex-none px-12">
         <div className="flex items-center justify-around flex-shrink w-full max-w-lg">
           <NavButton to="/feed" icon={HomeIcon} text={"Feed"} />
           <button
@@ -53,7 +53,7 @@ export function BottomNavigation() {
           </button>
           <NavButton to="/profile" icon={UserIcon} text={"Profile"} />
         </div>
-      </div>
+      </nav>
       <input
         hidden={true}
         id="upload-image"
@@ -88,18 +88,12 @@ function NavButton({ icon: Icon, text, to }: NavButtonProps) {
 
 export function MainLayout() {
   return (
-    <div
-      data-testid="layout-root"
-      className="flex flex-col w-full h-svh bg-gray-100"
-    >
-      <div
-        data-testid="layout-content"
-        className="flex-1 w-full overflow-y-auto overflow-x-hidden bg-white"
-      >
+    <div className="flex flex-col w-full h-svh bg-gray-100">
+      <main className="flex-1 w-full overflow-y-auto overflow-x-hidden bg-white">
         <div className="mx-auto max-w-2xl h-full">
           <Outlet />
         </div>
-      </div>
+      </main>
 
       <BottomNavigation />
     </div>

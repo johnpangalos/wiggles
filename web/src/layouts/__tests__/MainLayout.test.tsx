@@ -109,8 +109,8 @@ function renderApp() {
   );
 
   return render(
-    <div
-      data-testid="app-wrapper"
+    <section
+      aria-label="app-wrapper"
       style={{
         width: "375px",
         height: "740px",
@@ -120,9 +120,10 @@ function renderApp() {
     >
       {/* Override h-svh so the layout is 667px (mobile viewport), leaving
           a visible 73px gap below to simulate the browser chrome area */}
-      <style>{`[data-testid="layout-root"] { height: 667px !important; }`}</style>
+      {/* Target the layout root div (parent of <main>) to cap its height */}
+      <style>{`div:has(> main) { height: 667px !important; }`}</style>
       <RouterProvider router={router} />
-    </div>,
+    </section>,
   );
 }
 
@@ -130,13 +131,13 @@ describe("MainLayout", () => {
   test("layout root has gray background and content area has white background", async () => {
     renderApp();
 
-    await expect.element(page.getByTestId("layout-root")).toBeVisible();
+    await expect.element(page.getByRole("main")).toBeVisible();
 
-    const rootEl = document.querySelector('[data-testid="layout-root"]')!;
-    const contentEl = document.querySelector('[data-testid="layout-content"]')!;
+    const mainEl = document.querySelector("main")!;
+    const rootEl = mainEl.parentElement!;
 
     expect(rootEl.classList.contains("bg-gray-100")).toBe(true);
-    expect(contentEl.classList.contains("bg-white")).toBe(true);
+    expect(mainEl.classList.contains("bg-white")).toBe(true);
   });
 
   test("feed page with nav renders correctly", async () => {
@@ -144,7 +145,7 @@ describe("MainLayout", () => {
 
     // Screenshot the full wrapper (740px) which includes the 73px gap below
     // the layout (667px) — simulating the browser chrome zone on mobile
-    const wrapper = page.getByTestId("app-wrapper");
+    const wrapper = page.getByRole("region", { name: "app-wrapper" });
     await expect.element(page.getByText("Test User")).toBeVisible();
     await expect.element(page.getByText("Feed")).toBeVisible();
     await expect.element(wrapper).toMatchScreenshot("layout-feed-with-nav");

@@ -82,9 +82,9 @@ beforeEach(() => {
 
 function renderFeed() {
   return render(
-    <div data-testid="feed-root" style={{ minHeight: 1 }}>
+    <section aria-label="feed" style={{ minHeight: 1 }}>
       <Feed />
-    </div>,
+    </section>,
   );
 }
 
@@ -96,7 +96,7 @@ describe("Feed", () => {
     });
 
     renderFeed();
-    const root = page.getByTestId("feed-root");
+    const root = page.getByRole("region", { name: "feed" });
     await expect.element(root).toBeVisible();
     await expect.element(root).toMatchScreenshot("feed-empty-state");
   });
@@ -108,7 +108,7 @@ describe("Feed", () => {
     });
 
     renderFeed();
-    const root = page.getByTestId("feed-root");
+    const root = page.getByRole("region", { name: "feed" });
     await expect.element(page.getByText("Test User")).toBeVisible();
     await expect.element(root).toMatchScreenshot("feed-with-posts");
   });
@@ -122,7 +122,7 @@ describe("Feed", () => {
     renderFeed();
     await expect.element(page.getByText("Test User")).toBeVisible();
     await expect
-      .element(page.getByTestId("feed-root"))
+      .element(page.getByRole("region", { name: "feed" }))
       .toMatchScreenshot("feed-single-post");
   });
 
@@ -133,7 +133,7 @@ describe("Feed", () => {
     });
 
     renderFeed();
-    const root = page.getByTestId("feed-root");
+    const root = page.getByRole("region", { name: "feed" });
     await expect.element(page.getByText("Test User")).toBeVisible();
     await expect.element(page.getByText("Another User")).toBeVisible();
     await expect.element(root).toMatchScreenshot("feed-multiple-pages", {
@@ -151,7 +151,7 @@ describe("Feed", () => {
     });
 
     renderFeed();
-    const root = page.getByTestId("feed-root");
+    const root = page.getByRole("region", { name: "feed" });
     await expect.element(page.getByText("Test User")).toBeVisible();
     await expect.element(root).toMatchScreenshot("feed-loading-next-page");
   });

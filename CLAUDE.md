@@ -70,6 +70,13 @@ pnpm --filter web test:update   # update snapshots
 
 - Always use `--no-gpg-sign` when committing
 
+## Testing
+
+- Prefer semantic HTML and ARIA queries over `data-testid` attributes
+- Use `getByRole`, `getByText`, `getByLabelText` to locate elements in tests
+- In production components use semantic elements (`<main>`, `<nav>`, `<section>`, etc.) so tests can query by role
+- In test wrappers use `<section aria-label="...">` instead of `<div data-testid="...">`
+
 ## Code Style
 
 - TypeScript strict mode everywhere
