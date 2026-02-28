@@ -109,9 +109,17 @@ function renderApp() {
   );
 
   return render(
-    <div data-testid="app-wrapper" style={{ width: "375px" }}>
-      {/* Override h-svh so the layout fits a mobile-like 667px instead of
-          the full headless Chromium viewport (~720px+) */}
+    <div
+      data-testid="app-wrapper"
+      style={{
+        width: "375px",
+        height: "740px",
+        // Inherits body background (gray-100 from index.css) — the gap
+        // below the layout should stay gray, not white.
+      }}
+    >
+      {/* Override h-svh so the layout is 667px (mobile viewport), leaving
+          a visible 73px gap below to simulate the browser chrome area */}
       <style>{`[data-testid="layout-root"] { height: 667px !important; }`}</style>
       <RouterProvider router={router} />
     </div>,
@@ -134,9 +142,11 @@ describe("MainLayout", () => {
   test("feed page with nav renders correctly", async () => {
     renderApp();
 
-    const layoutRoot = page.getByTestId("layout-root");
+    // Screenshot the full wrapper (740px) which includes the 73px gap below
+    // the layout (667px) — simulating the browser chrome zone on mobile
+    const wrapper = page.getByTestId("app-wrapper");
     await expect.element(page.getByText("Test User")).toBeVisible();
     await expect.element(page.getByText("Feed")).toBeVisible();
-    await expect.element(layoutRoot).toMatchScreenshot("layout-feed-with-nav");
+    await expect.element(wrapper).toMatchScreenshot("layout-feed-with-nav");
   });
 });
