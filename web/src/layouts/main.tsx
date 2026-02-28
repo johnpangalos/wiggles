@@ -90,7 +90,7 @@ export function MainLayout() {
   return (
     <div className="flex flex-col w-full h-svh">
       <div className="flex-1 w-full overflow-y-auto overflow-x-hidden">
-        <div className="mx-auto max-w-2xl px-6 h-full">
+        <div className="mx-auto max-w-2xl h-full">
           <Outlet />
         </div>
       </div>

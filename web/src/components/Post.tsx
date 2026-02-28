@@ -61,7 +61,7 @@ export const Post = ({
           max-h-xs m-auto  max-w-xl
           ${selectable ? " cursor-pointer" : ""}
           ${selected ? " border-purple-600 border-2" : ""}
-          ${thumbnail ? "aspect-square" : ""}`}
+          ${thumbnail ? "h-[145px] md:h-[195px]" : "h-[520px]"}`}
     >
       <div
         className="flex flex-grow bg-gray-300 p-1 rounded justify-center items-center h-full"

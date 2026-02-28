@@ -138,9 +138,9 @@ export function Profile() {
   );
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full px-6 flex flex-col">
       <div>
-        <div className="m-auto py-4 h-16">
+        <div className="m-auto md:max-w-xl py-4 h-16">
           {selectMode ? (
             <>
               {fetcher.state !== "idle" ? (
@@ -196,19 +196,13 @@ export function Profile() {
       </div>
       <div ref={parent} className="overflow-auto">
         <div
-          className="pt-2 w-full flex-grow relative"
+          className="flex justify-center pt-2 w-full flex-grow relative"
           style={{
             height: `${rowVirtualizer.getTotalSize()}px`,
           }}
         >
           {rowCount > 0 &&
             rowVirtualizer.getVirtualItems().map((virtualItem) => {
-              const isLoaderRow = virtualItem.index > rowCount - 1;
-              if (isLoaderRow)
-                return (
-                  <Fragment key={virtualItem.key}>Loading more...</Fragment>
-                );
-
               const rowPosts = posts.slice(
                 virtualItem.index * 3,
                 virtualItem.index * 3 + 3,
@@ -220,7 +214,7 @@ export function Profile() {
                 <div
                   ref={rowVirtualizer.measureElement}
                   data-index={virtualItem.index}
-                  className="absolute top-0 w-full grid grid-cols-3 gap-3"
+                  className="absolute top-0 grid grid-cols-3 gap-x-3 md:max-w-xl w-full h-[150px] md:h-[200px]"
                   key={`${virtualItem.key}`}
                   style={{
                     transform: `translateY(${virtualItem.start}px)`,
@@ -230,7 +224,7 @@ export function Profile() {
                     return (
                       <div
                         key={`${virtualItem.key}-${index}`}
-                        className="aspect-square"
+                        className="h-full"
                       >
                         <Post
                           id={post.id}
