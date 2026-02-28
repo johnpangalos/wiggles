@@ -9,7 +9,7 @@ import { useLoaderData, useFetcher } from "react-router";
 import type { ActionFunctionArgs } from "react-router";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { NewPost } from "@/types";
-import { Button, Image, Post } from "@/components";
+import { Button, Image, Modal, Post } from "@/components";
 import { getAuthHeaders, getUserEmail } from "@/utils";
 import { useAuth0 } from "@auth0/auth0-react";
 
@@ -60,6 +60,7 @@ export function Profile() {
   const hasNextPage = !!cursor;
 
   const [selectMode, setSelectMode] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [selectedOrderKeys, setSelectedOrderKeys] = useState<
     Record<string, NewPost>
   >({});
@@ -158,13 +159,7 @@ export function Profile() {
 
                   <div className="space-x-2">
                     <Button
-                      onClick={() => {
-                        const formData = new FormData();
-                        Object.keys(selectedOrderKeys).forEach((key) =>
-                          formData.append("orderKey", key),
-                        );
-                        fetcher.submit(formData, { method: "POST" });
-                      }}
+                      onClick={() => setShowConfirm(true)}
                       variant="primary"
                     >
                       Delete
@@ -179,6 +174,39 @@ export function Profile() {
                       Cancel
                     </Button>
                   </div>
+                  <Modal
+                    open={showConfirm}
+                    onClose={() => setShowConfirm(false)}
+                  >
+                    <p className="text-sm mb-3">
+                      Delete{" "}
+                      {Object.values(selectedOrderKeys).length === 1
+                        ? "this photo"
+                        : `these ${Object.values(selectedOrderKeys).length} photos`}
+                      ? This cannot be undone.
+                    </p>
+                    <div className="flex justify-end space-x-2">
+                      <Button
+                        variant="secondary"
+                        onClick={() => setShowConfirm(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        variant="primary"
+                        onClick={() => {
+                          setShowConfirm(false);
+                          const formData = new FormData();
+                          Object.keys(selectedOrderKeys).forEach((key) =>
+                            formData.append("orderKey", key),
+                          );
+                          fetcher.submit(formData, { method: "POST" });
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </Modal>
                 </div>
               )}
             </>
