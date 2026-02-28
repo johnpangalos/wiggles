@@ -88,8 +88,14 @@ function NavButton({ icon: Icon, text, to }: NavButtonProps) {
 
 export function MainLayout() {
   return (
-    <div className="flex flex-col w-full h-svh bg-gray-100">
-      <div className="flex-1 w-full overflow-y-auto overflow-x-hidden bg-white">
+    <div
+      data-testid="layout-root"
+      className="flex flex-col w-full h-svh bg-gray-100"
+    >
+      <div
+        data-testid="layout-content"
+        className="flex-1 w-full overflow-y-auto overflow-x-hidden bg-white"
+      >
         <div className="mx-auto max-w-2xl h-full">
           <Outlet />
         </div>
