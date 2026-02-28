@@ -1,27 +1,106 @@
 import { render } from "vitest-browser-react";
 import { page } from "vitest/browser";
 import { describe, test, expect, vi } from "vitest";
-import { createMemoryRouter, RouterProvider } from "react-router";
-import { MainLayout, BottomNavigation } from "../main";
+import { createMemoryRouter, Navigate, RouterProvider } from "react-router";
+import type { NewPost } from "@/types";
+import placeholderUrl from "@/pages/__tests__/fixtures/placeholder.png";
+
+const mockPosts: NewPost[] = [
+  {
+    id: "post-1",
+    url: placeholderUrl,
+    account: {
+      displayName: "Test User",
+      email: "test@example.com",
+      id: "account-1",
+      photoURL: placeholderUrl,
+    },
+    contentType: "image/png",
+    timestamp: "1700000000000",
+    accountId: "account-1",
+    r2Key: "cf-img-1",
+    orderKey: "order-1",
+  },
+];
+
+vi.mock("@auth0/auth0-react", () => ({
+  Auth0Provider: ({ children }: { children: React.ReactNode }) => children,
+  useAuth0: vi.fn(() => ({
+    logout: vi.fn(),
+    user: { email: "test@example.com" },
+    getAccessTokenSilently: vi.fn(() => Promise.resolve("fake-token")),
+    isAuthenticated: true,
+    isLoading: false,
+    loginWithRedirect: vi.fn(),
+  })),
+}));
+
+vi.mock("@/utils", () => ({
+  getAuthHeaders: vi.fn(() =>
+    Promise.resolve({ Authorization: "Bearer fake-token" }),
+  ),
+  getUserEmail: vi.fn(() => "test@example.com"),
+  setTokenAccessor: vi.fn(),
+  setUserEmail: vi.fn(),
+}));
 
 vi.mock("@/hooks/useImageUpload", () => ({
   useImageUpload: vi.fn(() => vi.fn()),
 }));
 
-function renderLayout() {
+vi.mock("@tanstack/react-virtual", () => ({
+  useVirtualizer: vi.fn(({ count }: { count: number }) => ({
+    getTotalSize: () => count * 536,
+    getVirtualItems: () =>
+      Array.from({ length: count }, (_, i) => ({
+        index: i,
+        key: `virt-${i}`,
+        size: 536,
+        start: i * 536,
+      })),
+  })),
+}));
+
+vi.mock("@/register-sw", () => ({
+  checkRegistration: vi.fn(() => Promise.resolve(undefined)),
+  register: vi.fn(() => Promise.resolve()),
+  unregister: vi.fn(() => Promise.resolve()),
+}));
+
+const mockFetch = vi.fn(() =>
+  Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({ posts: [], cursor: undefined }),
+  }),
+);
+vi.stubGlobal("fetch", mockFetch);
+
+// Import after mocks are set up
+import { Auth0ProviderWithNavigate, RequireAuth } from "@/App";
+import { MainLayout } from "@/layouts/main";
+import { Feed } from "@/pages";
+
+function renderApp() {
   const router = createMemoryRouter(
     [
       {
-        path: "/feed",
-        element: <MainLayout />,
+        element: <Auth0ProviderWithNavigate />,
         children: [
           {
-            index: true,
-            element: (
-              <div style={{ padding: "16px" }}>
-                <p>Short content</p>
-              </div>
-            ),
+            path: "/",
+            element: <MainLayout />,
+            children: [
+              {
+                path: "feed",
+                loader: () => ({ posts: mockPosts, cursor: undefined }),
+                element: (
+                  <RequireAuth>
+                    <Feed />
+                  </RequireAuth>
+                ),
+              },
+              { index: true, element: <Navigate to="feed" /> },
+            ],
           },
         ],
       },
@@ -30,70 +109,31 @@ function renderLayout() {
   );
 
   return render(
-    <div data-testid="layout-test-wrapper" style={{ width: "375px" }}>
+    <div data-testid="app-wrapper" style={{ width: "375px" }}>
       <RouterProvider router={router} />
-    </div>,
-  );
-}
-
-/**
- * Renders the nav inside a compact container that simulates the layout root.
- * A red outer wrapper makes any background gaps immediately visible.
- * The gray parent (bg-gray-100) should extend below the nav — if it doesn't,
- * the red sentinel bleeds through in the screenshot.
- */
-function renderNavFocused() {
-  const router = createMemoryRouter(
-    [{ path: "/feed", element: <BottomNavigation /> }],
-    { initialEntries: ["/feed"] },
-  );
-
-  return render(
-    <div
-      data-testid="nav-focused-wrapper"
-      style={{
-        width: "375px",
-        height: "160px",
-        background: "red",
-      }}
-    >
-      <div
-        className="bg-gray-100"
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          height: "100%",
-        }}
-      >
-        <div className="bg-white" style={{ flex: 1 }} />
-        <RouterProvider router={router} />
-        {/* Space below nav — should show parent's gray, not the red sentinel */}
-        <div style={{ height: "40px", flexShrink: 0 }} />
-      </div>
     </div>,
   );
 }
 
 describe("MainLayout", () => {
   test("layout root has gray background and content area has white background", async () => {
-    renderLayout();
+    renderApp();
 
     await expect.element(page.getByTestId("layout-root")).toBeVisible();
 
     const rootEl = document.querySelector('[data-testid="layout-root"]')!;
     const contentEl = document.querySelector('[data-testid="layout-content"]')!;
 
-    // layout root should have gray background (below nav shows gray)
     expect(rootEl.classList.contains("bg-gray-100")).toBe(true);
-    // content area should have white background (feed/profile stays white)
     expect(contentEl.classList.contains("bg-white")).toBe(true);
   });
 
-  test("nav background extends below navigation bar", async () => {
-    renderNavFocused();
+  test("feed page with nav renders correctly", async () => {
+    renderApp();
 
-    const wrapper = page.getByTestId("nav-focused-wrapper");
+    const layoutRoot = page.getByTestId("layout-root");
+    await expect.element(page.getByText("Test User")).toBeVisible();
     await expect.element(page.getByText("Feed")).toBeVisible();
-    await expect.element(wrapper).toMatchScreenshot("layout-nav-area");
+    await expect.element(layoutRoot).toMatchScreenshot("layout-feed-with-nav");
   });
 });
