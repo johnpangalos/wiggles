@@ -110,6 +110,9 @@ function renderApp() {
 
   return render(
     <div data-testid="app-wrapper" style={{ width: "375px" }}>
+      {/* Override h-svh so the layout fits a mobile-like 667px instead of
+          the full headless Chromium viewport (~720px+) */}
+      <style>{`[data-testid="layout-root"] { height: 667px !important; }`}</style>
       <RouterProvider router={router} />
     </div>,
   );
