@@ -2,6 +2,12 @@
 
 @custom-variant pwa (@media (display-mode: standalone));
 
+/* Match the nav bar's gray so the area below h-svh (visible when the
+   mobile browser chrome collapses) stays gray instead of white. */
+body {
+  background-color: var(--color-gray-100);
+}
+
 @theme {
   --breakpoint-xs: 340px;
   --breakpoint-sm: 640px;

@@ -96,17 +96,10 @@ export function Profile() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetcher.state, fetcher.data]);
 
-  const postRows = posts.reduce<NewPost[][]>((acc, curr, index) => {
-    if (index % 3 === 0) {
-      acc.push([curr]);
-      return acc;
-    }
-    acc[acc.length - 1].push(curr);
-    return acc;
-  }, []);
+  const rowCount = Math.ceil(posts.length / 3);
 
   const rowVirtualizer = useVirtualizer({
-    count: hasNextPage ? postRows.length + 1 : postRows.length,
+    count: hasNextPage ? rowCount + 1 : rowCount,
     getScrollElement: () => parent.current,
     estimateSize: () => 150,
     overscan: 5,
@@ -130,18 +123,14 @@ export function Profile() {
         return;
       }
 
-      if (
-        lastItem.index >= postRows.length - 1 &&
-        hasNextPage &&
-        !isFetchingNextPage
-      )
+      if (lastItem.index >= rowCount - 1 && hasNextPage && !isFetchingNextPage)
         fetchNextPage();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       hasNextPage,
       fetchNextPage,
-      postRows?.length,
+      rowCount,
       isFetchingNextPage,
       // eslint-disable-next-line react-hooks/exhaustive-deps
       JSON.stringify(rowVirtualizer.getVirtualItems()),
@@ -212,29 +201,30 @@ export function Profile() {
             height: `${rowVirtualizer.getTotalSize()}px`,
           }}
         >
-          {postRows.length > 0 &&
+          {rowCount > 0 &&
             rowVirtualizer.getVirtualItems().map((virtualItem) => {
-              const row = postRows[virtualItem.index];
-              if (row === undefined) return <Fragment key={virtualItem.key} />;
-
-              const isLoaderRow = virtualItem.index > postRows.length - 1;
-              if (isLoaderRow) return <>Loading more...</>;
+              const rowPosts = posts.slice(
+                virtualItem.index * 3,
+                virtualItem.index * 3 + 3,
+              );
+              if (rowPosts.length === 0)
+                return <Fragment key={virtualItem.key} />;
 
               return (
                 <div
                   ref={rowVirtualizer.measureElement}
                   data-index={virtualItem.index}
-                  className="absolute top-0 space-x-3 flex md:max-w-xl w-full h-[150px] md:h-[200px]"
+                  className="absolute top-0 grid grid-cols-3 gap-x-3 md:max-w-xl w-full h-[150px] md:h-[200px]"
                   key={`${virtualItem.key}`}
                   style={{
                     transform: `translateY(${virtualItem.start}px)`,
                   }}
                 >
-                  {row.map((post, index) => {
+                  {rowPosts.map((post, index) => {
                     return (
                       <div
                         key={`${virtualItem.key}-${index}`}
-                        className="w-1/3 h-full"
+                        className="h-full"
                       >
                         <Post
                           id={post.id}
