@@ -8,4 +8,3 @@ export { Menu } from "./Menu";
 export { Modal } from "./Modal";
 export { Toolbar } from "./Toolbar";
 export { Post } from "./Post";
-export * from "./Tabs";

@@ -3,7 +3,6 @@ import { ReactNode } from "react";
 export const Toolbar = ({
   children,
 }: {
-  showing: boolean;
   children: ReactNode | ReactNode[];
 }) => {
   return (

@@ -47,14 +47,14 @@ export const Upload = () => {
     <>
       {urls.length > 0 && (
         <div className="flex flex-col h-full">
-          <div className="flex-auto overflow-y-scroll">
+          <div className="flex-auto overflow-y-auto">
             <div className="p-4 space-y-4">
               {urls.map((url, idx) => (
                 <ImagePreview key={`preview-${idx}`} url={url} idx={idx} />
               ))}
             </div>
           </div>
-          <div className="relative bottom-16 flex-none p-3 bg-purple-200 flex items-center">
+          <div className="flex-none p-3 bg-purple-200 flex items-center">
             <div className="flex-grow">
               Upload {urls.length} Picture{urls.length > 1 && "s"}
             </div>

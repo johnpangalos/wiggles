@@ -80,9 +80,9 @@ function renderProfile(
         loader: () => data,
         action: profileAction,
         element: (
-          <div data-testid="profile-root" style={{ minHeight: 1 }}>
+          <section aria-label="profile" style={{ minHeight: 1 }}>
             <Profile />
-          </div>
+          </section>
         ),
       },
     ],
@@ -97,7 +97,7 @@ describe("Profile", () => {
     await expect.element(page.getByText("Select")).toBeVisible();
     await expect.element(page.getByText("Logout")).toBeVisible();
     await expect
-      .element(page.getByTestId("profile-root"))
+      .element(page.getByRole("region", { name: "profile" }))
       .toMatchScreenshot("profile-thumbnail-grid");
   });
 
@@ -112,7 +112,7 @@ describe("Profile", () => {
       .element(page.getByRole("button", { name: "Cancel" }))
       .toBeVisible();
     await expect
-      .element(page.getByTestId("profile-root"))
+      .element(page.getByRole("region", { name: "profile" }))
       .toMatchScreenshot("profile-select-mode");
   });
 
@@ -120,7 +120,7 @@ describe("Profile", () => {
     renderProfile({ posts: [], cursor: undefined });
     await expect.element(page.getByText("Select")).toBeVisible();
     await expect
-      .element(page.getByTestId("profile-root"))
+      .element(page.getByRole("region", { name: "profile" }))
       .toMatchScreenshot("profile-empty");
   });
 
@@ -131,7 +131,7 @@ describe("Profile", () => {
     renderProfile({ posts: mockPosts, cursor: "next-cursor" });
     await expect.element(page.getByText("Select")).toBeVisible();
     await expect
-      .element(page.getByTestId("profile-root"))
+      .element(page.getByRole("region", { name: "profile" }))
       .toMatchScreenshot("profile-with-cursor");
   });
 });

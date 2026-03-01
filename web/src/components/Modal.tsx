@@ -1,13 +1,21 @@
+import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { ReactNode } from "react";
 
-export function Modal({ children }: { children: ReactNode | ReactNode[] }) {
+type ModalProps = {
+  children: ReactNode;
+  open: boolean;
+  onClose: () => void;
+};
+
+export function Modal({ children, open, onClose }: ModalProps) {
   return (
-    <div className="z-50 h-screen w-full flex flex-col items-center justify-center absolute">
-      <div className="h-screen w-full absolute flex items-center justify-center">
-        <div className="w-64 bg-white rounded shadow p-3 overflow-y-scroll">
+    <Dialog open={open} onClose={onClose} className="relative z-50">
+      <DialogBackdrop className="fixed inset-0 bg-black/50" />
+      <div className="fixed inset-0 flex items-center justify-center">
+        <DialogPanel className="w-64 bg-white rounded shadow p-3 overflow-y-auto">
           {children}
-        </div>
+        </DialogPanel>
       </div>
-    </div>
+    </Dialog>
   );
 }
