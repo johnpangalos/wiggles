@@ -65,7 +65,7 @@ export const Feed = () => {
   const rowVirtualizer = useVirtualizer({
     count: hasNextPage ? posts.length + 1 : posts.length,
     getScrollElement: () => parent.current,
-    estimateSize: () => 536,
+    estimateSize: () => 696,
     overscan: 5,
   });
 
