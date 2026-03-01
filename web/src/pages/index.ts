@@ -1,4 +1,4 @@
-export { Feed } from "./Feed";
-export { Upload } from "./Upload";
-export { Profile } from "./Profile";
-export { Login } from "./Login";
+export { Feed } from "@/routes/feed";
+export { Upload } from "@/routes/upload";
+export { Profile } from "@/routes/profile";
+export { Login } from "@/routes/login";
