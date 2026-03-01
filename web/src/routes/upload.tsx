@@ -5,7 +5,7 @@ import { Loading } from "@/components";
 import { Result, useImageUpload } from "@/hooks";
 import { useNavigate, useFetcher } from "react-router";
 import type { ActionFunctionArgs } from "react-router";
-import { getAuthHeaders } from "@/utils";
+import { getAuthHeaders, handleAuthResponse } from "@/utils";
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
@@ -14,6 +14,7 @@ export async function action({ request }: ActionFunctionArgs) {
     body: formData,
     headers: { ...(await getAuthHeaders()) },
   });
+  if (handleAuthResponse(res)) throw new Error("session expired");
   if (res.status > 300) throw new Error("upload failed");
   return await res.json();
 }

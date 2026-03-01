@@ -47,6 +47,7 @@ vi.mock("@/utils", () => ({
   getAuthHeaders: vi.fn(() =>
     Promise.resolve({ Authorization: "Bearer fake-token" }),
   ),
+  handleAuthResponse: vi.fn(() => false),
 }));
 
 // Mock the virtualizer to render items directly without layout measurement

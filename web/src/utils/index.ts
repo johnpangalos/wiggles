@@ -14,6 +14,17 @@ export async function getAccessToken(): Promise<string> {
   return _getAccessToken();
 }
 
+// Logout accessor: set by Auth0Provider wrapper, called on session expiry
+let _logout: (() => void) | null = null;
+
+export function setLogoutFn(fn: () => void): void {
+  _logout = fn;
+}
+
+export function triggerSessionExpiredLogout(): void {
+  if (_logout) _logout();
+}
+
 export async function getAuthHeaders(): Promise<
   { Authorization: string } | Record<string, never>
 > {
@@ -21,8 +32,23 @@ export async function getAuthHeaders(): Promise<
     const token = await getAccessToken();
     return { Authorization: `Bearer ${token}` };
   } catch {
+    // Token retrieval failed — session likely expired.
+    // Trigger logout so the user is redirected to login.
+    triggerSessionExpiredLogout();
     return {};
   }
+}
+
+/**
+ * Call after an API response to handle 401 by redirecting to login.
+ * Returns true if a 401 was detected (caller should bail out).
+ */
+export function handleAuthResponse(res: Response): boolean {
+  if (res.status === 401) {
+    triggerSessionExpiredLogout();
+    return true;
+  }
+  return false;
 }
 
 // User email accessor: set by Auth0Provider wrapper, used by loaders
