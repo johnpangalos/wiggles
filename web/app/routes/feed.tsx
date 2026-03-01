@@ -20,7 +20,13 @@ async function fetchPosts(cursor?: string, limit = 10): Promise<PostsResponse> {
   return res.json();
 }
 
-export async function loader(): Promise<PostsResponse> {
+export function loader(): PostsResponse {
+  // Auth tokens are client-side only; return empty on server.
+  // The clientLoader and useEffect handle real data fetching.
+  return { posts: [], cursor: undefined };
+}
+
+export async function clientLoader(): Promise<PostsResponse> {
   try {
     return await fetchPosts();
   } catch {
@@ -28,7 +34,9 @@ export async function loader(): Promise<PostsResponse> {
   }
 }
 
-export const Feed = () => {
+clientLoader.hydrate = true as const;
+
+export default function Feed() {
   const initialData = useLoaderData() as PostsResponse;
   const [posts, setPosts] = useState<NewPost[]>(initialData.posts);
   const [cursor, setCursor] = useState<string | undefined>(initialData.cursor);
@@ -135,6 +143,4 @@ export const Feed = () => {
       </div>
     </div>
   );
-};
-
-export { Feed as Component };
+}

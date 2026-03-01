@@ -2,7 +2,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 
-export const Login = () => {
+export default function Login() {
   const { loginWithRedirect, isAuthenticated, isLoading, error } = useAuth0();
   const navigate = useNavigate();
 
@@ -35,6 +35,4 @@ export const Login = () => {
       <div>Redirecting to login...</div>
     </div>
   );
-};
-
-export { Login as Component };
+}

@@ -4,10 +4,13 @@ import { Loading } from "@/components";
 
 import { Result, useImageUpload } from "@/hooks";
 import { useNavigate, useFetcher } from "react-router";
-import type { ActionFunctionArgs } from "react-router";
 import { getAuthHeaders } from "@/utils";
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function clientAction({
+  request,
+}: {
+  request: Request;
+}): Promise<unknown> {
   const formData = await request.formData();
   const res = await fetch(`${import.meta.env.VITE_API_URL}/upload`, {
     method: "POST",
@@ -18,7 +21,7 @@ export async function action({ request }: ActionFunctionArgs) {
   return await res.json();
 }
 
-export const Upload = () => {
+export default function Upload() {
   const urls = useImageUpload((state) => state.urls);
   const resetImageUpload = useImageUpload((state) => state.reset);
   const navigate = useNavigate();
@@ -85,9 +88,7 @@ export const Upload = () => {
       )}
     </>
   );
-};
-
-export { Upload as Component };
+}
 
 const ImagePreview: FC<{ url: Result; idx: number }> = ({ url, idx }) => (
   <div className="m-auto shadow-lg p-2 max-w-sm">

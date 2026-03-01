@@ -61,12 +61,6 @@ vi.mock("@tanstack/react-virtual", () => ({
   })),
 }));
 
-vi.mock("@/register-sw", () => ({
-  checkRegistration: vi.fn(() => Promise.resolve(undefined)),
-  register: vi.fn(() => Promise.resolve()),
-  unregister: vi.fn(() => Promise.resolve()),
-}));
-
 const mockFetch = vi.fn(() =>
   Promise.resolve({
     ok: true,
@@ -76,7 +70,8 @@ const mockFetch = vi.fn(() =>
 vi.stubGlobal("fetch", mockFetch);
 
 // Import after mocks are set up
-import { Auth0ProviderWithNavigate, RequireAuth } from "@/App";
+import Root from "@/root";
+import RequireAuth from "@/routes/require-auth";
 import { MainLayout } from "@/layouts/main";
 import { Feed } from "@/pages";
 
@@ -84,7 +79,7 @@ function renderApp() {
   const router = createMemoryRouter(
     [
       {
-        element: <Auth0ProviderWithNavigate />,
+        element: <Root />,
         children: [
           {
             path: "/",

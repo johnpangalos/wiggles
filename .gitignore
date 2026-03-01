@@ -86,3 +86,6 @@ api/.wrangler
 
 # Vitest screenshot attachments (hashed blobs)
 .vitest-attachments/
+
+# React Router generated types
+.react-router/

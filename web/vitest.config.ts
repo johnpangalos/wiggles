@@ -1,20 +1,24 @@
-import { defineConfig, mergeConfig } from "vitest/config";
+import { defineConfig } from "vitest/config";
 import { playwright } from "@vitest/browser-playwright";
-import viteConfig from "./vite.config";
+import tailwindcss from "@tailwindcss/vite";
+import path from "path";
 
-export default mergeConfig(
-  viteConfig,
-  defineConfig({
-    test: {
-      globals: true,
-      setupFiles: ["./src/test-setup.ts"],
-      browser: {
-        enabled: true,
-        provider: playwright(),
-        instances: [{ browser: "chromium" }],
-        headless: true,
-        screenshotFailures: false,
-      },
+export default defineConfig({
+  plugins: [tailwindcss()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./app"),
     },
-  }),
-);
+  },
+  test: {
+    globals: true,
+    setupFiles: ["./app/test-setup.ts"],
+    browser: {
+      enabled: true,
+      provider: playwright(),
+      instances: [{ browser: "chromium" }],
+      headless: true,
+      screenshotFailures: false,
+    },
+  },
+});

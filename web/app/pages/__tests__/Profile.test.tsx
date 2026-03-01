@@ -2,7 +2,7 @@ import { render } from "vitest-browser-react";
 import { page } from "vitest/browser";
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import { createMemoryRouter, RouterProvider } from "react-router";
-import { Profile, action as profileAction } from "@/routes/profile";
+import Profile, { clientAction as profileAction } from "@/routes/profile";
 import type { ProfilePostsResponse } from "@/routes/profile";
 import type { NewPost } from "@/types";
 import placeholderUrl from "./fixtures/placeholder.png";

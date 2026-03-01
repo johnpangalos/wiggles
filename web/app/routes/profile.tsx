@@ -6,7 +6,6 @@ import React, {
   useState,
 } from "react";
 import { useLoaderData, useFetcher, useRouteError } from "react-router";
-import type { ActionFunctionArgs } from "react-router";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { NewPost } from "@/types";
 import { Button, Image, Modal, Post } from "@/components";
@@ -31,13 +30,24 @@ async function fetchProfilePosts(
   return res.json();
 }
 
-export async function loader(): Promise<ProfilePostsResponse> {
+export function loader(): ProfilePostsResponse {
+  // Auth tokens are client-side only; return empty on server.
+  return { posts: [], cursor: undefined };
+}
+
+export async function clientLoader(): Promise<ProfilePostsResponse> {
   const email = getUserEmail();
   if (!email) return { posts: [], cursor: undefined };
   return await fetchProfilePosts(email);
 }
 
-export async function action({ request }: ActionFunctionArgs) {
+clientLoader.hydrate = true as const;
+
+export async function clientAction({
+  request,
+}: {
+  request: Request;
+}): Promise<unknown> {
   const formData = await request.formData();
   const orderKeys = formData.getAll("orderKey") as string[];
 
@@ -50,7 +60,7 @@ export async function action({ request }: ActionFunctionArgs) {
   return await res.json();
 }
 
-export function Profile() {
+export default function Profile() {
   const { logout, user } = useAuth0();
   const initialData = useLoaderData() as ProfilePostsResponse;
   const [posts, setPosts] = useState<NewPost[]>(initialData.posts);
@@ -290,8 +300,6 @@ export function Profile() {
     </div>
   );
 }
-
-export { Profile as Component };
 
 export function ErrorBoundary() {
   const error = useRouteError() as Error;

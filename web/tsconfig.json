@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
+    "rootDirs": [".", "./.react-router/types"],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./app/*"]
     },
     "target": "esnext",
     "lib": ["dom", "dom.iterable", "esnext"],
@@ -17,7 +18,13 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "types": ["vite/client"]
   },
-  "include": ["src", "./vite.config.ts", "manifest.json"]
+  "include": [
+    "app",
+    "./vite.config.ts",
+    "./react-router.config.ts",
+    ".react-router/types/**/*"
+  ]
 }
