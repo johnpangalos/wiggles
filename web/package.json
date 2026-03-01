@@ -21,7 +21,7 @@
     "build": "react-router build",
     "start": "wrangler dev",
     "preview": "rm -rf build && pnpm build && pnpm start",
-    "deploy": "pnpm build && wrangler pages deploy build/client",
+    "deploy": "pnpm build && wrangler deploy",
     "lint": "eslint ./app",
     "type-check": "react-router typegen && tsc",
     "test": "vitest run",

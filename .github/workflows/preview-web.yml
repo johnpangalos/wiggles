@@ -14,7 +14,7 @@ jobs:
       deployments: write
       pull-requests: write
 
-    name: Cloudflare Pages Preview
+    name: Cloudflare Workers Preview
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,9 +33,39 @@ jobs:
         run: cd web && pnpm build
 
       - name: Deploy Preview
+        id: deploy
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: e5933c765c57d2f3a58d86973c88362c
           workingDirectory: ./web
-          command: pages deploy build/client --project-name=wiggles --branch=${{ github.head_ref }}
+          command: versions upload
+
+      - name: Comment Preview URL
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const projectName = 'wiggles';
+            const body = `🚀 Preview deployment uploaded for **${projectName}**.\n\nUse \`wrangler versions deploy\` to promote this version, or view it in the [Cloudflare dashboard](https://dash.cloudflare.com).`;
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+            });
+            const existing = comments.find(c => c.body.includes('Preview deployment uploaded'));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body,
+              });
+            }
