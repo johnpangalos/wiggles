@@ -1,7 +1,7 @@
 import { render } from "vitest-browser-react";
 import { page } from "vitest/browser";
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import { Feed } from "../Feed";
+import { Feed } from "@/routes/feed";
 import type { NewPost } from "@/types";
 import placeholderUrl from "./fixtures/placeholder.png";
 

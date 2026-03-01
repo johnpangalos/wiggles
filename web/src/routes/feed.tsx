@@ -20,7 +20,7 @@ async function fetchPosts(cursor?: string, limit = 10): Promise<PostsResponse> {
   return res.json();
 }
 
-export async function feedLoader(): Promise<PostsResponse> {
+export async function loader(): Promise<PostsResponse> {
   try {
     return await fetchPosts();
   } catch {
@@ -136,3 +136,5 @@ export const Feed = () => {
     </div>
   );
 };
+
+export { Feed as Component };

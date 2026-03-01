@@ -7,7 +7,7 @@ import { useNavigate, useFetcher } from "react-router";
 import type { ActionFunctionArgs } from "react-router";
 import { getAuthHeaders } from "@/utils";
 
-export async function uploadAction({ request }: ActionFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const res = await fetch(`${import.meta.env.VITE_API_URL}/upload`, {
     method: "POST",
@@ -86,6 +86,8 @@ export const Upload = () => {
     </>
   );
 };
+
+export { Upload as Component };
 
 const ImagePreview: FC<{ url: Result; idx: number }> = ({ url, idx }) => (
   <div className="m-auto shadow-lg p-2 max-w-sm">

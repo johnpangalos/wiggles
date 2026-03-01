@@ -36,3 +36,5 @@ export const Login = () => {
     </div>
   );
 };
+
+export { Login as Component };

@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useLoaderData, useFetcher } from "react-router";
+import { useLoaderData, useFetcher, useRouteError } from "react-router";
 import type { ActionFunctionArgs } from "react-router";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { NewPost } from "@/types";
@@ -31,13 +31,13 @@ async function fetchProfilePosts(
   return res.json();
 }
 
-export async function profileLoader(): Promise<ProfilePostsResponse> {
+export async function loader(): Promise<ProfilePostsResponse> {
   const email = getUserEmail();
   if (!email) return { posts: [], cursor: undefined };
   return await fetchProfilePosts(email);
 }
 
-export async function profileAction({ request }: ActionFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const orderKeys = formData.getAll("orderKey") as string[];
 
@@ -287,6 +287,25 @@ export function Profile() {
             })}
         </div>
       </div>
+    </div>
+  );
+}
+
+export { Profile as Component };
+
+export function ErrorBoundary() {
+  const error = useRouteError() as Error;
+  return (
+    <div className="h-full flex flex-col p-6 overflow-auto">
+      <h1 className="text-xl font-bold text-red-600 mb-2">
+        Something went wrong
+      </h1>
+      <p className="text-gray-800 mb-4">{error?.message ?? String(error)}</p>
+      {error?.stack && (
+        <pre className="text-xs text-gray-600 whitespace-pre-wrap bg-gray-100 p-4 rounded overflow-auto">
+          {error.stack}
+        </pre>
+      )}
     </div>
   );
 }
