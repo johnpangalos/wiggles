@@ -30,13 +30,12 @@ jobs:
           command: deploy --env staging
 
       - name: Build
-        run: cd web && pnpm build --mode staging
+        run: cd web && pnpm build
 
       - name: Deploy Preview
-        uses: cloudflare/pages-action@1
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: e5933c765c57d2f3a58d86973c88362c
-          projectName: wiggles
-          directory: web/dist
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          workingDirectory: ./web
+          command: pages deploy build/client --project-name=wiggles --branch=${{ github.head_ref }}

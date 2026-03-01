@@ -89,3 +89,6 @@ api/.wrangler
 
 # React Router generated types
 .react-router/
+
+# Wrangler
+.wrangler/

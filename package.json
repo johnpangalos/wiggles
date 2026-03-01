@@ -9,16 +9,18 @@
     "lint": "pnpm run -r lint"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.25.6",
+    "@cloudflare/workers-types": "^4.20260228.0",
     "eslint": "^9.0.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "prettier": "^3.5",
     "typescript": "^5.9.2",
-    "typescript-eslint": "^8.0.0"
+    "typescript-eslint": "^8.0.0",
+    "wrangler": "^4.69.0"
   },
   "dependencies": {
+    "@react-router/cloudflare": "^7.13.1",
     "@react-router/dev": "^7.13.1",
-    "@react-router/node": "^7.13.1",
-    "@react-router/serve": "^7.13.1",
     "isbot": "^5.1.35",
     "react-router": "^7.13.1"
   }

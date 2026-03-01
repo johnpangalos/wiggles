@@ -19,10 +19,11 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "noFallthroughCasesInSwitch": true,
-    "types": ["vite/client"]
+    "types": ["vite/client", "@cloudflare/workers-types"]
   },
   "include": [
     "app",
+    "workers",
     "./vite.config.ts",
     "./react-router.config.ts",
     ".react-router/types/**/*"
