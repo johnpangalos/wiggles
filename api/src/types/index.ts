@@ -18,6 +18,7 @@ export type Post = {
 
 export type WigglesEnv = {
   Bindings: {
+    ASSETS: Fetcher;
     WIGGLES: KVNamespace;
     IMAGES_BUCKET: R2Bucket;
     AUTH0_DOMAIN: string;
