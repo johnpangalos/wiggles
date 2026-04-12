@@ -10,7 +10,7 @@ import type { ActionFunctionArgs } from "react-router";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { NewPost } from "@/types";
 import { Button, Image, Modal, Post } from "@/components";
-import { getAuthHeaders, getUserEmail } from "@/utils";
+import { getAuthHeaders, getUserEmail, handleAuthResponse } from "@/utils";
 import { useAuth0 } from "@auth0/auth0-react";
 
 export type ProfilePostsResponse = { posts: NewPost[]; cursor?: string };
@@ -27,6 +27,7 @@ async function fetchProfilePosts(
   const res = await fetch(`${import.meta.env.VITE_API_URL}/posts?${params}`, {
     headers,
   });
+  if (handleAuthResponse(res)) return { posts: [], cursor: undefined };
   if (!res.ok) return { posts: [], cursor: undefined };
   return res.json();
 }
@@ -46,6 +47,7 @@ export async function action({ request }: ActionFunctionArgs) {
     body: JSON.stringify(orderKeys),
     headers: { ...(await getAuthHeaders()) },
   });
+  if (handleAuthResponse(res)) throw new Error("session expired");
   if (res.status > 300) throw new Error("delete failed");
   return await res.json();
 }

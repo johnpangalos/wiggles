@@ -42,6 +42,8 @@ vi.mock("@/utils", () => ({
   getUserEmail: vi.fn(() => "test@example.com"),
   setTokenAccessor: vi.fn(),
   setUserEmail: vi.fn(),
+  setLogoutFn: vi.fn(),
+  handleAuthResponse: vi.fn(() => false),
 }));
 
 vi.mock("@/hooks/useImageUpload", () => ({

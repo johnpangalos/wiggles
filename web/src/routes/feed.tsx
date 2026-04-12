@@ -5,7 +5,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { Post } from "@/components";
 import { Image } from "@/components";
 import { NewPost } from "@/types";
-import { getAuthHeaders } from "@/utils";
+import { getAuthHeaders, handleAuthResponse } from "@/utils";
 
 export type PostsResponse = { posts: NewPost[]; cursor?: string };
 
@@ -16,6 +16,7 @@ async function fetchPosts(cursor?: string, limit = 10): Promise<PostsResponse> {
   const res = await fetch(`${import.meta.env.VITE_API_URL}/posts?${params}`, {
     headers,
   });
+  if (handleAuthResponse(res)) return { posts: [], cursor: undefined };
   if (!res.ok) return { posts: [], cursor: undefined };
   return res.json();
 }

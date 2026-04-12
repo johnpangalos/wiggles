@@ -45,6 +45,7 @@ vi.mock("@/utils", () => ({
     Promise.resolve({ Authorization: "Bearer fake-token" }),
   ),
   getUserEmail: vi.fn(() => "test@example.com"),
+  handleAuthResponse: vi.fn(() => false),
 }));
 
 vi.mock("@auth0/auth0-react", () => ({

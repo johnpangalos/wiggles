@@ -2,7 +2,7 @@ import { Outlet, RouterProvider, useNavigate } from "react-router";
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import React, { useEffect } from "react";
 import { checkRegistration, register, unregister } from "./register-sw";
-import { setTokenAccessor, setUserEmail } from "@/utils";
+import { setTokenAccessor, setUserEmail, setLogoutFn } from "@/utils";
 import { router } from "@/routes";
 
 export function Auth0ProviderWithNavigate() {
@@ -29,10 +29,15 @@ export function Auth0ProviderWithNavigate() {
 }
 
 function TokenAccessorSetup() {
-  const { getAccessTokenSilently, user } = useAuth0();
+  const { getAccessTokenSilently, user, logout } = useAuth0();
   useEffect(() => {
     setTokenAccessor(getAccessTokenSilently);
   }, [getAccessTokenSilently]);
+  useEffect(() => {
+    setLogoutFn(() =>
+      logout({ logoutParams: { returnTo: window.location.origin + "/login" } }),
+    );
+  }, [logout]);
   useEffect(() => {
     setUserEmail(user?.email);
   }, [user?.email]);
